@@ -186,7 +186,7 @@ func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membe
 	}
 
 	// Equip all items that were just transferred
-	equipItems(loadout.toSlice(), destinationID, characters, membershipType, client)
+	equipItems(loadout.toSlice(), destinationID, membershipType, client)
 
 	return nil
 }
@@ -222,7 +222,8 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 
 func moveLoadoutToCharacter(loadout Loadout, destinationID string, characters CharacterList, membershipType int, client *Client) error {
 
-	transferItem(loadout.toSlice(), characters, characters.findCharacterFromID(destinationID), membershipType, -1, client)
+	transferItems(loadout.toSlice(), characters.findCharacterFromID(destinationID),
+		membershipType, -1, client)
 
 	return nil
 }

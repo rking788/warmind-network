@@ -5,9 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
-	"net"
-	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -160,8 +157,8 @@ func PopulateItemMetadata() error {
 // which will be used to determine which type of equipment a specific Item represents.
 func PopulateBucketHashLookup() error {
 
-	// TODO: This absolutely needs to be done dynamically from the manifest. Not from a static definition
-	//var err error
+	// TODO: This absolutely needs to be done dynamically from the manifest. Not from a
+	//static definition
 	bucketHashLookup = make(map[EquipmentBucket]uint)
 
 	bucketHashLookup[Kinetic] = 1498876634
@@ -221,17 +218,15 @@ func CountItem(itemName, accessToken, appName string) (*skillserver.EchoResponse
 	}
 
 	// Load all items on all characters
-	profileChannel := make(chan *ProfileMsg)
-	go GetProfileForCurrentUser(client, profileChannel)
-
-	msg, _ := <-profileChannel
-	if msg.error != nil {
+	profile, err := GetProfileForCurrentUser(client)
+	if err != nil {
 		response.
 			OutputSpeech("Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app.").
 			LinkAccountCard()
 		return response, nil
 	}
-	matchingItems := msg.Profile.AllItems.FilterItems(itemHashFilter, hash)
+
+	matchingItems := profile.AllItems.FilterItems(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -289,16 +284,13 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 		client.AddAuthValues(accessToken, warmindAPIKey)
 	}
 
-	profileChannel := make(chan *ProfileMsg)
-	go GetProfileForCurrentUser(client, profileChannel)
-
-	msg := <-profileChannel
-	if msg.error != nil {
-		glg.Errorf("Failed to read the Items response from Bungie!: %s", msg.error.Error())
-		return nil, msg.error
+	profile, err := GetProfileForCurrentUser(client)
+	if err != nil {
+		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
+		return nil, err
 	}
 
-	matchingItems := msg.Profile.AllItems.FilterItems(itemHashFilter, hash)
+	matchingItems := profile.AllItems.FilterItems(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -307,7 +299,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 		return response, nil
 	}
 
-	allChars := msg.Profile.Characters
+	allChars := profile.Characters
 	destCharacter, err := allChars.findDestinationCharacter(destinationClass)
 	if err != nil {
 		output := fmt.Sprintf("Sorry Guardian, I could not transfer your %s because you do not have any %s characters in Destiny.", itemName, destinationClass)
@@ -318,8 +310,8 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 		return response, nil
 	}
 
-	actualQuantity := transferItem(matchingItems, allChars, destCharacter,
-		msg.Profile.MembershipType, count, client)
+	actualQuantity := transferItems(matchingItems, destCharacter, profile.MembershipType,
+		count, client)
 
 	var output string
 	if count != -1 && actualQuantity < count {
@@ -344,35 +336,33 @@ func EquipMaxLightGear(accessToken, appName string) (*skillserver.EchoResponse, 
 		client.AddAuthValues(accessToken, warmindAPIKey)
 	}
 
-	profileChannel := make(chan *ProfileMsg)
-	go GetProfileForCurrentUser(client, profileChannel)
-
-	msg := <-profileChannel
-	if msg.error != nil {
-		glg.Errorf("Failed to read the Items response from Bungie!: %s", msg.error.Error())
-		return nil, msg.error
+	profile, err := GetProfileForCurrentUser(client)
+	if err != nil {
+		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
+		return nil, err
 	}
 
 	// Transfer to the most recent character on the most recent platform
-	destinationID := msg.Profile.Characters[0].CharacterID
-	membershipType := msg.Profile.MembershipType
+	destinationID := profile.Characters[0].CharacterID
+	membershipType := profile.MembershipType
 
 	glg.Debugf("Character(%s), MembershipID(%s), MembershipType(%d)",
-		msg.Profile.Characters[0].CharacterID, msg.Profile.MembershipID, msg.Profile.MembershipType)
+		profile.Characters[0].CharacterID, profile.MembershipID, profile.MembershipType)
 
-	loadout := findMaxLightLoadout(msg.Profile, destinationID)
+	loadout := findMaxLightLoadout(profile, destinationID)
 
 	glg.Debugf("Found loadout to equip: %v", loadout)
 	glg.Infof("Calculated light for loadout: %f", loadout.calculateLightLevel())
 
-	err := equipLoadout(loadout, destinationID, msg.Profile, membershipType, client)
+	err = equipLoadout(loadout, destinationID, profile, membershipType, client)
 	if err != nil {
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
 		return nil, err
 	}
 
-	characterClass := classHashToName[msg.Profile.Characters[0].ClassHash]
-	response.OutputSpeech(fmt.Sprintf("Max light equipped to your %s Guardian. You are a force to be wreckoned with.", characterClass))
+	characterClass := classHashToName[profile.Characters[0].ClassHash]
+	response.OutputSpeech(fmt.Sprintf("Max light equipped to your %s Guardian. You are a force "+
+		"to be wreckoned with.", characterClass))
 	return response, nil
 }
 
@@ -387,18 +377,16 @@ func UnloadEngrams(accessToken, appName string) (*skillserver.EchoResponse, erro
 		client.AddAuthValues(accessToken, warmindAPIKey)
 	}
 
-	profileChannel := make(chan *ProfileMsg)
-	go GetProfileForCurrentUser(client, profileChannel)
-
-	msg := <-profileChannel
-	if msg.error != nil {
-		glg.Errorf("Failed to read the Items response from Bungie!: %s", msg.error.Error())
-		return nil, msg.error
+	profile, err := GetProfileForCurrentUser(client)
+	if err != nil {
+		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
+		return nil, err
 	}
 
-	matchingItems := msg.Profile.AllItems.FilterItems(itemIsEngramFilter, true)
+	matchingItems := profile.AllItems.FilterItems(itemIsEngramFilter, true)
 	if len(matchingItems) == 0 {
-		outputStr := fmt.Sprintf("You don't have any engrams on your current character. Happy farming Guardian!")
+		outputStr := fmt.Sprintf("You don't have any engrams on your current character. " +
+			"Happy farming Guardian!")
 		response.OutputSpeech(outputStr)
 		return response, nil
 	}
@@ -410,13 +398,13 @@ func UnloadEngrams(accessToken, appName string) (*skillserver.EchoResponse, erro
 
 	glg.Infof("Found %d engrams on all characters", foundCount)
 
-	allChars := msg.Profile.Characters
+	allChars := profile.Characters
 
-	_ = transferItem(matchingItems, allChars, nil,
-		msg.Profile.MembershipType, -1, client)
+	_ = transferItems(matchingItems, nil, profile.MembershipType, -1, client)
 
 	var output string
-	output = fmt.Sprintf("All set Guardian, your engrams have been transferred to your vault. Happy farming Guardian")
+	output = fmt.Sprintf("All set Guardian, your engrams have been transferred to your vault. " +
+		"Happy farming Guardian")
 
 	response.OutputSpeech(output)
 
@@ -504,6 +492,8 @@ func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldO
 	return response, nil
 }
 
+// EquipNamedLoadout will read the loadout with the specified name from the persistent
+// store and then equip it on the user's current character.
 func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
@@ -563,23 +553,23 @@ func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResp
 }
 
 // GetOutboundIP gets preferred outbound ip of this machine
-func GetOutboundIP() net.IP {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
+// func GetOutboundIP() net.IP {
+// 	conn, err := net.Dial("udp", "8.8.8.8:80")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer conn.Close()
 
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
+// 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	return localAddr.IP
-}
+// 	return localAddr.IP
+// }
 
-// transferItem is a generic transfer method that will handle a full transfer of a specific item to
+// transferItems is a generic transfer method that will handle a full transfer of a specific item to
 // the specified character. This requires a full trip from the source, to the vault, and then to the
 // destination character. By providing a nil destCharacter, the items will be transferred to the
 // vault and left there.
-func transferItem(itemSet []*Item, fullCharList []*Character, destCharacter *Character,
+func transferItems(itemSet []*Item, destCharacter *Character,
 	membershipType int, count int, client *Client) int {
 
 	// TODO: This should probably take the transferStatus field into account,
@@ -608,7 +598,7 @@ func transferItem(itemSet []*Item, fullCharList []*Character, destCharacter *Cha
 
 		// TODO: There is an issue were we are getting throttling responses from the Bungie
 		// servers. There will be an extra delay added here to try and avoid the throttling.
-		go func(item *Item, characters []*Character, wait *sync.WaitGroup) {
+		go func(item *Item, wait *sync.WaitGroup) {
 
 			defer wg.Done()
 
@@ -658,7 +648,7 @@ func transferItem(itemSet []*Item, fullCharList []*Character, destCharacter *Cha
 			transferClient.AddAuthValues(client.AccessToken, client.APIToken)
 			transferClient.PostTransferItem(vaultToCharRequestBody)
 
-		}(item, fullCharList, &wg)
+		}(item, &wg)
 
 		if count != -1 && totalCount >= count {
 			break
@@ -672,7 +662,7 @@ func transferItem(itemSet []*Item, fullCharList []*Character, destCharacter *Cha
 
 // equipItems is a generic equip method that will handle a equipping a specific
 // item on a specific character.
-func equipItems(itemSet []*Item, characterID string, characters CharacterList,
+func equipItems(itemSet []*Item, characterID string,
 	membershipType int, client *Client) {
 
 	ids := make([]int64, 0, len(itemSet))
@@ -681,13 +671,15 @@ func equipItems(itemSet []*Item, characterID string, characters CharacterList,
 
 		if item.TransferStatus == ItemIsEquipped && item.Character.CharacterID == characterID {
 			// If this item is already equipped, skip it.
-			glg.Debugf("Not equipping item because it is already equipped on the current character: %s", item.InstanceID)
+			glg.Debugf("Not equipping item, it is already equipped on the current character: %s",
+				item.InstanceID)
 			continue
 		}
 
 		instanceID, err := strconv.ParseInt(item.InstanceID, 10, 64)
 		if err != nil {
-			glg.Errorf("Not equipping item because the instance ID could not be parsed to an Int: %s", err.Error())
+			glg.Errorf("Not equipping item, the instance ID could not be parsed to an Int:  %s",
+				err.Error())
 			continue
 		}
 		ids = append(ids, instanceID)
@@ -719,173 +711,4 @@ func equipItem(item *Item, character *Character, membershipType int, client *Cli
 	}
 
 	client.PostEquipItem(equipRequestBody, false)
-}
-
-// Profile contains all information about a specific Destiny membership, including character and
-// inventory information.
-type Profile struct {
-	MembershipType        int
-	MembershipID          string
-	BungieNetMembershipID string
-	DateLastPlayed        time.Time
-	DisplayName           string
-	Characters            CharacterList
-
-	AllItems ItemList
-	// NOTE: Still not sure this is the best approach to flatten items into a single list,
-	// it works well for now so we will go with it. There are too many potential spots to look for an item.
-	//Equipments       map[string]ItemList
-	//Inventories      map[string]ItemList
-	//ProfileInventory ItemList
-	//Currencies       ItemList
-}
-
-// ProfileMsg is a wrapper around a Profile struct that should be used exclusively for sending a
-// Profile over a channel, or at least in cases where an error also needs to be sent to indicate
-// failures.
-type ProfileMsg struct {
-	*Profile
-	error
-}
-
-// GetProfileForCurrentUser will retrieve the Profile data for the currently logged in user
-// (determined by the access_token)
-func GetProfileForCurrentUser(client *Client, responseChan chan *ProfileMsg) {
-
-	// TODO: check error
-	currentAccount, _ := client.GetCurrentAccount()
-
-	if currentAccount == nil {
-		glg.Error("Failed to load current account with the specified access token!")
-		responseChan <- &ProfileMsg{
-			Profile: nil,
-			error:   errors.New("Couldn't load current user information"),
-		}
-
-		return
-	}
-
-	// TODO: Figure out how to support multiple accounts, meaning PSN and XBOX,
-	// maybe require it to be specified in the Alexa voice command.
-	membership := currentAccount.Response.DestinyMemberships[0]
-
-	profileResponse, err := client.GetUserProfileData(membership.MembershipType, membership.MembershipID)
-	if err != nil {
-		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
-		responseChan <- &ProfileMsg{
-			Profile: nil,
-			error:   errors.New("Failed to read current user's profile: " + err.Error()),
-		}
-		return
-	}
-
-	profile := fixupProfileFromProfileResponse(profileResponse)
-	profile.BungieNetMembershipID = currentAccount.Response.BungieNetUser.MembershipID
-
-	for _, char := range profile.Characters {
-		glg.Debugf("Character(%s) last played date: %+v", classHashToName[char.ClassHash], char.DateLastPlayed)
-	}
-
-	responseChan <- &ProfileMsg{
-		Profile: profile,
-		error:   nil,
-	}
-}
-
-func loadoutFromProfile(profile *Profile) Loadout {
-	loadout := make(Loadout)
-	for _, item := range profile.AllItems {
-		glg.Debugf("Found item(%d) for bucket(%d), equipment bucket lookupresult(%d)", item.ItemHash, item.BucketHash, equipmentBucketLookup[item.BucketHash])
-		if equipmentBucket, ok := equipmentBucketLookup[item.BucketHash]; ok {
-			if _, ok := loadout[equipmentBucket]; ok {
-				glg.Debugf("Found duplicate item for bucket: %d", item.BucketHash)
-			}
-			loadout[equipmentBucket] = item
-		}
-	}
-
-	return loadout
-}
-
-func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
-	profile := &Profile{}
-
-	// Profile Component
-	if response.Response.Profile != nil {
-		profile.MembershipID = response.Response.Profile.Data.UserInfo.MembershipID
-		profile.MembershipType = response.Response.Profile.Data.UserInfo.MembershipType
-	}
-
-	// Transform character map into an ordered list based on played time.
-	// Characters Component
-	if response.Response.Characters != nil {
-		profile.Characters = make([]*Character, 0, len(response.Response.Characters.Data))
-		for _, char := range response.Response.Characters.Data {
-			profile.Characters = append(profile.Characters, char)
-		}
-
-		sort.Sort(sort.Reverse(LastPlayedSort(profile.Characters)))
-	}
-
-	// Flatten out the items from different buckets including currencies, inventories, eequipments,
-	// etc.
-	//totalItemCount := len(response.Response.ProfileCurrencies.Data.Items) + len(response.Response.ProfileInventory.Data.Items)
-	// for id := range response.Response.Characters.Data {
-	// 	totalItemCount += len(response.Response.CharacterEquipment.Data[id].Items)
-	// 	totalItemCount += len(response.Response.CharacterInventories.Data[id].Items)
-	// }
-
-	items := make(ItemList, 0, 32)
-
-	// ProfileCurrencies Component
-	if response.Response.ProfileCurrencies != nil {
-		items = append(items, response.Response.ProfileCurrencies.Data.Items...)
-	}
-
-	// ProfileInventory Component
-	if response.Response.ProfileInventory != nil {
-		for _, item := range response.Response.ProfileInventory.Data.Items {
-			if item.InstanceID != "" {
-				item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
-			}
-		}
-		items = append(items, response.Response.ProfileInventory.Data.Items...)
-	}
-
-	// CharacterEquipment Component
-	if response.Response.CharacterEquipment != nil {
-		for charID, list := range response.Response.CharacterEquipment.Data {
-			for _, item := range list.Items {
-				if response.Response.Characters != nil {
-					item.Character = response.Response.Characters.Data[charID]
-				}
-				if item.InstanceID != "" && response.Response.ItemComponents != nil &&
-					response.Response.ItemComponents.Instances != nil {
-					item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
-				}
-			}
-
-			items = append(items, list.Items...)
-		}
-	}
-
-	// CharacterInventories Component
-	if response.Response.CharacterInventories != nil {
-		for charID, list := range response.Response.CharacterInventories.Data {
-			for _, item := range list.Items {
-				if response.Response.Characters != nil {
-					item.Character = response.Response.Characters.Data[charID]
-				}
-				if item.InstanceID != "" && response.Response.ItemComponents != nil &&
-					response.Response.ItemComponents.Instances != nil {
-					item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
-				}
-			}
-			items = append(items, list.Items...)
-		}
-	}
-
-	profile.AllItems = items
-
-	return profile
 }
