@@ -1,8 +1,5 @@
 package alexa
 
-// TODO: This file really needs a refactor. Endpoints that require a linked account
-// should use some kind of middleware instead of having the check in individually handlers.
-
 import (
 	"encoding/json"
 	"fmt"
@@ -105,13 +102,13 @@ func ClearSession(sessionID string) {
 }
 
 // Handler is the type of function that should be used to respond to a specific intent.
-type Handler func(*skillserver.EchoRequest) *skillserver.EchoResponse
+type Handler func(*skillserver.EchoRequest, string) *skillserver.EchoResponse
 
 // AuthWrapper is a handler function wrapper that will fail the chain of handlers if an access token was not provided
 // as part of the Alexa request
 func AuthWrapper(handler Handler) Handler {
 
-	return func(req *skillserver.EchoRequest) *skillserver.EchoResponse {
+	return func(req *skillserver.EchoRequest, appName string) *skillserver.EchoResponse {
 		accessToken := req.Session.User.AccessToken
 		if accessToken == "" {
 			response := skillserver.NewEchoResponse()
@@ -121,13 +118,13 @@ func AuthWrapper(handler Handler) Handler {
 			return response
 		}
 
-		return handler(req)
+		return handler(req, appName)
 	}
 }
 
 // WelcomePrompt is responsible for prompting the user with information about what they can ask
 // the skill to do.
-func WelcomePrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func WelcomePrompt(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 	response = skillserver.NewEchoResponse()
 
 	response.OutputSpeech("Welcome Guardian, would you like to equip max light, unload engrams, or transfer an item to a specific character, " +
@@ -140,7 +137,7 @@ func WelcomePrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.
 
 // HelpPrompt provides the required information to satisfy the HelpIntent built-in Alexa intent. This should
 // provider information to the user to let them know what the skill can do without providing exact commands.
-func HelpPrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func HelpPrompt(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 	response = skillserver.NewEchoResponse()
 
 	response.OutputSpeech("Welcome Guardian, I am here to help manage your Destiny in-game inventory. You can ask " +
@@ -154,12 +151,12 @@ func HelpPrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.Ech
 
 // CountItem calls the Bungie API to see count the number of Items on all characters and
 // in the vault.
-func CountItem(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func CountItem(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := echoRequest.Session.User.AccessToken
 	item, _ := echoRequest.GetSlotValue("Item")
 	lowerItem := strings.ToLower(item)
-	response, err := bungie.CountItem(lowerItem, accessToken)
+	response, err := bungie.CountItem(lowerItem, accessToken, appName)
 	if err != nil {
 		glg.Errorf("Error counting the number of items: %s", err.Error())
 		response = skillserver.NewEchoResponse()
@@ -172,7 +169,7 @@ func CountItem(echoRequest *skillserver.EchoRequest) (response *skillserver.Echo
 // TransferItem will attempt to transfer either a specific quantity or all of a
 // specific item to a specified character. The item name and destination are the
 // required fields. The quantity and source are optional.
-func TransferItem(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func TransferItem(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
 	countStr, _ := request.GetSlotValue("Count")
@@ -204,7 +201,7 @@ func TransferItem(request *skillserver.EchoRequest) (response *skillserver.EchoR
 	}
 
 	glg.Infof("Transferring %d of your %s from your %s to your %s", count, strings.ToLower(item), strings.ToLower(sourceClass), strings.ToLower(destinationClass))
-	response, err := bungie.TransferItem(strings.ToLower(item), accessToken, strings.ToLower(sourceClass), strings.ToLower(destinationClass), count)
+	response, err := bungie.TransferItem(strings.ToLower(item), accessToken, strings.ToLower(sourceClass), strings.ToLower(destinationClass), appName, count)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred trying to transfer that item.")
@@ -215,10 +212,10 @@ func TransferItem(request *skillserver.EchoRequest) (response *skillserver.EchoR
 }
 
 // MaxPower will equip the loadout on the current character that provides the maximum amount of power.
-func MaxPower(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func MaxPower(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
-	response, err := bungie.EquipMaxLightGear(accessToken)
+	response, err := bungie.EquipMaxLightGear(accessToken, appName)
 	if err != nil {
 		glg.Errorf("Error occurred equipping max light: %s", err.Error())
 		response = skillserver.NewEchoResponse()
@@ -230,10 +227,10 @@ func MaxPower(request *skillserver.EchoRequest) (response *skillserver.EchoRespo
 
 // UnloadEngrams will take all engrams on all of the current user's characters and transfer them all to the
 // vault to allow the player to continue farming.
-func UnloadEngrams(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func UnloadEngrams(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
-	response, err := bungie.UnloadEngrams(accessToken)
+	response, err := bungie.UnloadEngrams(accessToken, appName)
 	if err != nil {
 		glg.Errorf("Error occurred unloading engrams: %s", err.Error())
 		response = skillserver.NewEchoResponse()
@@ -244,7 +241,7 @@ func UnloadEngrams(request *skillserver.EchoRequest) (response *skillserver.Echo
 }
 
 // DestinyJoke will return the desired text for a random joke from the database.
-func DestinyJoke(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func DestinyJoke(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response = skillserver.NewEchoResponse()
 	setup, punchline, err := db.GetRandomJoke()
@@ -266,7 +263,7 @@ func DestinyJoke(request *skillserver.EchoRequest) (response *skillserver.EchoRe
 // CreateLoadout will determine the user's current character and create a new loadout based on
 // their currently equipped items. This loadout is then serialized and persisted to a
 // persistent store.
-func CreateLoadout(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func CreateLoadout(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response = skillserver.NewEchoResponse()
 
@@ -291,7 +288,7 @@ func CreateLoadout(request *skillserver.EchoRequest) (response *skillserver.Echo
 	}
 
 	var err error
-	response, err = bungie.CreateLoadoutForCurrentCharacter(accessToken, loadoutName,
+	response, err = bungie.CreateLoadoutForCurrentCharacter(accessToken, loadoutName, appName,
 		intentConfirmation == "CONFIRMED")
 
 	if err != nil {
@@ -302,7 +299,7 @@ func CreateLoadout(request *skillserver.EchoRequest) (response *skillserver.Echo
 	return
 }
 
-func EquipNamedLoadout(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func EquipNamedLoadout(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
 	loadoutName, _ := request.GetSlotValue("Name")
@@ -310,7 +307,7 @@ func EquipNamedLoadout(request *skillserver.EchoRequest) (response *skillserver.
 		response.OutputSpeech("Sorry Guardian, you must specify a name for the loadout being equipped.")
 	}
 
-	response, err := bungie.EquipNamedLoadout(accessToken, loadoutName)
+	response, err := bungie.EquipNamedLoadout(accessToken, loadoutName, appName)
 
 	if err != nil {
 		glg.Errorf("Error occurred creating loadout: %s", err.Error())
@@ -325,7 +322,7 @@ func EquipNamedLoadout(request *skillserver.EchoRequest) (response *skillserver.
  */
 
 // CurrentTrialsMap will return a brief description of the current map in the active Trials of Osiris week.
-func CurrentTrialsMap(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func CurrentTrialsMap(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response, err := trials.GetCurrentMap()
 	if err != nil {
@@ -338,10 +335,10 @@ func CurrentTrialsMap(request *skillserver.EchoRequest) (response *skillserver.E
 }
 
 // CurrentTrialsWeek will return a brief description of the current map in the active Trials of Osiris week.
-func CurrentTrialsWeek(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func CurrentTrialsWeek(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
-	response, err := trials.GetCurrentWeek(accessToken)
+	response, err := trials.GetCurrentWeek(accessToken, appName)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information right now, please try again later.")
@@ -352,7 +349,7 @@ func CurrentTrialsWeek(request *skillserver.EchoRequest) (response *skillserver.
 }
 
 // PopularWeapons will check Trials Report for the most popular specific weapons for the current week.
-func PopularWeapons(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func PopularWeapons(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response, err := trials.GetWeaponUsagePercentages()
 	if err != nil {
@@ -365,10 +362,10 @@ func PopularWeapons(request *skillserver.EchoRequest) (response *skillserver.Ech
 }
 
 // PersonalTopWeapons will check Trials Report for the most used weapons for the current user.
-func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func PersonalTopWeapons(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
-	response, err := trials.GetPersonalTopWeapons(accessToken)
+	response, err := trials.GetPersonalTopWeapons(accessToken, appName)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information at this time, please try again later")
@@ -380,7 +377,7 @@ func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver
 
 // PopularWeaponTypes will return info about what classes of weapons are getting
 // the most kills in Trials of Osiris.
-func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func PopularWeaponTypes(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response, err := trials.GetPopularWeaponTypes()
 	if err != nil {

@@ -25,10 +25,12 @@ const (
 )
 
 var bungieAPIKey string
+var warmindAPIKey string
 
 // InitEnv provides a package level initialization point for any work that is environment specific
-func InitEnv(apiKey string) {
+func InitEnv(apiKey, warmindKey string) {
 	bungieAPIKey = apiKey
+	warmindAPIKey = warmindKey
 }
 
 // CurrentMap represents the metadata describing the current active map in Trials of Osiris
@@ -128,10 +130,10 @@ func requestCurrentMap() (*CurrentMap, error) {
 }
 
 // GetCurrentWeek is responsible for requesting the players stats from the current week from Trials Report.
-func GetCurrentWeek(token string) (*skillserver.EchoResponse, error) {
+func GetCurrentWeek(token, appName string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
-	membershipID, err := findMembershipID(token)
+	membershipID, err := findMembershipID(token, appName)
 
 	url := fmt.Sprintf(TrialsCurrentWeekEndpointFmt, membershipID)
 	req, _ := http.NewRequest("GET", url, nil)
@@ -167,10 +169,14 @@ func GetCurrentWeek(token string) (*skillserver.EchoResponse, error) {
 
 // findMembershipID is a helper function for loading the membership ID from the currently
 // linked account, this eventually should take platform into account.
-func findMembershipID(token string) (string, error) {
+func findMembershipID(token, appName string) (string, error) {
 
 	client := bungie.Clients.Get()
-	client.AddAuthValues(token, bungieAPIKey)
+	if appName == "guardian-helper" {
+		client.AddAuthValues(token, bungieAPIKey)
+	} else {
+		client.AddAuthValues(token, warmindAPIKey)
+	}
 	currentAccount, err := client.GetCurrentAccount()
 	if err != nil {
 		glg.Errorf("Error loading current account info from Bungie.net: %s", err.Error())
@@ -222,10 +228,10 @@ func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 }
 
 // GetPersonalTopWeapons will return a summary of the top weapons used by the linked player/account.
-func GetPersonalTopWeapons(token string) (*skillserver.EchoResponse, error) {
+func GetPersonalTopWeapons(token, appName string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
-	membershipID, err := findMembershipID(token)
+	membershipID, err := findMembershipID(token, appName)
 	if err != nil {
 		glg.Errorf("Error loading membership ID for linked account: %s", err.Error())
 		return nil, err

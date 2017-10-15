@@ -179,13 +179,13 @@ func itemInstanceIDFilter(item *Item, instanceID interface{}) bool {
 
 // itemClassTypeFilter will filter out all items that are not equippable by the specified class
 func itemClassTypeFilter(item *Item, classType interface{}) bool {
-	// TODO: Is this correct? 3 is UNKNOWN class type, that seems to be what is used for class agnostic items.
+
 	metadata, ok := itemMetadata[item.ItemHash]
 	if !ok {
 		glg.Warnf("No metadata found for item: %s", item.ItemHash)
 		return false
 	}
 
-	return (metadata.ClassType == 3) ||
+	return (metadata.ClassType == UnknownClassType) ||
 		(metadata.ClassType == classType.(int))
 }

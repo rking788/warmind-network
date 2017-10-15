@@ -213,8 +213,8 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 	// Lowest light to highest
 	sort.Sort(LightSort(reverseLightSortedItems))
 
-	// Now that items are sorted in reverse light order, we want to equip the first item in the slice,
-	// the highest light item will be the last item in the slice.
+	// Now that items are sorted in reverse light order, we want to equip the first
+	// item in the slice, the highest light item will be the last item in the slice.
 	itemToEquip := reverseLightSortedItems[0]
 	character := item.Character
 	equipItem(itemToEquip, character, membershipType, client)
@@ -267,25 +267,28 @@ func findBestItemForBucket(bucket EquipmentBucket, items []*Item, destinationID 
 			// Lower light value, keep the current candidate
 			break
 		} else if candidate.IsEquipped && candidate.CharacterID == destinationID {
-			// The current max light piece of gear is currently equipped on the destination character,
-			// avoiding moving items around if we don't need to.
+			// The current max light piece of gear is currently equipped on the
+			// destination character, avoiding moving items around if we don't need to.
 			break
 		}
 
 		if (!next.IsInVault() && next.CharacterID == destinationID) &&
 			(!candidate.IsInVault() && candidate.CharacterID != destinationID) {
-			// This next item is the same light and on the destination character already, the current candidate is not
+			// This next item is the same light and on the destination character already,
+			// the current candidate is not
 			candidate = next
 		} else if (!next.IsInVault() && next.CharacterID == destinationID) &&
 			(!candidate.IsInVault() && candidate.CharacterID == destinationID) {
 			if next.TransferStatus == ItemIsEquipped && candidate.TransferStatus != ItemIsEquipped {
-				// The next item is currently equipped on the destination character, the current candidate is not
+				// The next item is currently equipped on the destination character,
+				// the current candidate is not
 				candidate = next
 			}
 		} else if (!candidate.IsInVault() && candidate.CharacterID != destinationID) &&
 			next.IsInVault() {
-			// If the current candidate is on a character that is NOT the destination and the next candidate is in the vault,
-			// prefer that since we will only need to do a single transfer request
+			// If the current candidate is on a character that is NOT the destination and the next
+			// candidate is in the vault, prefer that since we will only need to do a
+			// single transfer request
 			candidate = next
 		}
 	}

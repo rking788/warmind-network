@@ -91,10 +91,10 @@ var classNameToHash = map[string]uint{
 
 // Class Enum value passed in some of the Destiny API responses
 const (
-	TitanEnum        = 0
-	HunterEnum       = 1
+	TitanClassType   = 0
+	HunterClassType  = 1
 	WarlockEnum      = 2
-	UnknownClassEnum = 3
+	UnknownClassType = 3
 )
 
 // Hash values for Race types 'raceHash' JSON key

@@ -53,8 +53,14 @@ func InitEnv(c *EnvConfig) {
 	applications = map[string]interface{}{
 		"/echo/guardian-helper": skillserver.EchoApplication{ // Route
 			AppID:          c.AlexaAppID, // Echo App ID from Amazon Dashboard
-			OnIntent:       EchoIntentHandler,
-			OnLaunch:       EchoIntentHandler,
+			OnIntent:       guardianHelperIntentHandler,
+			OnLaunch:       guardianHelperIntentHandler,
+			OnSessionEnded: EchoSessionEndedHandler,
+		},
+		"/echo/warmind-network": skillserver.EchoApplication{ // Route
+			AppID:          c.WarmindNetworkAlexaAppID, // Echo App ID from Amazon Dashboard
+			OnIntent:       warmindIntentHandler,
+			OnLaunch:       warmindIntentHandler,
 			OnSessionEnded: EchoSessionEndedHandler,
 		},
 		"/health": skillserver.StdApplication{
@@ -68,10 +74,10 @@ func InitEnv(c *EnvConfig) {
 	// This provides and explicit configuration point as opposed to the package level init functions,
 	// as well as making it easier to write unit tests.
 	// It also makes it easier to guarantee ordering if that is necessary.
-	trials.InitEnv(c.BungieAPIKey)
+	trials.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey)
 	db.InitEnv(c.DatabaseURL)
 	alexa.InitEnv(c.RedisURL)
-	bungie.InitEnv(c.BungieAPIKey)
+	bungie.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey)
 }
 
 func main() {
@@ -108,7 +114,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func writeHeapProfile() {
-	bungie.EquipMaxLightGear("access-token")
+	//bungie.EquipMaxLightGear("access-token")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -137,9 +143,17 @@ func EchoSessionEndedHandler(echoRequest *skillserver.EchoRequest, echoResponse 
 	alexa.ClearSession(echoRequest.GetSessionID())
 }
 
+func guardianHelperIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
+	EchoIntentHandler(echoRequest, echoResponse, "guardian-helper")
+}
+
+func warmindIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
+	EchoIntentHandler(echoRequest, echoResponse, "warmind-network")
+}
+
 // EchoIntentHandler is a handler method that is responsible for receiving the
 // call from a Alexa command and returning the correct speech or cards.
-func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
+func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse, appName string) {
 
 	// Time the intent handler to determine if it is taking longer than normal
 	startTime := time.Now()
@@ -159,13 +173,13 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 
 	handler, ok := AlexaHandlers[intentName]
 	if echoRequest.GetRequestType() == "LaunchRequest" {
-		response = alexa.WelcomePrompt(echoRequest)
+		response = alexa.WelcomePrompt(echoRequest, appName)
 	} else if intentName == "AMAZON.StopIntent" {
 		response = skillserver.NewEchoResponse()
 	} else if intentName == "AMAZON.CancelIntent" {
 		response = skillserver.NewEchoResponse()
 	} else if ok {
-		response = handler(echoRequest)
+		response = handler(echoRequest, appName)
 	} else {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I did not understand your request.")
