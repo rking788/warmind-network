@@ -47,18 +47,19 @@ func GetProfileForCurrentUser(client *Client) (*Profile, error) {
 		return nil, errors.New("Couldn't load current user information")
 	}
 
-	// TODO: Figure out how to support multiple accounts, meaning PSN and XBOX,
-	// maybe require it to be specified in the Alexa voice command.
-	membership := currentAccount.Response.DestinyMemberships[0]
+	// This will always be the Destiny membership with the most recently played character
+	membership := currentAccount.DestinyMembership
 
-	profileResponse, err := client.GetUserProfileData(membership.MembershipType, membership.MembershipID)
+	profileResponse := GetProfileResponse{}
+	err := client.Execute(NewUserProfileRequest(membership.MembershipType,
+		membership.MembershipID), &profileResponse)
 	if err != nil {
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(profileResponse)
-	profile.BungieNetMembershipID = currentAccount.Response.BungieNetUser.MembershipID
+	profile := fixupProfileFromProfileResponse(&profileResponse)
+	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	for _, char := range profile.Characters {
 		glg.Debugf("Character(%s) last played date: %+v", classHashToName[char.ClassHash], char.DateLastPlayed)

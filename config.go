@@ -28,12 +28,14 @@ type EnvConfig struct {
 func NewEnvConfig() *EnvConfig {
 	// Default to values from the environment or nothing, this is mainly for the Heroku deployments
 	config := &EnvConfig{
-		Environment:  "staging",
-		RedisURL:     os.Getenv("REDIS_URL"),
-		BungieAPIKey: os.Getenv("BUNGIE_API_KEY"),
-		DatabaseURL:  os.Getenv("DATABASE_URL"),
-		AlexaAppID:   os.Getenv("ALEXA_APP_ID"),
-		LogLevel:     os.Getenv("GUARDIAN_HELPER_LOG_LEVEL"),
+		Environment:              "staging",
+		RedisURL:                 os.Getenv("REDIS_URL"),
+		BungieAPIKey:             os.Getenv("BUNGIE_API_KEY"),
+		WarmindBungieAPIKey:      os.Getenv("WARMIND_BUNGIE_API_KEY"),
+		DatabaseURL:              os.Getenv("DATABASE_URL"),
+		AlexaAppID:               os.Getenv("ALEXA_APP_ID"),
+		WarmindNetworkAlexaAppID: os.Getenv("WARMIND_NETWORK_APP_ID"),
+		LogLevel:                 os.Getenv("GUARDIAN_HELPER_LOG_LEVEL"),
 	}
 
 	return config

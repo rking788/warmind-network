@@ -3,16 +3,24 @@ package bungie
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/kpango/glg"
 )
+
+// StatusResponse is used as the generic response parameter for the deserialized response
+// from the generic Client Execute calls. One of the below structs should be used as the
+// concrete type for the request's response to be deserialized into.
+type StatusResponse interface {
+	ErrCode() int
+	ErrStatus() string
+}
 
 // BaseResponse represents the data returned as part of all of the Bungie API
 // requests.
@@ -24,21 +32,36 @@ type BaseResponse struct {
 	MessageData     interface{} `json:"MessageData"`
 }
 
+func (b *BaseResponse) ErrCode() int      { return b.ErrorCode }
+func (b *BaseResponse) ErrStatus() string { return b.ErrorStatus }
+
 // CurrentUserMembershipsResponse contains information about the membership data for the currently
-// authorized user. The request for this information will use the access_token to determine the current user
+// authorized user. The request for this information will use the access_token to determine
+// the current user
 // https://bungie-net.github.io/multi/operation_get_User-GetMembershipDataForCurrentUser.html#operation_get_User-GetMembershipDataForCurrentUser
 type CurrentUserMembershipsResponse struct {
 	*BaseResponse
 	Response *struct {
-		DestinyMemberships []*struct {
-			DisplayName    string `json:"displayName"`
-			MembershipType int    `json:"membershipType"`
-			MembershipID   string `json:"membershipId"`
-		} `json:"destinyMemberships"`
-		BungieNetUser *struct {
-			MembershipID string `json:"membershipId"`
-		} `json:"bungieNetUser"`
+		DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
+		BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
 	} `json:"Response"`
+}
+
+// CurrentUserMemberships will hold the current user's Bungie.net membership data
+// as well as the Destiny membership data for their most recently played character.
+type CurrentUserMemberships struct {
+	BungieNetUser     *BungieNetUser
+	DestinyMembership *DestinyMembership
+}
+
+type BungieNetUser struct {
+	MembershipID string `json:"membershipId"`
+}
+
+type DestinyMembership struct {
+	DisplayName    string `json:"displayName"`
+	MembershipType int    `json:"membershipType"`
+	MembershipID   string `json:"membershipId"`
 }
 
 // GetProfileResponse is the response from the GetProfile endpoint. This data contains information about
@@ -194,179 +217,129 @@ func (c *Client) AddAuthValues(accessToken, apiKey string) {
 // AddAuthHeadersToRequest will handle adding the authentication headers from the
 // current client to the specified Request.
 func (c *Client) AddAuthHeadersToRequest(req *http.Request) {
-	for key, val := range c.AuthenticationHeaders() {
-		req.Header.Add(key, val)
-	}
-}
-
-// AuthenticationHeaders will generate a map with the required headers to make
-// an authenticated HTTP call to the Bungie API.
-func (c *Client) AuthenticationHeaders() map[string]string {
-	return map[string]string{
+	authHeaders := map[string]string{
 		"X-Api-Key":     c.APIToken,
 		"Authorization": "Bearer " + c.AccessToken,
+	}
+	for key, val := range authHeaders {
+		req.Header.Add(key, val)
 	}
 }
 
 // GetCurrentAccount will request the user info for the current user
 // based on the OAuth token provided as part of the request.
-func (c *Client) GetCurrentAccount() (*CurrentUserMembershipsResponse, error) {
-
-	glg.Debugf("Client with local address: %s", c.Address)
-
-	req, _ := http.NewRequest("GET", GetMembershipsForCurrentUserEndpoint, nil)
-	req.Header.Add("Content-Type", "application/json")
-	c.AddAuthHeadersToRequest(req)
-
-	membershipsResponse, err := c.Do(req)
-	if err != nil {
-		glg.Errorf("Failed to read the Memberships response from Bungie!: %s", err.Error())
-		return nil, err
-	}
-	defer membershipsResponse.Body.Close()
+func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 
 	accountResponse := CurrentUserMembershipsResponse{}
-	json.NewDecoder(membershipsResponse.Body).Decode(&accountResponse)
+	c.Execute(NewCurrentAccountRequest(), &accountResponse)
 
-	return &accountResponse, nil
+	glg.Debugf("Found %d Destiny memberships", len(accountResponse.Response.DestinyMemberships))
+
+	// If the user only has a single destiny membership, just use that then
+	if len(accountResponse.Response.DestinyMemberships) == 1 {
+		return &CurrentUserMemberships{
+			BungieNetUser:     accountResponse.Response.BungieNetUser,
+			DestinyMembership: accountResponse.Response.DestinyMemberships[0],
+		}, nil
+	}
+
+	allChars := make(CharacterList, 0, 9)
+	destinyMembershipLookup := make(map[string]*DestinyMembership)
+	for _, destinyMembership := range accountResponse.Response.DestinyMemberships {
+		destinyMembershipLookup[destinyMembership.MembershipID] = destinyMembership
+
+		allChars = append(allChars,
+			c.getCharacters(NewGetCharactersRequest(destinyMembership.MembershipType, destinyMembership.MembershipID))...)
+	}
+
+	latestDestinyMembership := accountResponse.Response.DestinyMemberships[0]
+	sort.Sort(sort.Reverse(LastPlayedSort(allChars)))
+	glg.Debugf("Found all membership characters: %+v", allChars)
+	if len(allChars) > 0 {
+		latestDestinyMembership = destinyMembershipLookup[allChars[0].MembershipID]
+	}
+
+	return &CurrentUserMemberships{
+		BungieNetUser:     accountResponse.Response.BungieNetUser,
+		DestinyMembership: latestDestinyMembership,
+	}, nil
 }
 
-// GetUserProfileData is responsible for loading all of the profiles, characters, equipments, and inventories for all
-// of the supplied user's characters.
-func (c *Client) GetUserProfileData(membershipType int, membershipID string) (*GetProfileResponse, error) {
-
-	glg.Debugf("Client local address: %s", c.Address)
-
-	endpoint := fmt.Sprintf(GetProfileEndpointFormat, membershipType, membershipID)
-
-	req, _ := http.NewRequest("GET", endpoint, nil)
-	vals := url.Values{}
-	vals.Add("components", strings.Join([]string{ProfilesComponent,
-		ProfileInventoriesComponent, ProfileCurrenciesComponent, CharactersComponent,
-		CharacterInventoriesComponent, CharacterEquipmentComponent, ItemInstancesComponent}, ","))
-
-	// Add required headers and query string parameters
-	req.Header.Add("Content-Type", "application/json")
-	c.AddAuthHeadersToRequest(req)
-	req.URL.RawQuery = vals.Encode()
-
-	profileResponse, err := c.Client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer profileResponse.Body.Close()
+func (c *Client) getCharacters(request *APIRequest) CharacterList {
 
 	profile := &GetProfileResponse{}
-	json.NewDecoder(profileResponse.Body).Decode(profile)
+	c.Execute(request, profile)
 
-	return profile, nil
-}
-
-func (c *Client) GetCurrentEquipment(membershipType int, membershipID string) (*GetProfileResponse, error) {
-
-	glg.Debugf("Client local address: %s", c.Address)
-
-	endpoint := fmt.Sprintf(GetProfileEndpointFormat, membershipType, membershipID)
-
-	req, _ := http.NewRequest("GET", endpoint, nil)
-	vals := url.Values{}
-	vals.Add("components", strings.Join([]string{CharactersComponent, CharacterEquipmentComponent, ItemInstancesComponent}, ","))
-
-	// Add required headers and query string parameters
-	req.Header.Add("Content-Type", "application/json")
-	c.AddAuthHeadersToRequest(req)
-	req.URL.RawQuery = vals.Encode()
-
-	profileResponse, err := c.Client.Do(req)
-	if err != nil {
-		return nil, err
+	chars := make(CharacterList, 0, 3)
+	if profile.Response == nil || profile.Response.Characters == nil {
+		return chars
 	}
-	defer profileResponse.Body.Close()
 
-	profile := &GetProfileResponse{}
-	json.NewDecoder(profileResponse.Body).Decode(profile)
+	for _, char := range profile.Response.Characters.Data {
+		chars = append(chars, char)
+	}
 
-	return profile, nil
+	return chars
 }
 
-// PostTransferItem is responsible for calling the Bungie.net API to transfer
-// an item from a source to a destination. This could be either a user's character
-// or the vault.
-func (c *Client) PostTransferItem(body map[string]interface{}) {
+// Execute is a generic request execution method that will send the passed request
+// on to the Bungie API using the configured client. The response is then deserialized into
+// the response object provided.
+func (c *Client) Execute(request *APIRequest, response StatusResponse) error {
 
 	glg.Debugf("Client local address: %s", c.Address)
 
 	// TODO: This retry logic should probably be added to a middleware type function
 	retry := true
 	attempts := 0
+	var resp *http.Response
+	var err error
+
 	for {
 		retry = false
-		jsonBody, _ := json.Marshal(body)
+		var req *http.Request
 
-		req, _ := http.NewRequest("POST", TransferItemEndpointURL, strings.NewReader(string(jsonBody)))
+		glg.Warnf("Executing request: %+v", request)
+		if request.Body != nil && (len(request.Body) > 0) {
+			glg.Warn("Setting the requests body...")
+			jsonBody, _ := json.Marshal(request.Body)
+			bodyReader := strings.NewReader(string(jsonBody))
+
+			req, _ = http.NewRequest(request.HTTPMethod, request.Endpoint, bodyReader)
+		} else {
+			req, _ = http.NewRequest(request.HTTPMethod, request.Endpoint, nil)
+		}
+
 		req.Header.Add("Content-Type", "application/json")
 		c.AddAuthHeadersToRequest(req)
 
-		resp, err := c.Do(req)
-		if err != nil {
-			glg.Errorf("Error transferring item: %s", err.Error())
-			return
+		if request.Components != nil && (len(request.Components) > 0) {
+			vals := url.Values{}
+			vals.Add("components", strings.Join(request.Components, ","))
+			req.URL.RawQuery = vals.Encode()
 		}
-		defer resp.Body.Close()
 
-		var response BaseResponse
-		json.NewDecoder(resp.Body).Decode(&response)
-		if response.ErrorCode == 36 || response.ErrorStatus == "ThrottleLimitExceededMomentarily" {
+		resp, err = c.Do(req)
+		if err != nil {
+			glg.Errorf("Error executing request: %s", err.Error())
+			return err
+		}
+
+		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			glg.Warnf("Error executing API request: %s", err.Error())
+			return err
+		}
+		if response.ErrCode() == 36 || response.ErrStatus() == "ThrottleLimitExceededMomentarily" {
 			time.Sleep(1 * time.Second)
 			retry = true
 		}
 
-		glg.Infof("Response for transfer request: %+v", response)
+		glg.Infof("Response for request: %+v", response)
 		attempts++
 		if retry == false || attempts >= 5 {
 			break
 		}
 	}
-}
 
-// PostEquipItem is responsible for calling the Bungie.net API to equip
-// an item on a specific character.
-func (c *Client) PostEquipItem(body map[string]interface{}, isMultipleItems bool) {
-
-	glg.Debugf("Client local address: %s", c.Address)
-	// TODO: This retry logic should probably be added to a middleware type function
-	retry := true
-	attempts := 0
-	for {
-		retry = false
-		jsonBody, _ := json.Marshal(body)
-
-		endpoint := EquipSingleItemEndpointURL
-		if isMultipleItems {
-			endpoint = EquipMultiItemsEndpointURL
-		}
-		req, _ := http.NewRequest("POST", endpoint, strings.NewReader(string(jsonBody)))
-		req.Header.Add("Content-Type", "application/json")
-		c.AddAuthHeadersToRequest(req)
-
-		resp, err := c.Do(req)
-		if err != nil {
-			glg.Errorf("Error equipping item: %s", err.Error())
-			return
-		}
-		defer resp.Body.Close()
-
-		var response BaseResponse
-		json.NewDecoder(resp.Body).Decode(&response)
-		if response.ErrorCode == 36 || response.ErrorStatus == "ThrottleLimitExceededMomentarily" {
-			time.Sleep(1 * time.Second)
-			retry = true
-		}
-
-		glg.Infof("Response for equip request: %+v", response)
-		attempts++
-		if retry == false || attempts >= 5 {
-			break
-		}
-	}
+	return nil
 }

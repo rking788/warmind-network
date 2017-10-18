@@ -299,8 +299,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 		return response, nil
 	}
 
-	allChars := profile.Characters
-	destCharacter, err := allChars.findDestinationCharacter(destinationClass)
+	destCharacter, err := profile.Characters.findDestinationCharacter(destinationClass)
 	if err != nil {
 		output := fmt.Sprintf("Sorry Guardian, I could not transfer your %s because you do not have any %s characters in Destiny.", itemName, destinationClass)
 		glg.Error(output)
@@ -398,8 +397,6 @@ func UnloadEngrams(accessToken, appName string) (*skillserver.EchoResponse, erro
 
 	glg.Infof("Found %d engrams on all characters", foundCount)
 
-	allChars := profile.Characters
-
 	_ = transferItems(matchingItems, nil, profile.MembershipType, -1, client)
 
 	var output string
@@ -441,7 +438,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldO
 
 	// Check to see if a loadout with this name already exists and prompt for
 	// confirmation to overwrite
-	bnetMembershipID := currentAccount.Response.BungieNetUser.MembershipID
+	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
 	if !shouldOverwrite {
 		existing, _ := db.SelectLoadout(bnetMembershipID, name)
 		if existing != "" {
@@ -452,18 +449,18 @@ func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldO
 		}
 	}
 
-	// TODO: Figure out how to support multiple accounts, meaning PSN and XBOX,
-	// maybe require it to be specified in the Alexa voice command.
-	membership := currentAccount.Response.DestinyMemberships[0]
+	// This will be the membership that has the most recently played character
+	membership := currentAccount.DestinyMembership
 
-	profileResponse, err := client.GetCurrentEquipment(membership.MembershipType,
-		membership.MembershipID)
+	profileResponse := GetProfileResponse{}
+	err := client.Execute(NewGetCurrentEquipmentRequest(membership.MembershipType,
+		membership.MembershipID), &profileResponse)
 	if err != nil {
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(&profileResponse)
 	profile.BungieNetMembershipID = bnetMembershipID
 
 	// We want to remove all items that are not on the current character
@@ -513,19 +510,19 @@ func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResp
 		return nil, errors.New("CLouldn't load the current account")
 	}
 
-	// TODO: Figure out how to support multiple accounts, meaning PSN and XBOX,
-	// maybe require it to be specified in the Alexa voice command.
-	membership := currentAccount.Response.DestinyMemberships[0]
+	// This will always be the Destiny membership with the most recently played character
+	membership := currentAccount.DestinyMembership
 
-	profileResponse, err := client.GetUserProfileData(membership.MembershipType,
-		membership.MembershipID)
+	profileResponse := GetProfileResponse{}
+	err := client.Execute(NewUserProfileRequest(membership.MembershipType,
+		membership.MembershipID), &profileResponse)
 	if err != nil {
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(profileResponse)
-	profile.BungieNetMembershipID = currentAccount.Response.BungieNetUser.MembershipID
+	profile := fixupProfileFromProfileResponse(&profileResponse)
+	profile.BungieNetMembershipID = currentAccount.DestinyMembership.MembershipID
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
@@ -579,7 +576,7 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 	for _, item := range itemSet {
 
-		if item.Character == destCharacter {
+		if item == nil || item.Character == destCharacter {
 			// Item is already on the destination character, skipping...
 			continue
 		}
@@ -604,9 +601,6 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 			glg.Infof("Transferring item: %+v", item)
 
-			// TODO: I think this is probably the best way to tell if it is in the vault?
-			// maybe need to check the bucket hash instead?
-
 			// If these items are already in the vault, skip it they will be transferred later
 			if item.Character != nil {
 				// These requests are all going TO the vault, the FROM the vault request
@@ -622,7 +616,8 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 				transferClient := Clients.Get()
 				transferClient.AddAuthValues(client.AccessToken, client.APIToken)
-				transferClient.PostTransferItem(requestBody)
+				response := BaseResponse{}
+				transferClient.Execute(NewPostTransferItemRequest(requestBody), &response)
 			}
 
 			// TODO: This could possibly be handled more efficiently if we know the items are
@@ -646,7 +641,8 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 			transferClient := Clients.Get()
 			transferClient.AddAuthValues(client.AccessToken, client.APIToken)
-			transferClient.PostTransferItem(vaultToCharRequestBody)
+			response := BaseResponse{}
+			transferClient.Execute(NewPostTransferItemRequest(vaultToCharRequestBody), &response)
 
 		}(item, &wg)
 
@@ -668,6 +664,10 @@ func equipItems(itemSet []*Item, characterID string,
 	ids := make([]int64, 0, len(itemSet))
 
 	for _, item := range itemSet {
+
+		if item == nil {
+			continue
+		}
 
 		if item.TransferStatus == ItemIsEquipped && item.Character.CharacterID == characterID {
 			// If this item is already equipped, skip it.
@@ -694,7 +694,8 @@ func equipItems(itemSet []*Item, characterID string,
 	}
 
 	// Having a single equip call should avoid the throttling problems.
-	client.PostEquipItem(equipRequestBody, true)
+	response := BaseResponse{}
+	client.Execute(NewPostEquipItem(equipRequestBody, true), &response)
 }
 
 // TODO: All of these equip/transfer/etc. action should take a single struct with all the
@@ -702,6 +703,11 @@ func equipItems(itemSet []*Item, characterID string,
 
 // equipItem will take the specified item and equip it on the provided character
 func equipItem(item *Item, character *Character, membershipType int, client *Client) {
+	if item == nil {
+		glg.Debug("Trying to equip a nil item, ignoring.")
+		return
+	}
+
 	glg.Debugf("Equipping item(%d, %d)...", item.ItemHash, item.InstanceID)
 
 	equipRequestBody := map[string]interface{}{
@@ -710,5 +716,6 @@ func equipItem(item *Item, character *Character, membershipType int, client *Cli
 		"membershipType": membershipType,
 	}
 
-	client.PostEquipItem(equipRequestBody, false)
+	response := BaseResponse{}
+	client.Execute(NewPostEquipItem(equipRequestBody, false), &response)
 }

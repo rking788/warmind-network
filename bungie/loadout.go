@@ -100,22 +100,28 @@ func fromPersistedLoadout(persisted PersistedLoadout, profile *Profile) Loadout 
 
 func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	// Start by filtering all items that are NOT exotics
-	destinationClassType := profile.Characters.findCharacterFromID(destinationID).ClassType
+	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
+	destinationClassType := destinationCharacter.ClassType
 	filteredItems := profile.AllItems.
 		FilterItems(itemClassTypeFilter, destinationClassType).
-		FilterItems(itemNotTierTypeFilter, ExoticTier)
+		FilterItems(itemNotTierTypeFilter, ExoticTier).
+		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
 	gearSortedByLight := groupAndSortGear(filteredItems)
 
 	// Find the best loadout given just legendary weapons
 	loadout := make(Loadout)
 	for i := Kinetic; i <= ClassArmor; i++ {
+		if i == Ghost {
+			continue
+		}
 		loadout[i] = findBestItemForBucket(i, gearSortedByLight[i], destinationID)
 	}
 
 	// Determine the best exotics to use for both weapons and armor
 	exotics := profile.AllItems.
 		FilterItems(itemTierTypeFilter, ExoticTier).
-		FilterItems(itemClassTypeFilter, destinationClassType)
+		FilterItems(itemClassTypeFilter, destinationClassType).
+		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
 	exoticsSortedAndGrouped := groupAndSortGear(exotics)
 
 	// Override inventory items with exotics as needed
@@ -151,7 +157,7 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 			if armorExoticCandidate == nil || exoticCandidate.Power() > armorExoticCandidate.Power() {
 				armorExoticCandidate = exoticCandidate
 				armorBucket = bucket
-				glg.Debugf("Overriding %s...\n", bucket)
+				glg.Debugf("Overriding %s...", bucket)
 			}
 		}
 	}

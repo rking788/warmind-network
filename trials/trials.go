@@ -181,13 +181,12 @@ func findMembershipID(token, appName string) (string, error) {
 	if err != nil {
 		glg.Errorf("Error loading current account info from Bungie.net: %s", err.Error())
 		return "", err
-	} else if currentAccount.Response == nil || currentAccount.Response.DestinyMemberships == nil ||
-		len(currentAccount.Response.DestinyMemberships) == 0 {
+	} else if currentAccount == nil || currentAccount.DestinyMembership == nil {
 		return "", errors.New("No linked Destiny account found on Bungie.net")
 	}
 
 	// TODO: This should take the platform into account instead of just defaulting to the first one.
-	return currentAccount.Response.DestinyMemberships[0].MembershipID, nil
+	return currentAccount.DestinyMembership.MembershipID, nil
 }
 
 // GetWeaponUsagePercentages will return a response describing the top 3 used weapons
@@ -217,7 +216,8 @@ func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 	err = json.NewDecoder(weaponResponse.Body).Decode(&usages)
 
 	buffer := bytes.NewBufferString("According to Trials Report, the top weapons used in trials this week are: ")
-	// TODO: Maybe it would be good to have the user specify the number of top weapons they want returned.
+	// TODO: Maybe it would be good to have the user specify the number of top weapons
+	// they want returned.
 	for i := 0; i < TopWeaponUsageLimit; i++ {
 		usagePercent, _ := strconv.ParseFloat(usages[i].Percentage, 64)
 		buffer.WriteString(fmt.Sprintf("%s with %.1f%%, ", usages[i].Name, usagePercent))

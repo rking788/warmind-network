@@ -18,7 +18,7 @@ func setup() {
 	glg.Get().SetLevelMode(glg.WARN, glg.NONE)
 
 	db.InitEnv(os.Getenv("DATABASE_URL"))
-	InitEnv("")
+	InitEnv("", "")
 }
 
 // NOTE: Never run this while using the bungie.net URLs in bungie/constants.go

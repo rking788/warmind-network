@@ -19,11 +19,14 @@ type Character struct {
 	ClassHash            uint      `json:"classHash"`
 	ClassType            int       `json:"classType"`
 	Light                int       `json:"light"`
+	LevelProgression     *struct {
+		Level int `json:"level"`
+	} `json:"levelProgression"`
 }
 
 func (c *Character) String() string {
-	return fmt.Sprintf("Character{ID: %s, Race: %d, Class: %s, Power: %d}",
-		c.MembershipID, c.RaceHash, classHashToName[c.ClassHash], c.Light)
+	return fmt.Sprintf("Character{ID: %s, Race: %d, Class: %s, Power: %d, LastPlayed: %v}",
+		c.MembershipID, c.RaceHash, classHashToName[c.ClassHash], c.Light, c.DateLastPlayed)
 }
 
 // CharacterList represents a slice of Character pointers.

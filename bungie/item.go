@@ -26,12 +26,13 @@ type Item struct {
 // perks, etc. as well as equipped status and things like that.
 type ItemInstance struct {
 	//https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemInstanceComponent.html#schema_Destiny-Entities-Items-DestinyItemInstanceComponent
-	IsEquipped        bool `json:"isEquipped"`
-	CanEquip          bool `json:"canEquip"`
-	Quality           int  `json:"quality"`
-	CannotEquipReason int  `json:"cannotEquipReason"`
-	DamageType        int
-	PrimaryStat       *struct {
+	IsEquipped         bool `json:"isEquipped"`
+	CanEquip           bool `json:"canEquip"`
+	Quality            int  `json:"quality"`
+	CannotEquipReason  int  `json:"cannotEquipReason"`
+	DamageType         int
+	EquipRequiredLevel int `json:"equipRequiredLevel"`
+	PrimaryStat        *struct {
 		//https://bungie-net.github.io/multi/schema_Destiny-DestinyStat.html#schema_Destiny-DestinyStat
 		StatHash     uint `json:"statHash"`
 		Value        int  `json:"value"`
@@ -188,4 +189,10 @@ func itemClassTypeFilter(item *Item, classType interface{}) bool {
 
 	return (metadata.ClassType == UnknownClassType) ||
 		(metadata.ClassType == classType.(int))
+}
+
+// itemRequiredLevelFilter will filter items that have a required level that is greater than
+// the level provided in `maxLevel`. True if the required level is <= the max level; False otherwise
+func itemRequiredLevelFilter(item *Item, maxLevel interface{}) bool {
+	return item.ItemInstance != nil && item.ItemInstance.EquipRequiredLevel <= maxLevel.(int)
 }
