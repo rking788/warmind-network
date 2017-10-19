@@ -1,7 +1,7 @@
 BUILD_DATE := `date +%Y-%m-%d\ %H:%M`
 VERSIONFILE := version.go
 APP_VERSION := `bash ./generate_version.sh`
-APP_NAME := "guardian-helper"
+APP_NAME := "warmind-network"
 
 
 all: build

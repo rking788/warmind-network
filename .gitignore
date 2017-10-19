@@ -1,7 +1,7 @@
 .vscode
 local_tools/*
 config/utterances.txt
-guardian-helper
+warmind-network
 *.mprof
 *.prof
 *.test

@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/kpango/glg"
-	"github.com/rking788/guardian-helper/bungie"
-	"github.com/rking788/guardian-helper/db"
-	"github.com/rking788/guardian-helper/trials"
+	"github.com/rking788/warmind-network/bungie"
+	"github.com/rking788/warmind-network/db"
+	"github.com/rking788/warmind-network/trials"
 
 	"strings"
 

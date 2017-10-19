@@ -11,7 +11,7 @@ import (
 
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
-	"github.com/rking788/guardian-helper/db"
+	"github.com/rking788/warmind-network/db"
 )
 
 const (

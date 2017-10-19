@@ -9,7 +9,7 @@ import (
 
 	"github.com/kpango/glg"
 
-	"github.com/rking788/guardian-helper/db"
+	"github.com/rking788/warmind-network/db"
 )
 
 func setup() {
