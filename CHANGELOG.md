@@ -1,3 +1,8 @@
+Version 1.2.0
+===============
+- Named loadout support
+- Auto deploying from Travis CI for staging branches
+
 Version 1.0.0
 ===============
 - Updated to support the Destiny 2 API.
