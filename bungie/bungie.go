@@ -360,7 +360,7 @@ func EquipMaxLightGear(accessToken, appName string) (*skillserver.EchoResponse, 
 	}
 
 	characterClass := classHashToName[profile.Characters[0].ClassHash]
-	response.OutputSpeech(fmt.Sprintf("Max light equipped to your %s Guardian. You are a force "+
+	response.OutputSpeech(fmt.Sprintf("Max power equipped to your %s Guardian. You are a force "+
 		"to be wreckoned with.", characterClass))
 	return response, nil
 }

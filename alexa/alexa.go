@@ -127,9 +127,9 @@ func AuthWrapper(handler Handler) Handler {
 func WelcomePrompt(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 	response = skillserver.NewEchoResponse()
 
-	response.OutputSpeech("Welcome Guardian, would you like to equip max light, unload engrams, or transfer an item to a specific character, " +
+	response.OutputSpeech("Welcome Guardian, would you like to equip max power, unload engrams, or transfer an item to a specific character, " +
 		"find out how many of an item you have, or ask about Trials of Osiris?").
-		Reprompt("Do you want to equip max light, unload engrams, transfer an item, find out how much of an item you have, or ask about Trials of Osiris?").
+		Reprompt("Do you want to equip max power, unload engrams, transfer an item, find out how much of an item you have, or ask about Trials of Osiris?").
 		EndSession(false)
 
 	return
@@ -141,7 +141,7 @@ func HelpPrompt(echoRequest *skillserver.EchoRequest, appName string) (response 
 	response = skillserver.NewEchoResponse()
 
 	response.OutputSpeech("Welcome Guardian, I am here to help manage your Destiny in-game inventory. You can ask " +
-		"me to equip your max light loadout, unload engrams from your inventory, or transfer items between your available " +
+		"me to equip your max power loadout, unload engrams from your inventory, or transfer items between your available " +
 		"characters including the vault. You can also ask how many of an " +
 		"item you have. Trials of Osiris statistics provided by Trials Report are available too.").
 		EndSession(false)
@@ -211,15 +211,16 @@ func TransferItem(request *skillserver.EchoRequest, appName string) (response *s
 	return
 }
 
-// MaxPower will equip the loadout on the current character that provides the maximum amount of power.
+// MaxPower will equip the loadout on the current character that provides the maximum
+// amount of power.
 func MaxPower(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
 	response, err := bungie.EquipMaxLightGear(accessToken, appName)
 	if err != nil {
-		glg.Errorf("Error occurred equipping max light: %s", err.Error())
+		glg.Errorf("Error occurred equipping max power: %s", err.Error())
 		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, an error occurred equipping your max light gear.")
+		response.OutputSpeech("Sorry Guardian, an error occurred equipping your max power gear.")
 	}
 
 	return
