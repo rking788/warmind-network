@@ -67,5 +67,6 @@ func NewPostEquipItem(body map[string]interface{}, isMultipleItems bool) *APIReq
 	return &APIRequest{
 		HTTPMethod: "POST",
 		Endpoint:   endpoint,
+		Body:       body,
 	}
 }
