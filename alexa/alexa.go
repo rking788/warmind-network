@@ -128,8 +128,8 @@ func WelcomePrompt(echoRequest *skillserver.EchoRequest, appName string) (respon
 	response = skillserver.NewEchoResponse()
 
 	response.OutputSpeech("Welcome Guardian, would you like to equip max power, unload engrams, or transfer an item to a specific character, " +
-		"find out how many of an item you have, or ask about Trials of Osiris?").
-		Reprompt("Do you want to equip max power, unload engrams, transfer an item, find out how much of an item you have, or ask about Trials of Osiris?").
+		"find out how many of an item you have, or ask about Trials of the Nine?").
+		Reprompt("Do you want to equip max power, unload engrams, transfer an item, find out how much of an item you have, or ask about Trials of the Nine?").
 		EndSession(false)
 
 	return
@@ -143,7 +143,7 @@ func HelpPrompt(echoRequest *skillserver.EchoRequest, appName string) (response 
 	response.OutputSpeech("Welcome Guardian, I am here to help manage your Destiny in-game inventory. You can ask " +
 		"me to equip your max power loadout, unload engrams from your inventory, or transfer items between your available " +
 		"characters including the vault. You can also ask how many of an " +
-		"item you have. Trials of Osiris statistics provided by Trials Report are available too.").
+		"item you have. Trials of the Nine statistics provided by Trials Report are available too.").
 		EndSession(false)
 
 	return
@@ -318,11 +318,12 @@ func EquipNamedLoadout(request *skillserver.EchoRequest, appName string) (respon
 	return
 }
 
-/*
- * Trials of Osiris data
+/**
+ * Trials of the Nine
  */
 
-// CurrentTrialsMap will return a brief description of the current map in the active Trials of Osiris week.
+// CurrentTrialsMap will return a brief description of the current map in the active
+// Trials of the Nine week.
 func CurrentTrialsMap(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response, err := trials.GetCurrentMap()
@@ -335,14 +336,16 @@ func CurrentTrialsMap(request *skillserver.EchoRequest, appName string) (respons
 	return
 }
 
-// CurrentTrialsWeek will return a brief description of the current map in the active Trials of Osiris week.
+// CurrentTrialsWeek will return a brief description of the current map in the
+// active Trials of the Nine week.
 func CurrentTrialsWeek(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
 	response, err := trials.GetCurrentWeek(accessToken, appName)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, I cannot access this information right now, please try again later.")
+		response.OutputSpeech("Sorry Guardian, I cannot access this information right now, " +
+			"please try again later.")
 		return
 	}
 
@@ -369,7 +372,8 @@ func PersonalTopWeapons(request *skillserver.EchoRequest, appName string) (respo
 	response, err := trials.GetPersonalTopWeapons(accessToken, appName)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, I cannot access this information at this time, please try again later")
+		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
+			"this time, please try again later")
 		return
 	}
 
@@ -377,13 +381,14 @@ func PersonalTopWeapons(request *skillserver.EchoRequest, appName string) (respo
 }
 
 // PopularWeaponTypes will return info about what classes of weapons are getting
-// the most kills in Trials of Osiris.
+// the most kills in Trials of the Nine.
 func PopularWeaponTypes(echoRequest *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	response, err := trials.GetPopularWeaponTypes()
 	if err != nil {
 		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, I cannot access this information at this time, pleast try again later")
+		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
+			"this time, please try again later")
 		return
 	}
 

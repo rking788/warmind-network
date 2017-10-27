@@ -44,8 +44,8 @@ var itemHashLookup map[string]uint
 
 var engramHashes map[uint]bool
 var itemMetadata map[uint]*ItemMetadata
-var bucketHashLookup map[EquipmentBucket]uint
-var equipmentBucketLookup map[uint]EquipmentBucket
+var BucketHashLookup map[EquipmentBucket]uint
+var EquipmentBucketLookup map[uint]EquipmentBucket
 var bungieAPIKey string
 var warmindAPIKey string
 
@@ -159,32 +159,32 @@ func PopulateBucketHashLookup() error {
 
 	// TODO: This absolutely needs to be done dynamically from the manifest. Not from a
 	//static definition
-	bucketHashLookup = make(map[EquipmentBucket]uint)
+	BucketHashLookup = make(map[EquipmentBucket]uint)
 
-	bucketHashLookup[Kinetic] = 1498876634
-	bucketHashLookup[Energy] = 2465295065
-	bucketHashLookup[Power] = 953998645
-	bucketHashLookup[Ghost] = 4023194814
+	BucketHashLookup[Kinetic] = 1498876634
+	BucketHashLookup[Energy] = 2465295065
+	BucketHashLookup[Power] = 953998645
+	BucketHashLookup[Ghost] = 4023194814
 
-	bucketHashLookup[Helmet] = 3448274439
-	bucketHashLookup[Gauntlets] = 3551918588
-	bucketHashLookup[Chest] = 14239492
-	bucketHashLookup[Legs] = 20886954
-	bucketHashLookup[Artifact] = 434908299
-	bucketHashLookup[ClassArmor] = 1585787867
+	BucketHashLookup[Helmet] = 3448274439
+	BucketHashLookup[Gauntlets] = 3551918588
+	BucketHashLookup[Chest] = 14239492
+	BucketHashLookup[Legs] = 20886954
+	BucketHashLookup[Artifact] = 434908299
+	BucketHashLookup[ClassArmor] = 1585787867
 
-	equipmentBucketLookup = make(map[uint]EquipmentBucket)
-	equipmentBucketLookup[1498876634] = Kinetic
-	equipmentBucketLookup[2465295065] = Energy
-	equipmentBucketLookup[953998645] = Power
-	equipmentBucketLookup[4023194814] = Ghost
+	EquipmentBucketLookup = make(map[uint]EquipmentBucket)
+	EquipmentBucketLookup[1498876634] = Kinetic
+	EquipmentBucketLookup[2465295065] = Energy
+	EquipmentBucketLookup[953998645] = Power
+	EquipmentBucketLookup[4023194814] = Ghost
 
-	equipmentBucketLookup[3448274439] = Helmet
-	equipmentBucketLookup[3551918588] = Gauntlets
-	equipmentBucketLookup[14239492] = Chest
-	equipmentBucketLookup[20886954] = Legs
-	equipmentBucketLookup[434908299] = Artifact
-	equipmentBucketLookup[1585787867] = ClassArmor
+	EquipmentBucketLookup[3448274439] = Helmet
+	EquipmentBucketLookup[3551918588] = Gauntlets
+	EquipmentBucketLookup[14239492] = Chest
+	EquipmentBucketLookup[20886954] = Legs
+	EquipmentBucketLookup[434908299] = Artifact
+	EquipmentBucketLookup[1585787867] = ClassArmor
 
 	return nil
 }
@@ -351,7 +351,7 @@ func EquipMaxLightGear(accessToken, appName string) (*skillserver.EchoResponse, 
 	loadout := findMaxLightLoadout(profile, destinationID)
 
 	glg.Debugf("Found loadout to equip: %v", loadout)
-	glg.Infof("Calculated light for loadout: %f", loadout.calculateLightLevel())
+	glg.Infof("Calculated power for loadout: %f", loadout.calculateLightLevel())
 
 	err = equipLoadout(loadout, destinationID, profile, membershipType, client)
 	if err != nil {
@@ -682,6 +682,8 @@ func equipItems(itemSet []*Item, characterID string,
 				err.Error())
 			continue
 		}
+
+		glg.Debugf("Equipping itme with name : %s, %s", item.ItemHash)
 		ids = append(ids, instanceID)
 	}
 

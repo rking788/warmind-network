@@ -240,16 +240,16 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 
 	result := make(map[EquipmentBucket]ItemList)
 
-	result[Kinetic] = sortGearBucket(bucketHashLookup[Kinetic], inventory)
-	result[Energy] = sortGearBucket(bucketHashLookup[Energy], inventory)
-	result[Power] = sortGearBucket(bucketHashLookup[Power], inventory)
-	result[Ghost] = sortGearBucket(bucketHashLookup[Ghost], inventory)
+	result[Kinetic] = sortGearBucket(BucketHashLookup[Kinetic], inventory)
+	result[Energy] = sortGearBucket(BucketHashLookup[Energy], inventory)
+	result[Power] = sortGearBucket(BucketHashLookup[Power], inventory)
+	result[Ghost] = sortGearBucket(BucketHashLookup[Ghost], inventory)
 
-	result[Helmet] = sortGearBucket(bucketHashLookup[Helmet], inventory)
-	result[Gauntlets] = sortGearBucket(bucketHashLookup[Gauntlets], inventory)
-	result[Chest] = sortGearBucket(bucketHashLookup[Chest], inventory)
-	result[Legs] = sortGearBucket(bucketHashLookup[Legs], inventory)
-	result[ClassArmor] = sortGearBucket(bucketHashLookup[ClassArmor], inventory)
+	result[Helmet] = sortGearBucket(BucketHashLookup[Helmet], inventory)
+	result[Gauntlets] = sortGearBucket(BucketHashLookup[Gauntlets], inventory)
+	result[Chest] = sortGearBucket(BucketHashLookup[Chest], inventory)
+	result[Legs] = sortGearBucket(BucketHashLookup[Legs], inventory)
+	result[ClassArmor] = sortGearBucket(BucketHashLookup[ClassArmor], inventory)
 
 	return result
 }

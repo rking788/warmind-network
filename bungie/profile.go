@@ -71,8 +71,9 @@ func GetProfileForCurrentUser(client *Client) (*Profile, error) {
 func loadoutFromProfile(profile *Profile) Loadout {
 	loadout := make(Loadout)
 	for _, item := range profile.AllItems {
-		glg.Debugf("Found item(%d) for bucket(%d), equipment bucket lookupresult(%d)", item.ItemHash, item.BucketHash, equipmentBucketLookup[item.BucketHash])
-		if equipmentBucket, ok := equipmentBucketLookup[item.BucketHash]; ok {
+		glg.Debugf("Found item(%d) for bucket(%d), equipment bucket lookup result(%d)",
+			item.ItemHash, item.BucketHash, EquipmentBucketLookup[item.BucketHash])
+		if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
 			if _, ok := loadout[equipmentBucket]; ok {
 				glg.Debugf("Found duplicate item for bucket: %d", item.BucketHash)
 			}

@@ -74,7 +74,7 @@ func InitEnv(c *EnvConfig) {
 	// This provides and explicit configuration point as opposed to the package level init functions,
 	// as well as making it easier to write unit tests.
 	// It also makes it easier to guarantee ordering if that is necessary.
-	trials.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey)
+	trials.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey, "")
 	db.InitEnv(c.DatabaseURL)
 	alexa.InitEnv(c.RedisURL)
 	bungie.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey)
