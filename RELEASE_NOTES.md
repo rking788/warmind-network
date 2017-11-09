@@ -1,4 +1,5 @@
 Version 1.4.0
 ===============
-- Updated the Trials Report endpoints to use the Trials of the Nine data.
+- Updated the trials package to use the Trials of the Nine data from
+  Trials Report instead of the legacy Trails of Osiris stuff.
 
