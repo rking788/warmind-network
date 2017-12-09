@@ -15,15 +15,17 @@ type CurrentMap struct {
 	Status   string `json:"Status"`
 	Message  string `json:"Message"`
 	Response *struct {
-		MapName     string                        `json:"name"`
-		Mode        string                        `json:"mode"`
-		PlayerCount int                           `json:"players"`
-		Matches     int                           `json:"matches"`
-		Week        int                           `json:"week"`
-		Kills       int                           `json:"kills"`
-		StartDate   NineTime                      `json:"startDate"`
-		EndDate     NineTime                      `json:"endDate"`
-		Weapons     map[string][]*nineWeaponStats `json:"weapons"`
+		MapName           string                                   `json:"name"`
+		Mode              string                                   `json:"mode"`
+		PlayerCount       int                                      `json:"players"`
+		Matches           int                                      `json:"matches"`
+		Week              int                                      `json:"week"`
+		Kills             int                                      `json:"kills"`
+		StartDate         NineTime                                 `json:"startDate"`
+		EndDate           NineTime                                 `json:"endDate"`
+		WeaponKills       int                                      `json:"weaponKills"`
+		Weapons           map[string][]*nineWeaponStats            `json:"weapons"`
+		WeaponsByPlatform map[string]map[string][]*nineWeaponStats `json:"weaponsByPlatform"`
 	} `json:"Response"`
 }
 

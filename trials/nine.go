@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"sort"
 
@@ -52,7 +53,7 @@ func GetCurrentMap() (*skillserver.EchoResponse, error) {
 	}
 
 	response.OutputSpeech(fmt.Sprintf("According to Trials Report, the current Trials of "+
-		"the Nine map beginning %s %d is %s, goodluck Guardian.", resp.Response.StartDate.Month().String(), resp.Response.StartDate.Day(), resp.Response.MapName))
+		"the Nine map beginning %s %d is %s on %s, goodluck Guardian.", resp.Response.StartDate.Month().String(), resp.Response.StartDate.Day(), resp.Response.Mode, resp.Response.MapName))
 
 	return response, nil
 }
@@ -94,8 +95,10 @@ func GetPopularWeaponTypes() (*skillserver.EchoResponse, error) {
 		return nil, err
 	}
 
-	kinetic := currentMapInfo.Response.Weapons[string(bungie.BucketHashLookup[bungie.Kinetic])]
-	energy := currentMapInfo.Response.Weapons[string(bungie.BucketHashLookup[bungie.Energy])]
+	kineticID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Kinetic])
+	energyID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Energy])
+	kinetic := currentMapInfo.Response.Weapons[kineticID]
+	energy := currentMapInfo.Response.Weapons[energyID]
 
 	output := fmt.Sprintf("For kinetics it looks like %ss and %ss are the most popular "+
 		"this week. %ss and %ss seem to be the most popular energy weapons acoording to "+
@@ -117,25 +120,37 @@ func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 		return nil, err
 	}
 
-	kinetics := currentWeekStats.Response.Weapons[string(bungie.BucketHashLookup[bungie.Kinetic])]
-	energies := currentWeekStats.Response.Weapons[string(bungie.BucketHashLookup[bungie.Energy])]
+	weaponStatsMap := make(map[string]*nineWeaponStats)
 
-	combinedWeapons := make([]*nineWeaponStats, 0, len(kinetics)+len(energies))
-	combinedWeapons = append(combinedWeapons, kinetics...)
-	combinedWeapons = append(combinedWeapons, energies...)
+	for _, val := range currentWeekStats.Response.WeaponsByPlatform {
+		for _, stats := range val {
+			for _, stat := range stats {
+				if _, ok := weaponStatsMap[stat.Name]; ok {
+					weaponStatsMap[stat.Name].Kills += stat.Kills
+				} else {
+					weaponStatsMap[stat.Name] = stat
+				}
+			}
+		}
+	}
+
+	combinedWeapons := make([]*nineWeaponStats, 0, len(weaponStatsMap))
+	for _, val := range weaponStatsMap {
+		combinedWeapons = append(combinedWeapons, val)
+	}
 
 	sort.Slice(combinedWeapons, func(i, j int) bool {
-		return combinedWeapons[i].Matches > combinedWeapons[j].Matches
+		return combinedWeapons[i].Kills > combinedWeapons[j].Kills
 	})
 
 	buffer := bytes.NewBufferString("According to Trials Report, the top weapons used " +
-		"in trials this week are: ")
+		"in Trials based on percentage of kills this week are: ")
 	// TODO: Maybe it would be good to have the user specify the number of top weapons
 	// they want returned.
 	for i := 0; i < TopWeaponUsageLimit; i++ {
-		usagePercent := float64(combinedWeapons[i].Matches) / float64(currentWeekStats.Response.Matches)
-		buffer.WriteString(fmt.Sprintf("%s with %.1f%% of matches, ",
-			combinedWeapons[i].Name, usagePercent))
+		usagePercent := (float64(combinedWeapons[i].Kills) / float64(currentWeekStats.Response.WeaponKills)) * 100.0
+		buffer.WriteString(fmt.Sprintf("%s with %.0f%%, ",
+			combinedWeapons[i].Name, math.Floor(usagePercent+0.5)))
 	}
 
 	response.OutputSpeech(buffer.String())
