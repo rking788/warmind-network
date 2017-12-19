@@ -683,7 +683,7 @@ func equipItems(itemSet []*Item, characterID string,
 			continue
 		}
 
-		glg.Debugf("Equipping itme with name : %s, %s", item.ItemHash)
+		glg.Debugf("Equipping item with name : %+v", item)
 		ids = append(ids, instanceID)
 	}
 
