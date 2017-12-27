@@ -22,6 +22,7 @@ type EnvConfig struct {
 	LogFilePath              string `json:"log_file_path"`
 	SSLCertPath              string `json:"ssl_cert_path"`
 	SSLKeyPath               string `json:"ssl_key_path"`
+	Port                     string `json:"port"`
 }
 
 // NewEnvConfig will create a default instance of the EnvConfig struct
@@ -36,6 +37,7 @@ func NewEnvConfig() *EnvConfig {
 		AlexaAppID:               os.Getenv("ALEXA_APP_ID"),
 		WarmindNetworkAlexaAppID: os.Getenv("WARMIND_NETWORK_APP_ID"),
 		LogLevel:                 os.Getenv("GUARDIAN_HELPER_LOG_LEVEL"),
+		Port:                     os.Getenv("PORT"),
 	}
 
 	return config

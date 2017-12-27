@@ -96,7 +96,7 @@ func main() {
 	// writeHeapProfile()
 
 	if config.Environment == "production" {
-		port := ":443"
+		port := ":" + config.Port
 		err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
 		if err != nil {
 			glg.Errorf("Error starting the application! : %s", err.Error())
@@ -104,8 +104,7 @@ func main() {
 	} else {
 		// Heroku makes us read a random port from the environment and our app is a
 		// subdomain of theirs so we get SSL for free
-		port := os.Getenv("PORT")
-		skillserver.Run(applications, port)
+		skillserver.Run(applications, config.Port)
 	}
 }
 
