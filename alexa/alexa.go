@@ -226,8 +226,8 @@ func MaxPower(request *skillserver.EchoRequest, appName string) (response *skill
 	return
 }
 
-// UnloadEngrams will take all engrams on all of the current user's characters and transfer them all to the
-// vault to allow the player to continue farming.
+// UnloadEngrams will take all engrams on all of the current user's characters and
+// transfer them all to the vault to allow the player to continue farming.
 func UnloadEngrams(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
 	accessToken := request.Session.User.AccessToken
@@ -300,8 +300,11 @@ func CreateLoadout(request *skillserver.EchoRequest, appName string) (response *
 	return
 }
 
+// EquipNamedLoadout will take the name of a loadout and try to retrieve it from the database
+// and equip it on the user's currently active character.
 func EquipNamedLoadout(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
 
+	response = skillserver.NewEchoResponse()
 	accessToken := request.Session.User.AccessToken
 	loadoutName, _ := request.GetSlotValue("Name")
 	if loadoutName == "" {
@@ -313,6 +316,21 @@ func EquipNamedLoadout(request *skillserver.EchoRequest, appName string) (respon
 	if err != nil {
 		glg.Errorf("Error occurred creating loadout: %s", err.Error())
 		response.OutputSpeech("Sorry Guardian, an error occurred equipping your loadout.")
+	}
+
+	return
+}
+
+// ListLoadouts provides a speech response back to the user that lists the names
+// of the currently saved loadouts that are found in the DB.
+func ListLoadouts(request *skillserver.EchoRequest, appName string) (response *skillserver.EchoResponse) {
+
+	accessToken := request.Session.User.AccessToken
+	response, err := bungie.GetLoadoutNames(accessToken, appName)
+	if err != nil {
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, there was an error getting your loadout names, please try again later")
+		return
 	}
 
 	return

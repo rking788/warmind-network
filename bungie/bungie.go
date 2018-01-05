@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -545,6 +546,48 @@ func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResp
 		profile.MembershipType, client)
 
 	response.OutputSpeech("All set Guardian, your " + name + " loadout has been restored!")
+
+	return response, nil
+}
+
+// GetLoadoutNames will request all of the loadout names from the database and
+// return the list of names to the user.
+func GetLoadoutNames(accessToken, appName string) (*skillserver.EchoResponse, error) {
+
+	response := skillserver.NewEchoResponse()
+
+	client := Clients.Get()
+	if appName == "guardian-helper" {
+		client.AddAuthValues(accessToken, bungieAPIKey)
+	} else {
+		client.AddAuthValues(accessToken, warmindAPIKey)
+	}
+
+	// TODO: check error
+	currentAccount, _ := client.GetCurrentAccount()
+
+	if currentAccount == nil {
+		glg.Error("Failed to load current account with the specified access token!")
+		return nil, errors.New("Couldn't load the current account")
+	}
+
+	// Retrieve the existing loadouts from the database
+	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
+	existing, _ := db.SelectLoadouts(bnetMembershipID)
+
+	if len(existing) == 0 {
+		glg.Debug("No loadouts found for user")
+		response.OutputSpeech("It looks like you don't currently have any saved loadouts." +
+			"You can save your current loadout by saying 'Save this loadout for later'")
+		return response, nil
+	}
+
+	speech := bytes.NewBufferString("Guardian, it looks like you have loadouts saved with these names: ")
+
+	names := strings.Join(existing, ", ")
+	speech.WriteString(names)
+
+	response.OutputSpeech(speech.String())
 
 	return response, nil
 }

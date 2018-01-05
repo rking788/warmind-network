@@ -34,6 +34,7 @@ var (
 		"DestinyJoke":              alexa.DestinyJoke,
 		"CreateLoadout":            alexa.AuthWrapper(alexa.CreateLoadout),
 		"EquipNamedLoadout":        alexa.AuthWrapper(alexa.EquipNamedLoadout),
+		"ListLoadouts":             alexa.AuthWrapper(alexa.ListLoadouts),
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
 	}
 )
@@ -47,8 +48,8 @@ var applications map[string]interface{}
 // config is the environment configuration for this specific deployment of the server
 var config *EnvConfig
 
-// InitEnv is responsible for initializing all components (including sub-packages) that depend on a specific
-// deployment environment configuration.
+// InitEnv is responsible for initializing all components (including sub-packages) that
+// depend on a specific deployment environment configuration.
 func InitEnv(c *EnvConfig) {
 	applications = map[string]interface{}{
 		"/echo/guardian-helper": skillserver.EchoApplication{ // Route

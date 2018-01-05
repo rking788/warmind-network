@@ -17,15 +17,16 @@ const (
 )
 
 type LookupDB struct {
-	Database          *sql.DB
-	HashFromNameStmt  *sql.Stmt
-	NameFromHashStmt  *sql.Stmt
-	EngramHashStmt    *sql.Stmt
-	ItemMetadataStmt  *sql.Stmt
-	RandomJokeStmt    *sql.Stmt
-	InsertLoadoutStmt *sql.Stmt
-	UpdateLoadoutStmt *sql.Stmt
-	SelectLoadoutStmt *sql.Stmt
+	Database                *sql.DB
+	HashFromNameStmt        *sql.Stmt
+	NameFromHashStmt        *sql.Stmt
+	EngramHashStmt          *sql.Stmt
+	ItemMetadataStmt        *sql.Stmt
+	RandomJokeStmt          *sql.Stmt
+	InsertLoadoutStmt       *sql.Stmt
+	UpdateLoadoutStmt       *sql.Stmt
+	SelectLoadoutStmt       *sql.Stmt
+	SelectLoadoutByNameStmt *sql.Stmt
 }
 
 var db1 *LookupDB
@@ -88,22 +89,29 @@ func InitDatabase() error {
 		return err
 	}
 
-	selectLoadoutStmt, err := db.Prepare("SELECT loadout FROM loadouts WHERE bungie_membership_id=$1 AND name=$2")
+	selectLoadoutStmt, err := db.Prepare("SELECT name FROM loadouts WHERE bungie_membership_id=$1")
 	if err != nil {
 		glg.Errorf("Error preparing the select loadout statement: %s", err.Error())
 		return err
 	}
 
+	selectLoadoutByNameStmt, err := db.Prepare("SELECT loadout FROM loadouts WHERE bungie_membership_id=$1 AND name=$2")
+	if err != nil {
+		glg.Errorf("Error preparing the select loadout by name statement: %s", err.Error())
+		return err
+	}
+
 	db1 = &LookupDB{
-		Database:          db,
-		HashFromNameStmt:  stmt,
-		NameFromHashStmt:  nameFromHashStmt,
-		EngramHashStmt:    engramHashStmt,
-		ItemMetadataStmt:  itemMetadataStmt,
-		RandomJokeStmt:    randomJokeStmt,
-		InsertLoadoutStmt: insertLoadoutStmt,
-		UpdateLoadoutStmt: updateLoadoutStmt,
-		SelectLoadoutStmt: selectLoadoutStmt,
+		Database:                db,
+		HashFromNameStmt:        stmt,
+		NameFromHashStmt:        nameFromHashStmt,
+		EngramHashStmt:          engramHashStmt,
+		ItemMetadataStmt:        itemMetadataStmt,
+		RandomJokeStmt:          randomJokeStmt,
+		InsertLoadoutStmt:       insertLoadoutStmt,
+		UpdateLoadoutStmt:       updateLoadoutStmt,
+		SelectLoadoutStmt:       selectLoadoutStmt,
+		SelectLoadoutByNameStmt: selectLoadoutByNameStmt,
 	}
 
 	return nil
@@ -244,8 +252,9 @@ func UpdateLoadout(loadoutJSON []byte, membershipID, name string) error {
 	return err
 }
 
-// SelectLoadout is responsible for querying the database for a loadout with the provided membership ID
-// and loadout name. The return value is the JSON string for the loadout requested.
+// SelectLoadout is responsible for querying the database for a loadout with the
+// provided membership ID and loadout name. The return value is the JSON string for
+// the loadout requested.
 func SelectLoadout(membershipID, name string) (string, error) {
 
 	db, err := GetDBConnection()
@@ -253,7 +262,7 @@ func SelectLoadout(membershipID, name string) (string, error) {
 		return "", err
 	}
 
-	row := db.SelectLoadoutStmt.QueryRow(membershipID, name)
+	row := db.SelectLoadoutByNameStmt.QueryRow(membershipID, name)
 
 	var loadout string
 	err = row.Scan(&loadout)
@@ -266,9 +275,39 @@ func SelectLoadout(membershipID, name string) (string, error) {
 	return loadout, nil
 }
 
+// SelectLoadouts is responsible for querying the database for a loadout with the
+// provided membership ID and loadout name. The return value is the JSON string for
+// the loadout requested.
+func SelectLoadouts(membershipID string) ([]string, error) {
+
+	db, err := GetDBConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.SelectLoadoutStmt.Query(membershipID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make([]string, 0, 10)
+	for rows.Next() {
+		var name string
+		err = rows.Scan(&name)
+		if err != nil {
+			glg.Errorf("Error retrieving loadout name from DB...%s\n", err.Error())
+			continue
+		}
+		result = append(result, name)
+	}
+
+	return result, nil
+}
+
 // InsertUnknownValueIntoTable is a helper method for inserting a value into the specified table.
-// This is used when a value for a slot type is not usable. For example when a class name for a character
-// is not a valid Destiny class name.
+// This is used when a value for a slot type is not usable. For example when a class name for
+// a character is not a valid Destiny class name.
 func InsertUnknownValueIntoTable(value, tableName string) {
 
 	conn, err := GetDBConnection()
