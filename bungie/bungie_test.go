@@ -379,7 +379,7 @@ func TestLoadoutFromProfile(t *testing.T) {
 			t.FailNow()
 		}
 
-		if _, ok := bucketHashLookup[equipmentBucket]; !ok {
+		if _, ok := BucketHashLookup[equipmentBucket]; !ok {
 			t.FailNow()
 		}
 	}

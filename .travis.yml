@@ -9,6 +9,7 @@ branches:
 install: go get -u -v ./...
 script:
 - make build
+- make test
 deploy:
   provider: heroku
   api_key:
