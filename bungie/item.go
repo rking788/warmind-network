@@ -134,7 +134,7 @@ func itemHashesFilter(item *Item, hashList interface{}) bool {
 func itemBucketHashFilter(item *Item, bucketTypeHash interface{}) bool {
 	metadata, ok := itemMetadata[item.ItemHash]
 	if !ok {
-		glg.Warnf("No metadata found for item: %s", item.ItemHash)
+		glg.Warnf("No metadata found for item: %d", item.ItemHash)
 		return false
 	}
 

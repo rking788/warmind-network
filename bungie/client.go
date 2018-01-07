@@ -3,6 +3,7 @@ package bungie
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -34,6 +35,12 @@ type BaseResponse struct {
 
 func (b *BaseResponse) ErrCode() int      { return b.ErrorCode }
 func (b *BaseResponse) ErrStatus() string { return b.ErrorStatus }
+func (b *BaseResponse) String() string {
+	if b != nil {
+		return fmt.Sprintf("%+v", *b)
+	}
+	return "<nil>"
+}
 
 // CurrentUserMembershipsResponse contains information about the membership data for the currently
 // authorized user. The request for this information will use the access_token to determine
