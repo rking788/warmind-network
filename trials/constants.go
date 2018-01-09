@@ -2,8 +2,9 @@ package trials
 
 // Constant Trials Report API endpoints
 const (
-	NineBaseURL              = "https://api.trialsofthenine.com"
-	NineCurrentWeekStatsPath = "/week/0/"
+	NineBaseURL                = "https://api.trialsofthenine.com"
+	DestinyTrialsReportBaseURL = "https://api.destinytrialsreport.com"
+	NineCurrentWeekStatsPath   = "/week/0/"
 	// MembershipID
 	NinePlayerSummaryFmt              = "/player/%s/"
 	NinePlayerCurrentWeekStatsPathFmt = "/slack/trials/week/%s/0"

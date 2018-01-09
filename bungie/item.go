@@ -120,8 +120,8 @@ func itemHashFilter(item *Item, itemHash interface{}) bool {
 	return item != nil && (item.ItemHash == itemHash.(uint))
 }
 
-// itemHashesFilter will return true if the item's hash value is present in the provided slice of hashes;
-// otherwise false.
+// itemHashesFilter will return true if the item's hash value is present in the provided
+// slice of hashes; otherwise false.
 func itemHashesFilter(item *Item, hashList interface{}) bool {
 	for _, hash := range hashList.([]uint) {
 		return itemHashFilter(item, hash)

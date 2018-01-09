@@ -22,6 +22,7 @@ const (
 var bungieAPIKey string
 var warmindAPIKey string
 var client *NineClient
+var destinyTrialsReportClient *NineClient
 
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey, baseURL string) {
@@ -31,8 +32,14 @@ func InitEnv(apiKey, warmindKey, baseURL string) {
 		client = &NineClient{
 			BaseURL: NineBaseURL,
 		}
+		destinyTrialsReportClient = &NineClient{
+			BaseURL: DestinyTrialsReportBaseURL,
+		}
 	} else {
 		client = &NineClient{
+			BaseURL: baseURL,
+		}
+		destinyTrialsReportClient = &NineClient{
 			BaseURL: baseURL,
 		}
 	}
@@ -169,8 +176,15 @@ func GetPersonalTopWeapons(token, appName string) (*skillserver.EchoResponse, er
 	}
 
 	fullEndpoint := fmt.Sprintf(NinePlayerCurrentWeekStatsPathFmt, membershipID)
-	currentWeekStats := PlayerCurrentWeekStats{}
-	client.Execute(fullEndpoint, &currentWeekStats)
+	currentWeekStatsArray := []PlayerCurrentWeekStats{}
+	destinyTrialsReportClient.Execute(fullEndpoint, &currentWeekStatsArray)
+	currentWeekStats := currentWeekStatsArray[0]
+
+	if len(currentWeekStats.Weapons) <= 0 {
+		response.OutputSpeech("It looks like you don't have any popular weapons yet, check back" +
+			" after playing a few matches in the Trials of the Nine.")
+		return response, nil
+	}
 
 	buffer := bytes.NewBufferString("According to Trials Report, your top weapons by kills are: ")
 	for index, weaponStat := range currentWeekStats.Weapons {
