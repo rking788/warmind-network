@@ -67,10 +67,10 @@ func GetCurrentMap() (*skillserver.EchoResponse, error) {
 
 // GetCurrentWeek is responsible for requesting the players stats from the current
 // week from Trials Report.
-func GetCurrentWeek(token, appName string) (*skillserver.EchoResponse, error) {
+func GetCurrentWeek(token string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
-	membershipID, err := findMembershipID(token, appName)
+	membershipID, err := findMembershipID(token)
 	if err != nil {
 		return nil, err
 	}
@@ -166,10 +166,10 @@ func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 
 // GetPersonalTopWeapons will return a summary of the top weapons used by the
 // linked player/account.
-func GetPersonalTopWeapons(token, appName string) (*skillserver.EchoResponse, error) {
+func GetPersonalTopWeapons(token string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
-	membershipID, err := findMembershipID(token, appName)
+	membershipID, err := findMembershipID(token)
 	if err != nil {
 		glg.Errorf("Error loading membership ID for linked account: %s", err.Error())
 		return nil, err
@@ -230,14 +230,11 @@ func (client *NineClient) Execute(endpoint string, response interface{}) error {
 
 // findMembershipID is a helper function for loading the membership ID from the currently
 // linked account, this eventually should take platform into account.
-func findMembershipID(token, appName string) (string, error) {
+func findMembershipID(token string) (string, error) {
 
 	client := bungie.Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(token, bungieAPIKey)
-	} else {
-		client.AddAuthValues(token, warmindAPIKey)
-	}
+	client.AddAuthValues(token, warmindAPIKey)
+
 	currentAccount, err := client.GetCurrentAccount()
 	if err != nil {
 		glg.Errorf("Error loading current account info from Bungie.net: %s", err.Error())

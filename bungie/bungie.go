@@ -192,7 +192,7 @@ func PopulateBucketHashLookup() error {
 
 // CountItem will count the number of the specified item and return an EchoResponse
 // that can be serialized and sent back to the Alexa skill.
-func CountItem(itemName, accessToken, appName string) (*skillserver.EchoResponse, error) {
+func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) {
 	glg.Infof("ItemName: %s", itemName)
 
 	response := skillserver.NewEchoResponse()
@@ -212,11 +212,7 @@ func CountItem(itemName, accessToken, appName string) (*skillserver.EchoResponse
 	}
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// Load all items on all characters
 	profile, err := GetProfileForCurrentUser(client)
@@ -253,7 +249,7 @@ func CountItem(itemName, accessToken, appName string) (*skillserver.EchoResponse
 // transfer the specified item to the specified character. The quantity is optional
 // as well as the source class. If no quantity is specified, all of the specific
 // items will be transfered to the particular character.
-func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName string, count int) (*skillserver.EchoResponse, error) {
+func TransferItem(itemName, accessToken, sourceClass, destinationClass string, count int) (*skillserver.EchoResponse, error) {
 	glg.Infof("ItemName: %s, Source: %s, Destination: %s, Count: %d", itemName, sourceClass, destinationClass, count)
 
 	response := skillserver.NewEchoResponse()
@@ -279,11 +275,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 	}
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	profile, err := GetProfileForCurrentUser(client)
 	if err != nil {
@@ -326,15 +318,11 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass, appName 
 }
 
 // EquipMaxLightGear will equip all items that are required to have the maximum light on a character
-func EquipMaxLightGear(accessToken, appName string) (*skillserver.EchoResponse, error) {
+func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	profile, err := GetProfileForCurrentUser(client)
 	if err != nil {
@@ -367,15 +355,11 @@ func EquipMaxLightGear(accessToken, appName string) (*skillserver.EchoResponse, 
 }
 
 // UnloadEngrams is responsible for transferring all engrams off of a character and
-func UnloadEngrams(accessToken, appName string) (*skillserver.EchoResponse, error) {
+func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	profile, err := GetProfileForCurrentUser(client)
 	if err != nil {
@@ -411,7 +395,7 @@ func UnloadEngrams(accessToken, appName string) (*skillserver.EchoResponse, erro
 
 // CreateLoadoutForCurrentCharacter will create a new PersistedLoadout based on the items equipped
 // to the user's current character and save them to the persistent storage.
-func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldOverwrite bool) (*skillserver.EchoResponse, error) {
+func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite bool) (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
 
@@ -423,11 +407,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldO
 	}
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()
@@ -492,16 +472,12 @@ func CreateLoadoutForCurrentCharacter(accessToken, name, appName string, shouldO
 
 // EquipNamedLoadout will read the loadout with the specified name from the persistent
 // store and then equip it on the user's current character.
-func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResponse, error) {
+func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()
@@ -552,16 +528,12 @@ func EquipNamedLoadout(accessToken, name, appName string) (*skillserver.EchoResp
 
 // GetLoadoutNames will request all of the loadout names from the database and
 // return the list of names to the user.
-func GetLoadoutNames(accessToken, appName string) (*skillserver.EchoResponse, error) {
+func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
 
 	client := Clients.Get()
-	if appName == "guardian-helper" {
-		client.AddAuthValues(accessToken, bungieAPIKey)
-	} else {
-		client.AddAuthValues(accessToken, warmindAPIKey)
-	}
+	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()

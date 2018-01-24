@@ -72,8 +72,8 @@ func InitEnv(c *EnvConfig) {
 
 	ConfigureLogging(c.LogLevel, c.LogFilePath)
 
-	// This provides and explicit configuration point as opposed to the package level init functions,
-	// as well as making it easier to write unit tests.
+	// This provides and explicit configuration point as opposed to the package level
+	// init functions, as well as making it easier to write unit tests.
 	// It also makes it easier to guarantee ordering if that is necessary.
 	trials.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey, "")
 	db.InitEnv(c.DatabaseURL)
@@ -136,7 +136,8 @@ func writeHeapProfile() {
 
 // Alexa skill related functions
 
-// EchoSessionEndedHandler is responsible for cleaning up an open session since the user has quit the session.
+// EchoSessionEndedHandler is responsible for cleaning up an open session since the user
+// has quit the session.
 func EchoSessionEndedHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
 	*echoResponse = *skillserver.NewEchoResponse()
 
@@ -144,16 +145,22 @@ func EchoSessionEndedHandler(echoRequest *skillserver.EchoRequest, echoResponse 
 }
 
 func guardianHelperIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
-	EchoIntentHandler(echoRequest, echoResponse, "guardian-helper")
+	glg.Info("Breaking the bad news to guardian-helper user")
+	response := skillserver.NewEchoResponse()
+	response.OutputSpeech("Sorry Guardian, the Guardian Helper skill is now shutdown, " +
+		"please enable the Warmind Network skill for new features and " +
+		" performance improvements.")
+	*echoResponse = *response
+	return
 }
 
 func warmindIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
-	EchoIntentHandler(echoRequest, echoResponse, "warmind-network")
+	EchoIntentHandler(echoRequest, echoResponse)
 }
 
 // EchoIntentHandler is a handler method that is responsible for receiving the
 // call from a Alexa command and returning the correct speech or cards.
-func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse, appName string) {
+func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skillserver.EchoResponse) {
 
 	// Time the intent handler to determine if it is taking longer than normal
 	startTime := time.Now()
@@ -173,13 +180,13 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 
 	handler, ok := AlexaHandlers[intentName]
 	if echoRequest.GetRequestType() == "LaunchRequest" {
-		response = alexa.WelcomePrompt(echoRequest, appName)
+		response = alexa.WelcomePrompt(echoRequest)
 	} else if intentName == "AMAZON.StopIntent" {
 		response = skillserver.NewEchoResponse()
 	} else if intentName == "AMAZON.CancelIntent" {
 		response = skillserver.NewEchoResponse()
 	} else if ok {
-		response = handler(echoRequest, appName)
+		response = handler(echoRequest)
 	} else {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I did not understand your request.")
