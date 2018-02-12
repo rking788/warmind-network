@@ -1,4 +1,6 @@
-Version 1.6.0
+Version 1.7.0
 ===============
-- No longer supporting Guardian Helper, asking users to enable Warmind Network.
+- Added an intent for randomizing loadouts.
+- Requiring confirmation for loadout names now to avoid accidental loadout names.
+- Adding support for Canada and Australia (English only still).
 

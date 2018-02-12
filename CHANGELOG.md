@@ -1,3 +1,7 @@
+Version 1.6.0
+===============
+- No longer supporting Guardian Helper, asking users to enable Warmind Network.
+
 Version 1.5.0
 ===============
 - Added an intent for listing a user's loadouts that are currently persisted.

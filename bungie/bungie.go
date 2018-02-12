@@ -539,7 +539,8 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
-		response.OutputSpeech("Sorry Guardian, a loadout could not be found with the name " + name)
+		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s."+
+			"You need to create a loadout with that name before it can be equipped.", name))
 		return response, nil
 	} else if err != nil {
 		glg.Errorf("Failed to read loadout from the database")
