@@ -19,8 +19,13 @@ type Profile struct {
 	Characters            CharacterList
 
 	AllItems ItemList
+
+	// A map between the character ID and the Loadout currently equipped on that character
+	Loadouts map[string]Loadout
+
 	// NOTE: Still not sure this is the best approach to flatten items into a single list,
-	// it works well for now so we will go with it. There are too many potential spots to look for an item.
+	// it works well for now so we will go with it. There are too many potential spots to
+	// look for an item.
 	//Equipments       map[string]ItemList
 	//Inventories      map[string]ItemList
 	//ProfileInventory ItemList
@@ -66,22 +71,6 @@ func GetProfileForCurrentUser(client *Client) (*Profile, error) {
 	}
 
 	return profile, nil
-}
-
-func loadoutFromProfile(profile *Profile) Loadout {
-	loadout := make(Loadout)
-	for _, item := range profile.AllItems {
-		glg.Debugf("Found item(%d) for bucket(%d), equipment bucket lookup result(%d)",
-			item.ItemHash, item.BucketHash, EquipmentBucketLookup[item.BucketHash])
-		if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
-			if _, ok := loadout[equipmentBucket]; ok {
-				glg.Debugf("Found duplicate item for bucket: %d", item.BucketHash)
-			}
-			loadout[equipmentBucket] = item
-		}
-	}
-
-	return loadout
 }
 
 func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
@@ -131,17 +120,32 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
 
 	// CharacterEquipment Component
 	if response.Response.CharacterEquipment != nil {
+
+		// If the character equipment fields were provided, populate the profile's loadouts map
+		profile.Loadouts = make(map[string]Loadout)
+
 		for charID, list := range response.Response.CharacterEquipment.Data {
+
+			currentLoadout := make(Loadout)
 			for _, item := range list.Items {
+
 				if response.Response.Characters != nil {
 					item.Character = response.Response.Characters.Data[charID]
 				}
+
 				if item.InstanceID != "" && response.Response.ItemComponents != nil &&
 					response.Response.ItemComponents.Instances != nil {
 					item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
 				}
+
+				// We don't need to check IsEquipped here, that is what the CharacterEquipment
+				// group means, just make sure its on the right character.
+				if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
+					currentLoadout[equipmentBucket] = item
+				}
 			}
 
+			profile.Loadouts[charID] = currentLoadout
 			items = append(items, list.Items...)
 		}
 	}

@@ -227,6 +227,22 @@ func MaxPower(request *skillserver.EchoRequest) (response *skillserver.EchoRespo
 	return
 }
 
+// RandomGear will equip random gear for each of the current characters gear slots (excluding
+// things like ghost and class items). It is possible to randomize only weapons or weapons
+// and armor.
+func RandomGear(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+
+	accessToken := request.Session.User.AccessToken
+	response, err := bungie.RandomizeLoadout(accessToken)
+	if err != nil {
+		glg.Errorf("Error occurred equipping random gear: %s", err.Error())
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, an error occurred equipping random gear.")
+	}
+
+	return
+}
+
 // UnloadEngrams will take all engrams on all of the current user's characters and
 // transfer them all to the vault to allow the player to continue farming.
 func UnloadEngrams(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {

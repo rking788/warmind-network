@@ -1,6 +1,7 @@
 package bungie
 
 import (
+	"math/rand"
 	"sort"
 
 	"github.com/kpango/glg"
@@ -168,6 +169,66 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	return loadout
 }
 
+func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool) Loadout {
+
+	// Start by filtering all items that are NOT exotics
+	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
+	destinationClassType := destinationCharacter.ClassType
+	filteredItems := profile.AllItems.
+		FilterItems(itemClassTypeFilter, destinationClassType).
+		FilterItems(itemNotTierTypeFilter, ExoticTier).
+		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+	gearSortedByLight := groupAndSortGear(filteredItems)
+
+	// Find the best loadout given just legendary weapons
+	loadout := profile.Loadouts[destinationID]
+	glg.Debugf("Starting with loadout as base Loadout for charID(%s): %+v", destinationID, loadout)
+
+	// Only randomize weapons unless specified
+	upperBound := Power
+	if includeArmor {
+		upperBound = Legs
+	}
+
+	for i := Kinetic; i <= upperBound; i++ {
+		if i == Ghost {
+			continue
+		}
+
+		randIndex := rand.Intn(len(gearSortedByLight[i]))
+		loadout[i] = gearSortedByLight[i][randIndex]
+	}
+
+	// Determine the best exotics to use for both weapons and armor
+	exotics := profile.AllItems.
+		FilterItems(itemTierTypeFilter, ExoticTier).
+		FilterItems(itemClassTypeFilter, destinationClassType).
+		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+	exoticsSortedAndGrouped := groupAndSortGear(exotics)
+
+	// Override inventory items with exotics as needed
+
+	// Exotic Weapon
+	randExoticBucket := EquipmentBucket(rand.Intn(int(Power)))
+	if len(exoticsSortedAndGrouped[randExoticBucket]) > 0 {
+		weaponBucketItems := exoticsSortedAndGrouped[randExoticBucket]
+		randIndex := rand.Intn(len(weaponBucketItems))
+		loadout[randExoticBucket] = weaponBucketItems[randIndex]
+	}
+
+	// Exotic Armor
+	if includeArmor {
+		randExoticBucket = EquipmentBucket(rand.Intn(int(Legs)-int(Helmet)) + int(Helmet))
+		if len(exoticsSortedAndGrouped[randExoticBucket]) > 0 {
+			armorBucketItems := exoticsSortedAndGrouped[randExoticBucket]
+			randIndex := rand.Intn(len(armorBucketItems))
+			loadout[randExoticBucket] = armorBucketItems[randIndex]
+		}
+	}
+
+	return loadout
+}
+
 func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membershipType int, client *Client) error {
 
 	characters := profile.Characters
@@ -197,8 +258,9 @@ func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membe
 	return nil
 }
 
-// swapEquippedItem is responsible for equipping a new item on a character that is not the destination
-// of a transfer. This way it free up the item to be equipped by the desired character.
+// swapEquippedItem is responsible for equipping a new item on a character that is
+// not the destination of a transfer. This way it free up the item to be equipped
+// by the desired character.
 func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, membershipType int, client *Client) {
 
 	// TODO: Currently filtering out exotics to make it easier
@@ -210,8 +272,8 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 		FilterItems(itemNotTierTypeFilter, ExoticTier)
 
 	if len(reverseLightSortedItems) <= 1 {
-		// TODO: If there are no other items from the specified character, then we need to figure out
-		// an item to be transferred from the vault
+		// TODO: If there are no other items from the specified character, then we need to
+		// figure out an item to be transferred from the vault
 		glg.Warn("No other items on the specified character, not currently setup to transfer new choices from the vault...")
 		return
 	}

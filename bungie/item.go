@@ -53,7 +53,7 @@ type ItemMetadata struct {
 func (i *Item) String() string {
 	if i.ItemInstance != nil {
 		if i.ItemInstance.PrimaryStat != nil {
-			return fmt.Sprintf("Item{itemHash: %d, itemID: %s, light:%d, quantity: %d}", i.ItemHash, i.InstanceID, i.PrimaryStat.Value, i.Quantity)
+			return fmt.Sprintf("Item{itemHash: %d, itemID: %s, light:%d, isEquipped: %v, quantity: %d}", i.ItemHash, i.InstanceID, i.PrimaryStat.Value, i.IsEquipped, i.Quantity)
 		}
 
 		return fmt.Sprintf("Item{itemHash: %d, itemID: %s, quantity: %d}", i.ItemHash, i.InstanceID, i.Quantity)

@@ -354,6 +354,44 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	return response, nil
 }
 
+// RandomizeLoadout will determine random items to be equipped on the current character.
+// It is possible to ask for only weapons to be random or for weapons & armor to be random.
+func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
+	response := skillserver.NewEchoResponse()
+
+	client := Clients.Get()
+	client.AddAuthValues(accessToken, warmindAPIKey)
+
+	profile, err := GetProfileForCurrentUser(client)
+	if err != nil {
+		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
+		return nil, err
+	}
+
+	// Transfer to the most recent character on the most recent platform
+	destinationID := profile.Characters[0].CharacterID
+	membershipType := profile.MembershipType
+
+	glg.Debugf("Character(%s), MembershipID(%s), MembershipType(%d)",
+		profile.Characters[0].CharacterID, profile.MembershipID, profile.MembershipType)
+
+	randomLoadout := findRandomLoadout(profile, destinationID, false)
+
+	glg.Debugf("Found random loadout to equip: %v", randomLoadout)
+	glg.Infof("Calculated power for loadout: %f", randomLoadout.calculateLightLevel())
+
+	err = equipLoadout(randomLoadout, destinationID, profile, membershipType, client)
+	if err != nil {
+		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
+		return nil, err
+	}
+
+	characterClass := classHashToName[profile.Characters[0].ClassHash]
+	response.OutputSpeech(fmt.Sprintf("Random gear equipped to your %s Guardian. Goodluck "+
+		"with that.", characterClass))
+	return response, nil
+}
+
 // UnloadEngrams is responsible for transferring all engrams off of a character and
 func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
@@ -444,12 +482,10 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	profile := fixupProfileFromProfileResponse(&profileResponse)
 	profile.BungieNetMembershipID = bnetMembershipID
 
-	// We want to remove all items that are not on the current character
-	profile.AllItems = profile.AllItems.FilterItems(itemCharacterIDFilter,
-		profile.Characters[0].CharacterID)
+	loadout := profile.Loadouts[profile.Characters[0].CharacterID]
 
-	loadout := loadoutFromProfile(profile)
 	glg.Debugf("Created Loadout: %+v", loadout)
+
 	persistedLoadout := loadout.toPersistedLoadout()
 	persistedBytes, err := json.Marshal(persistedLoadout)
 	if err != nil {

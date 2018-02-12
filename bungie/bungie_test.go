@@ -40,6 +40,7 @@ func setup() {
 // }
 
 func BenchmarkFiltering(b *testing.B) {
+
 	setup()
 	profileResponse, err := getCurrentProfileResponse()
 	if err != nil {
@@ -57,6 +58,7 @@ func BenchmarkFiltering(b *testing.B) {
 }
 
 func BenchmarkMaxLight(b *testing.B) {
+
 	setup()
 	profileResponse, err := getCurrentProfileResponse()
 	if err != nil {
@@ -72,8 +74,44 @@ func BenchmarkMaxLight(b *testing.B) {
 		findMaxLightLoadout(profile, testDestinationID)
 	}
 }
+func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+	testDestinationID := profile.Characters[0].CharacterID
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		findRandomLoadout(profile, testDestinationID, false)
+	}
+}
+
+func BenchmarkFindRandomLoadoutAll(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+	testDestinationID := profile.Characters[0].CharacterID
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		findRandomLoadout(profile, testDestinationID, true)
+	}
+}
 
 func BenchmarkGroupAndSort(b *testing.B) {
+
 	setup()
 	response, err := getCurrentProfileResponse()
 	if err != nil {
@@ -92,6 +130,7 @@ func BenchmarkGroupAndSort(b *testing.B) {
 }
 
 func BenchmarkBestItemForBucket(b *testing.B) {
+
 	setup()
 	response, err := getCurrentProfileResponse()
 	if err != nil {
@@ -119,6 +158,7 @@ func BenchmarkBestItemForBucket(b *testing.B) {
 }
 
 func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
+
 	setup()
 	response, err := getCurrentProfileResponse()
 	if err != nil {
@@ -130,35 +170,6 @@ func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		profile := fixupProfileFromProfileResponse(response)
 		if profile == nil {
-			b.FailNow()
-		}
-	}
-}
-
-func BenchmarkLoadoutFromProfile(b *testing.B) {
-	setup()
-
-	setup()
-	response, err := getCurrentProfileResponse()
-	if err != nil {
-		b.FailNow()
-	}
-	response.Response.CharacterInventories = nil
-	response.Response.ProfileInventory = nil
-	response.Response.ProfileCurrencies = nil
-	response.Response.Profile = nil
-	response.Response.ItemComponents = nil
-
-	profile := fixupProfileFromProfileResponse(response)
-	if profile == nil {
-		b.FailNow()
-	}
-
-	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		loadout := loadoutFromProfile(profile)
-		if loadout == nil {
 			b.FailNow()
 		}
 	}
@@ -193,11 +204,11 @@ func TestParseCurrentMembershipsResponse(t *testing.T) {
 		if membership.DisplayName == "" || membership.MembershipID == "" || membership.MembershipType <= 0 {
 			t.FailNow()
 		}
-		//fmt.Printf("Display name=%s, membershipID=%s, membershipType=%d\n", membership.DisplayName, membership.MembershipID, membership.MembershipType)
 	}
 }
 
 func TestParseGetProfileResponse(t *testing.T) {
+
 	setup()
 	response, err := getCurrentProfileResponse()
 	if err != nil {
@@ -248,8 +259,6 @@ func TestFixupProfileFromProfileResponse(t *testing.T) {
 	if profile == nil {
 		t.FailNow()
 	}
-
-	//fmt.Println("Loaded items: ", profile.AllItems)
 }
 
 func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
@@ -272,8 +281,6 @@ func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
 	if profile.MembershipType != 0 {
 		t.FailNow()
 	}
-
-	//fmt.Println("Loaded items: ", profile.AllItems)
 }
 
 func TestFixupProfileFromProfileResponseMissingProfileInventory(t *testing.T) {
@@ -352,8 +359,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterInventories(t *testing.T
 	}
 }
 
-func TestLoadoutFromProfile(t *testing.T) {
-	setup()
+func TestRandomLoadoutFromProfile(t *testing.T) {
 
 	setup()
 	response, err := getCurrentProfileResponse()
@@ -365,14 +371,19 @@ func TestLoadoutFromProfile(t *testing.T) {
 	response.Response.ProfileInventory = nil
 	response.Response.ProfileCurrencies = nil
 	response.Response.Profile = nil
-	response.Response.ItemComponents = nil
 
 	profile := fixupProfileFromProfileResponse(response)
 	if profile == nil {
 		t.FailNow()
 	}
 
-	loadout := loadoutFromProfile(profile)
+	startingLoadout := profile.Loadouts[profile.Characters[0].CharacterID]
+	startingInstanceIDs := make([]string, 0, len(startingLoadout))
+	for i := Kinetic; i < Artifact; i++ {
+		startingInstanceIDs = append(startingInstanceIDs, startingLoadout[i].InstanceID)
+	}
+
+	loadout := findRandomLoadout(profile, profile.Characters[0].CharacterID, true)
 
 	for equipmentBucket, item := range loadout {
 		if item == nil {
@@ -382,6 +393,24 @@ func TestLoadoutFromProfile(t *testing.T) {
 		if _, ok := BucketHashLookup[equipmentBucket]; !ok {
 			t.FailNow()
 		}
+	}
+
+	endingInstanceIDs := make([]string, 0, len(loadout))
+	for i := Kinetic; i < Artifact; i++ {
+		endingInstanceIDs = append(endingInstanceIDs, loadout[i].InstanceID)
+	}
+
+	fmt.Printf("Starting Instance IDs: %v\nEnding Instance IDs: %v\n",
+		startingInstanceIDs, endingInstanceIDs)
+
+	allTheSame := true
+	for index, instanceID := range startingInstanceIDs {
+		allTheSame = allTheSame && (instanceID == endingInstanceIDs[index])
+	}
+
+	if allTheSame {
+		fmt.Println("Calculated a random loadout that was exactly equal to the starting loadout")
+		t.FailNow()
 	}
 }
 

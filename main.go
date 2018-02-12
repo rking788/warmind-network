@@ -31,6 +31,7 @@ var (
 		"TrialsPersonalTopWeapons": alexa.AuthWrapper(alexa.PersonalTopWeapons),
 		"UnloadEngrams":            alexa.AuthWrapper(alexa.UnloadEngrams),
 		"EquipMaxLight":            alexa.AuthWrapper(alexa.MaxPower),
+		"RandomizeGear":            alexa.AuthWrapper(alexa.RandomGear),
 		"DestinyJoke":              alexa.DestinyJoke,
 		"CreateLoadout":            alexa.AuthWrapper(alexa.CreateLoadout),
 		"EquipNamedLoadout":        alexa.AuthWrapper(alexa.EquipNamedLoadout),

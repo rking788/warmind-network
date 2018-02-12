@@ -18,8 +18,9 @@ install: genversion
 	go install
 test:
 	go test -v ./...
-benchmark:
-	go test -bench=. ./...
+bench:
+	# Don't run regular tests as part of benchmarks
+	go test -bench=. -run=XXX ./...
 coverage:
 	## Right now the coverprofile option is not allowed when testing multiple packages.
 	## this is the best we can do for now until writing a bash script to loop over packages.
