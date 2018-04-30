@@ -223,7 +223,7 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 		return response, nil
 	}
 
-	matchingItems := profile.AllItems.FilterItems(itemHashFilter, hash)
+	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -283,7 +283,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		return nil, err
 	}
 
-	matchingItems := profile.AllItems.FilterItems(itemHashFilter, hash)
+	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -405,7 +405,7 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 		return nil, err
 	}
 
-	matchingItems := profile.AllItems.FilterItems(itemIsEngramFilter, true)
+	matchingItems := profile.AllItems.FilterItemsBubble(itemIsEngramFilter, true)
 	if len(matchingItems) == 0 {
 		outputStr := fmt.Sprintf("You don't have any engrams on your current character. " +
 			"Happy farming Guardian!")

@@ -39,7 +39,7 @@ func setup() {
 // 	}
 // }
 
-func BenchmarkFiltering(b *testing.B) {
+func BenchmarkFilteringSingleFilter(b *testing.B) {
 
 	setup()
 	profileResponse, err := getCurrentProfileResponse()
@@ -53,7 +53,228 @@ func BenchmarkFiltering(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.FilterItems(itemTierTypeFilter, ExoticTier)
+		_ = items._FilterItems(itemTierTypeFilter, ExoticTier)
+	}
+}
+func BenchmarkFilteringMultipleFilters(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.
+			_FilterItems(itemClassTypeFilter, WARLOCK).
+			_FilterItems(itemNotTierTypeFilter, ExoticTier).
+			_FilterItems(itemRequiredLevelFilter, 25)
+	}
+}
+
+func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.
+			_FilterItemsMultiple(createItemClassTypeFilter(WARLOCK),
+				createItemNotTierTypeFilter(ExoticTier),
+				createItemRequiredLevelFilter(25))
+	}
+}
+
+func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.
+			FilterItemsMultipleBubble(createItemClassTypeFilter(WARLOCK),
+				createItemNotTierTypeFilter(ExoticTier),
+				createItemRequiredLevelFilter(25))
+	}
+}
+
+func BenchmarkFilteringPassthrough(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.
+			FilterBaseline(createItemClassTypeFilter(WARLOCK),
+				createItemNotTierTypeFilter(ExoticTier),
+				createItemRequiredLevelFilter(25))
+	}
+}
+
+func (items ItemList) FilterBaseline(filters ...ItemFilter) ItemList {
+
+	for i, item := range items {
+		if item.InstanceID == "0" {
+			fmt.Println("Breaking")
+			break
+		}
+
+		tempItem := items[i]
+		items[i] = items[len(items)-i-1]
+		items[len(items)-i-1] = tempItem
+	}
+
+	return make(ItemList, 10)
+}
+func TestFilteringSingleFilterBubble(t *testing.T) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		t.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+
+	resultNormal := items._FilterItems(itemTierTypeFilter, ExoticTier)
+	resultBubble := items.FilterItemsBubble(itemTierTypeFilter, ExoticTier)
+
+	fmt.Printf("Found normal(%d), bubble(%d)", len(resultNormal), len(resultBubble))
+
+	if len(resultNormal) != len(resultBubble) {
+		t.Errorf("Incorrect item count normal(%d) bubble(%d)", len(resultNormal), len(resultBubble))
+		t.FailNow()
+	}
+}
+
+func TestFilteringMultipleFilter(t *testing.T) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		t.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+
+	resultNormal := items.
+		_FilterItems(itemClassTypeFilter, WARLOCK).
+		_FilterItems(itemNotTierTypeFilter, ExoticTier).
+		_FilterItems(itemRequiredLevelFilter, 25)
+	resultBubble := items.
+		FilterItemsBubble(itemClassTypeFilter, WARLOCK).
+		FilterItemsBubble(itemNotTierTypeFilter, ExoticTier).
+		FilterItemsBubble(itemRequiredLevelFilter, 25)
+	resultSingleFilter := items.
+		FilterItemsMultipleBubble(createItemClassTypeFilter(WARLOCK),
+			createItemNotTierTypeFilter(ExoticTier),
+			createItemRequiredLevelFilter(25))
+
+	fmt.Printf("Found normal(%d), bubble(%d), single(%d)\n", len(resultNormal), len(resultBubble), len(resultSingleFilter))
+
+	if len(resultNormal) != len(resultBubble) {
+		t.Errorf("Incorrect item count normal(%d) bubble(%d)", len(resultNormal), len(resultBubble))
+		t.FailNow()
+	}
+	if len(resultNormal) != len(resultSingleFilter) {
+		t.Errorf("Incorrect item count normal(%d) singleFilter(%d)", len(resultNormal),
+			len(resultSingleFilter))
+		t.FailNow()
+	}
+
+	foundCount := len(resultNormal)
+	for _, outer := range resultNormal {
+		found := false
+
+		for _, inner := range resultSingleFilter {
+			if outer.InstanceID == inner.InstanceID {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			t.Errorf("Item(%d) with instanceID(%s) not found in single bubble results",
+				outer.ItemHash, outer.InstanceID)
+			t.FailNow()
+		}
+	}
+
+	if foundCount != len(resultSingleFilter) {
+		t.Errorf("All elements from the normal filter method were not found in the " +
+			"single bubble filter results")
+		t.FailNow()
+	}
+}
+
+func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.FilterItemsBubble(itemTierTypeFilter, ExoticTier)
+	}
+}
+func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
+
+	setup()
+	profileResponse, err := getCurrentProfileResponse()
+	if err != nil {
+		b.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse)
+
+	items := profile.AllItems
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = items.
+			FilterItemsBubble(itemClassTypeFilter, WARLOCK).
+			FilterItemsBubble(itemNotTierTypeFilter, ExoticTier).
+			FilterItemsBubble(itemRequiredLevelFilter, 25)
 	}
 }
 
@@ -399,9 +620,6 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 	for i := Kinetic; i < Artifact; i++ {
 		endingInstanceIDs = append(endingInstanceIDs, loadout[i].InstanceID)
 	}
-
-	fmt.Printf("Starting Instance IDs: %v\nEnding Instance IDs: %v\n",
-		startingInstanceIDs, endingInstanceIDs)
 
 	allTheSame := true
 	for index, instanceID := range startingInstanceIDs {
