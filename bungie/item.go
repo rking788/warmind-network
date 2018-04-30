@@ -99,10 +99,10 @@ func (items LightSort) Less(i, j int) bool {
 	return items[i].Power() < items[j].Power()
 }
 
-// FilterItems will filter the receiver slice of Items and return only the items that match the criteria
-// specified in ItemFilter. If ItemFilter returns True, the element will be included, if it returns False
-// the element will be removed.
-func (items ItemList) FilterItems(filter ItemFilter, arg interface{}) ItemList {
+// FilterItems will filter the receiver slice of Items and return only the items that match
+// the criteria specified in ItemFilter. If ItemFilter returns True, the element will be included,
+// if it returns False the element will be removed.
+func (items ItemList) _FilterItems(filter ItemFilter, arg interface{}) ItemList {
 
 	result := make(ItemList, 0, len(items))
 
@@ -115,7 +115,76 @@ func (items ItemList) FilterItems(filter ItemFilter, arg interface{}) ItemList {
 	return result
 }
 
-// itemHashFilter will return true if the itemHash provided matches the hash of the item; otherwise false.
+func (items ItemList) _FilterItemsMultiple(filters ...ItemFilter) ItemList {
+	result := make(ItemList, 0, len(items))
+
+	for _, item := range items {
+		allMatch := true
+
+		for _, filter := range filters {
+			allMatch = allMatch && filter(item, nil)
+			if allMatch == false {
+				break
+			}
+		}
+
+		if allMatch {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+func (items ItemList) FilterItemsBubble(filter ItemFilter, arg interface{}) ItemList {
+
+	filterPos := 0
+
+	for i, item := range items {
+		if filter(item, arg) {
+			tempItem := items[filterPos]
+			items[filterPos] = items[i]
+			items[i] = tempItem
+			filterPos++
+		}
+	}
+
+	result := make(ItemList, filterPos)
+	copy(result, items)
+
+	return result
+}
+
+func (items ItemList) FilterItemsMultipleBubble(filters ...ItemFilter) ItemList {
+
+	filterPos := 0
+
+	for i, item := range items {
+		allMatch := true
+
+		for _, filter := range filters {
+			allMatch = allMatch && filter(item, nil)
+			if allMatch == false {
+				break
+			}
+		}
+
+		if allMatch {
+			tempItem := items[filterPos]
+			items[filterPos] = items[i]
+			items[i] = tempItem
+			filterPos++
+		}
+	}
+
+	result := make(ItemList, filterPos)
+	copy(result, items)
+
+	return result
+}
+
+// itemHashFilter will return true if the itemHash provided matches the hash of the item;
+// otherwise false.
 func itemHashFilter(item *Item, itemHash interface{}) bool {
 	return item != nil && (item.ItemHash == itemHash.(uint))
 }
@@ -130,15 +199,30 @@ func itemHashesFilter(item *Item, hashList interface{}) bool {
 	return false
 }
 
-// itemBucketHashIncludingVaultFilter will filter the list of items by the specified bucket hash or the Vault location
+func createItemBucketHashFilter(bucketTypeHash interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, unused interface{}) bool {
+		return itemBucketHashFilter(item, bucketTypeHash)
+	}
+}
+
+// itemBucketHashIncludingVaultFilter will filter the list of items by the specified
+// bucket hash or the Vault location
 func itemBucketHashFilter(item *Item, bucketTypeHash interface{}) bool {
-	metadata, ok := itemMetadata[item.ItemHash]
-	if !ok {
-		glg.Warnf("No metadata found for item: %d", item.ItemHash)
-		return false
+
+	if metadata, ok := itemMetadata[item.ItemHash]; ok {
+		return metadata.BucketHash == bucketTypeHash.(uint)
 	}
 
-	return metadata.BucketHash == bucketTypeHash.(uint)
+	glg.Warnf("No metadata found for item: %d", item.ItemHash)
+	return false
+}
+
+func createCharacterIDFilter(characterID interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, unused interface{}) bool {
+		return itemCharacterIDFilter(item, characterID)
+	}
 }
 
 // itemCharacterIDFilter will filter the list of items by the specified character identifier
@@ -162,13 +246,28 @@ func itemTierTypeFilter(item *Item, tierType interface{}) bool {
 	return metadata.TierType == tierType.(int)
 }
 
-func itemNotTierTypeFilter(item *Item, tierType interface{}) bool {
-	metadata, ok := itemMetadata[item.ItemHash]
-	if !ok {
-		glg.Warnf("No metadata found for item: %s", item.ItemHash)
-		return false
+func createItemTierTypeFilter(tierType interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, tier interface{}) bool {
+		return itemTierTypeFilter(item, tierType)
 	}
-	return metadata.TierType != tierType.(int)
+}
+
+func createItemNotTierTypeFilter(tierType interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, tier interface{}) bool {
+		return itemNotTierTypeFilter(item, tierType)
+	}
+}
+
+func itemNotTierTypeFilter(item *Item, tierType interface{}) bool {
+
+	if metadata, ok := itemMetadata[item.ItemHash]; ok {
+		return metadata.TierType != tierType.(int)
+	}
+
+	glg.Warnf("No metadata found for item: %s", item.ItemHash)
+	return false
 }
 
 // itemInstanceIDFilter is an item filter that will return true for all items with an
@@ -178,17 +277,30 @@ func itemInstanceIDFilter(item *Item, instanceID interface{}) bool {
 	return item.InstanceID == instanceID.(string)
 }
 
+func createItemClassTypeFilter(classType interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, class interface{}) bool {
+		return itemClassTypeFilter(item, classType)
+	}
+}
+
 // itemClassTypeFilter will filter out all items that are not equippable by the specified class
 func itemClassTypeFilter(item *Item, classType interface{}) bool {
 
-	metadata, ok := itemMetadata[item.ItemHash]
-	if !ok {
-		glg.Warnf("No metadata found for item: %s", item.ItemHash)
-		return false
+	if metadata, ok := itemMetadata[item.ItemHash]; ok {
+		return (metadata.ClassType == UnknownClassType) ||
+			(metadata.ClassType == classType.(int))
 	}
 
-	return (metadata.ClassType == UnknownClassType) ||
-		(metadata.ClassType == classType.(int))
+	glg.Warnf("No metadata found for item: %s", item.ItemHash)
+	return false
+}
+
+func createItemRequiredLevelFilter(maxLevel interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, level interface{}) bool {
+		return itemRequiredLevelFilter(item, maxLevel)
+	}
 }
 
 // itemRequiredLevelFilter will filter items that have a required level that is greater than

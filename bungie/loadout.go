@@ -77,7 +77,7 @@ func fromPersistedLoadout(persisted PersistedLoadout, profile *Profile) Loadout 
 
 	result := make(Loadout)
 	for equipmentBucket, item := range persisted {
-		sameHashList := profile.AllItems.FilterItems(itemHashFilter, item.ItemHash)
+		sameHashList := profile.AllItems.FilterItemsBubble(itemHashFilter, item.ItemHash)
 		if len(sameHashList) <= 0 {
 			glg.Warnf("Item(%v) not in profile when restoring loadout", item.ItemHash)
 			result[equipmentBucket] = nil
@@ -85,7 +85,7 @@ func fromPersistedLoadout(persisted PersistedLoadout, profile *Profile) Loadout 
 		}
 
 		bestMatchItem := sameHashList[0]
-		exactInstances := sameHashList.FilterItems(itemInstanceIDFilter, item.InstanceID)
+		exactInstances := sameHashList.FilterItemsBubble(itemInstanceIDFilter, item.InstanceID)
 
 		if len(exactInstances) > 0 {
 			bestMatchItem = exactInstances[0]
@@ -104,9 +104,9 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
 	destinationClassType := destinationCharacter.ClassType
 	filteredItems := profile.AllItems.
-		FilterItems(itemClassTypeFilter, destinationClassType).
-		FilterItems(itemNotTierTypeFilter, ExoticTier).
-		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+		FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
+			createItemNotTierTypeFilter(ExoticTier),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	gearSortedByLight := groupAndSortGear(filteredItems)
 
 	// Find the best loadout given just legendary weapons
@@ -120,9 +120,9 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 
 	// Determine the best exotics to use for both weapons and armor
 	exotics := profile.AllItems.
-		FilterItems(itemTierTypeFilter, ExoticTier).
-		FilterItems(itemClassTypeFilter, destinationClassType).
-		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+		FilterItemsMultipleBubble(createItemTierTypeFilter(ExoticTier),
+			createItemClassTypeFilter(destinationClassType),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	exoticsSortedAndGrouped := groupAndSortGear(exotics)
 
 	// Override inventory items with exotics as needed
@@ -175,9 +175,9 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
 	destinationClassType := destinationCharacter.ClassType
 	filteredItems := profile.AllItems.
-		FilterItems(itemClassTypeFilter, destinationClassType).
-		FilterItems(itemNotTierTypeFilter, ExoticTier).
-		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+		FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
+			createItemNotTierTypeFilter(ExoticTier),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	gearSortedByLight := groupAndSortGear(filteredItems)
 
 	// Find the best loadout given just legendary weapons
@@ -195,15 +195,20 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 			continue
 		}
 
-		randIndex := rand.Intn(len(gearSortedByLight[i]))
+		bucketCount := len(gearSortedByLight[i])
+		if bucketCount <= 0 {
+			continue
+		}
+
+		randIndex := rand.Intn(bucketCount)
 		loadout[i] = gearSortedByLight[i][randIndex]
 	}
 
 	// Determine the best exotics to use for both weapons and armor
 	exotics := profile.AllItems.
-		FilterItems(itemTierTypeFilter, ExoticTier).
-		FilterItems(itemClassTypeFilter, destinationClassType).
-		FilterItems(itemRequiredLevelFilter, destinationCharacter.LevelProgression.Level)
+		FilterItemsMultipleBubble(createItemTierTypeFilter(ExoticTier),
+			createItemClassTypeFilter(destinationClassType),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	exoticsSortedAndGrouped := groupAndSortGear(exotics)
 
 	// Override inventory items with exotics as needed
@@ -267,9 +272,9 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 	// This should be more robust. There is no guarantee the character already has an exotic
 	// equipped in a different slot and this may be the only option to swap out this item.
 	reverseLightSortedItems := profile.AllItems.
-		FilterItems(itemCharacterIDFilter, item.CharacterID).
-		FilterItems(itemBucketHashFilter, item.BucketHash).
-		FilterItems(itemNotTierTypeFilter, ExoticTier)
+		FilterItemsMultipleBubble(createCharacterIDFilter(item.CharacterID),
+			createItemBucketHashFilter(item.BucketHash),
+			createItemNotTierTypeFilter(ExoticTier))
 
 	if len(reverseLightSortedItems) <= 1 {
 		// TODO: If there are no other items from the specified character, then we need to
@@ -318,7 +323,7 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 
 func sortGearBucket(bucketHash uint, inventory ItemList) ItemList {
 
-	result := inventory.FilterItems(itemBucketHashFilter, bucketHash)
+	result := inventory.FilterItemsBubble(itemBucketHashFilter, bucketHash)
 	sort.Sort(sort.Reverse(LightSort(result)))
 	return result
 }

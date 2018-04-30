@@ -108,17 +108,17 @@ func (stats *PlayerCurrentWeekStats) combinedKD() float64 {
 type PlayerSummaryStats struct {
 	Count   int `json:"count"`
 	Results []*struct {
-		*characterStats
+		*CharacterStats
 		Flawless       int    `json:"Flawless"`
 		DisplayName    string `json:"displayName"`
 		MembershipType int    `json:"membershipType"`
 		MembershipID   string `json:"membershipId"`
 		Current        *struct {
-			*characterStats
+			*CharacterStats
 			Weapons []*struct{} `json:"weapons"`
 		} `json:"current"`
 		Characters map[string]*struct {
-			*characterStats
+			*CharacterStats
 		} `json:"characters"`
 		Activities []*struct {
 		} `json:"activities"`
@@ -140,7 +140,7 @@ type TeammatesStats struct {
 	Results []*playerStats
 }
 
-type characterStats struct {
+type CharacterStats struct {
 	Matches int `json:"matches"`
 	Deaths  int `json:"deaths"`
 	Assists int `json:"assists"`
@@ -151,7 +151,7 @@ type characterStats struct {
 type playerStats struct {
 	DisplayName  string `json:"displayName"`
 	MembershipID string `json:"membershipId"`
-	*characterStats
+	*CharacterStats
 }
 
 // NineTime is a custom time wrapper that allows the dates
