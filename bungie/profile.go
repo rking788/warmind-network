@@ -42,7 +42,7 @@ type ProfileMsg struct {
 
 // GetProfileForCurrentUser will retrieve the Profile data for the currently logged in user
 // (determined by the access_token)
-func GetProfileForCurrentUser(client *Client) (*Profile, error) {
+func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profile, error) {
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()
@@ -63,7 +63,7 @@ func GetProfileForCurrentUser(client *Client) (*Profile, error) {
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse)
+	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	for _, char := range profile.Characters {
@@ -73,14 +73,12 @@ func GetProfileForCurrentUser(client *Client) (*Profile, error) {
 	return profile, nil
 }
 
-func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
+func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData bool) *Profile {
 	profile := &Profile{}
 
 	// Profile Component
-	if response.Response.Profile != nil {
-		profile.MembershipID = response.Response.Profile.Data.UserInfo.MembershipID
-		profile.MembershipType = response.Response.Profile.Data.UserInfo.MembershipType
-	}
+	profile.MembershipID = response.membershipID()
+	profile.MembershipType = response.membershipType()
 
 	// Transform character map into an ordered list based on played time.
 	// Characters Component
@@ -105,17 +103,20 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
 
 	// ProfileCurrencies Component
 	if response.Response.ProfileCurrencies != nil {
-		items = append(items, response.Response.ProfileCurrencies.Data.Items...)
+		if !requireInstanceData {
+			items = append(items, response.Response.ProfileCurrencies.Data.Items...)
+		}
 	}
 
 	// ProfileInventory Component
 	if response.Response.ProfileInventory != nil {
 		for _, item := range response.Response.ProfileInventory.Data.Items {
-			if item.InstanceID != "" {
-				item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
+			item.ItemInstance = response.instanceData(item.InstanceID)
+
+			if !requireInstanceData || item.ItemInstance != nil {
+				items = append(items, item)
 			}
 		}
-		items = append(items, response.Response.ProfileInventory.Data.Items...)
 	}
 
 	// CharacterEquipment Component
@@ -129,24 +130,20 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
 			currentLoadout := make(Loadout)
 			for _, item := range list.Items {
 
-				if response.Response.Characters != nil {
-					item.Character = response.Response.Characters.Data[charID]
-				}
-
-				if item.InstanceID != "" && response.Response.ItemComponents != nil &&
-					response.Response.ItemComponents.Instances != nil {
-					item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
-				}
+				item.Character = response.character(charID)
+				item.ItemInstance = response.instanceData(item.InstanceID)
 
 				// We don't need to check IsEquipped here, that is what the CharacterEquipment
 				// group means, just make sure its on the right character.
 				if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
 					currentLoadout[equipmentBucket] = item
 				}
+				if !requireInstanceData || item.ItemInstance != nil {
+					items = append(items, item)
+				}
 			}
 
 			profile.Loadouts[charID] = currentLoadout
-			items = append(items, list.Items...)
 		}
 	}
 
@@ -154,19 +151,18 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse) *Profile {
 	if response.Response.CharacterInventories != nil {
 		for charID, list := range response.Response.CharacterInventories.Data {
 			for _, item := range list.Items {
-				if response.Response.Characters != nil {
-					item.Character = response.Response.Characters.Data[charID]
-				}
-				if item.InstanceID != "" && response.Response.ItemComponents != nil &&
-					response.Response.ItemComponents.Instances != nil {
-					item.ItemInstance = response.Response.ItemComponents.Instances.Data[item.InstanceID]
+				item.Character = response.character(charID)
+				item.ItemInstance = response.instanceData(item.InstanceID)
+
+				if !requireInstanceData || item.ItemInstance != nil {
+					items = append(items, item)
 				}
 			}
-			items = append(items, list.Items...)
 		}
 	}
 
 	profile.AllItems = items
 
+	//fmt.Printf("Found %d items in fixed up profile response\n", len(profile.AllItems))
 	return profile
 }

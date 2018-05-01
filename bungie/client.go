@@ -102,6 +102,39 @@ type GetProfileResponse struct {
 	} `json:"Response"`
 }
 
+func (r *GetProfileResponse) membershipID() string {
+	if r.Response.Profile == nil {
+		return ""
+	}
+
+	return r.Response.Profile.Data.UserInfo.MembershipID
+}
+
+func (r *GetProfileResponse) membershipType() int {
+	if r.Response.Profile == nil {
+		return 0
+	}
+
+	return r.Response.Profile.Data.UserInfo.MembershipType
+}
+
+func (r *GetProfileResponse) character(charID string) *Character {
+	if r.Response.Characters == nil {
+		return nil
+	}
+
+	return r.Response.Characters.Data[charID]
+}
+
+func (r *GetProfileResponse) instanceData(ID string) *ItemInstance {
+	if ID == "" || r.Response.ItemComponents == nil ||
+		r.Response.ItemComponents.Instances == nil {
+		return nil
+	}
+
+	return r.Response.ItemComponents.Instances.Data[ID]
+}
+
 type ItemListData struct {
 	Data *struct {
 		Items ItemList `json:"items"`

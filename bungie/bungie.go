@@ -215,7 +215,7 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// Load all items on all characters
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		response.
 			OutputSpeech("Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app.").
@@ -277,7 +277,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -324,7 +324,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -362,7 +362,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -399,7 +399,7 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -479,7 +479,9 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse)
+	// At some point it could be useful to save emotes, ships, subclasses, etc. That is why
+	// instance data is not required here for getting the profile info.
+	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = bnetMembershipID
 
 	loadout := profile.Loadouts[profile.Characters[0].CharacterID]
@@ -534,7 +536,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse)
+	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = currentAccount.DestinyMembership.MembershipID
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
