@@ -45,10 +45,16 @@ var itemHashLookup map[string]uint
 
 var engramHashes map[uint]bool
 var itemMetadata map[uint]*ItemMetadata
-var BucketHashLookup map[EquipmentBucket]uint
-var EquipmentBucketLookup map[uint]EquipmentBucket
 var bungieAPIKey string
 var warmindAPIKey string
+
+// BucketHashLookup maps all of the equipment bucket constants to their corresponding bucket
+// hashes as defined in the Bungie API.
+var BucketHashLookup map[EquipmentBucket]uint
+
+// EquipmentBucketLookup maps the bucket hash values defined in the Bungie API to the bucket
+// equipment constants.
+var EquipmentBucketLookup map[uint]EquipmentBucket
 
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey string) {
@@ -202,8 +208,6 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 		itemName = translation
 	}
 
-	// hash, err := db.GetItemHashFromName(itemName)
-	// if err != nil {
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
@@ -265,8 +269,6 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		sourceClass = translation
 	}
 
-	//hash, err := db.GetItemHashFromName(itemName)
-	//if err != nil {
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
