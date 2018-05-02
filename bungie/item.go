@@ -136,6 +136,8 @@ func (items ItemList) _FilterItemsMultiple(filters ...ItemFilter) ItemList {
 	return result
 }
 
+// FilterItemsBubble will use the "bubble" approach to filter items in the provided list using the
+// provided filter method and argument.
 func (items ItemList) FilterItemsBubble(filter ItemFilter, arg interface{}) ItemList {
 
 	filterPos := 0
@@ -155,6 +157,8 @@ func (items ItemList) FilterItemsBubble(filter ItemFilter, arg interface{}) Item
 	return result
 }
 
+// FilterItemsMultipleBubble will use the bubble approach and provided filters to filter the items
+// in the item given item list.
 func (items ItemList) FilterItemsMultipleBubble(filters ...ItemFilter) ItemList {
 
 	filterPos := 0

@@ -140,6 +140,7 @@ type TeammatesStats struct {
 	Results []*playerStats
 }
 
+// CharacterStats will store data about specific players as returned by the Trials Report API
 type CharacterStats struct {
 	Matches int `json:"matches"`
 	Deaths  int `json:"deaths"`
@@ -160,7 +161,9 @@ type NineTime struct {
 	time.Time
 }
 
-func (self *NineTime) UnmarshalJSON(b []byte) (err error) {
+// UnmarshalJSON is responsible for unmarshaling a time.Time in the format provided by
+// Trials Report
+func (nt *NineTime) UnmarshalJSON(b []byte) (err error) {
 	s := string(b)
 
 	// Get rid of the quotes "" around the value.
@@ -173,6 +176,6 @@ func (self *NineTime) UnmarshalJSON(b []byte) (err error) {
 	if err != nil {
 		t, err = time.Parse("2006-01-02T15:04:05.999999999Z0700", s)
 	}
-	self.Time = t
+	nt.Time = t
 	return
 }

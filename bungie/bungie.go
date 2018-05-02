@@ -45,10 +45,16 @@ var itemHashLookup map[string]uint
 
 var engramHashes map[uint]bool
 var itemMetadata map[uint]*ItemMetadata
-var BucketHashLookup map[EquipmentBucket]uint
-var EquipmentBucketLookup map[uint]EquipmentBucket
 var bungieAPIKey string
 var warmindAPIKey string
+
+// BucketHashLookup maps all of the equipment bucket constants to their corresponding bucket
+// hashes as defined in the Bungie API.
+var BucketHashLookup map[EquipmentBucket]uint
+
+// EquipmentBucketLookup maps the bucket hash values defined in the Bungie API to the bucket
+// equipment constants.
+var EquipmentBucketLookup map[uint]EquipmentBucket
 
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey string) {
@@ -202,8 +208,6 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 		itemName = translation
 	}
 
-	// hash, err := db.GetItemHashFromName(itemName)
-	// if err != nil {
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
@@ -215,7 +219,7 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// Load all items on all characters
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		response.
 			OutputSpeech("Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app.").
@@ -265,8 +269,6 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		sourceClass = translation
 	}
 
-	//hash, err := db.GetItemHashFromName(itemName)
-	//if err != nil {
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
@@ -277,7 +279,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -324,7 +326,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -362,7 +364,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -399,7 +401,7 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client)
+	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
@@ -479,7 +481,9 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse)
+	// At some point it could be useful to save emotes, ships, subclasses, etc. That is why
+	// instance data is not required here for getting the profile info.
+	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = bnetMembershipID
 
 	loadout := profile.Loadouts[profile.Characters[0].CharacterID]
@@ -534,12 +538,13 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse)
+	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = currentAccount.DestinyMembership.MembershipID
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
-		response.OutputSpeech("Sorry Guardian, a loadout could not be found with the name " + name)
+		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s."+
+			"You need to create a loadout with that name before it can be equipped.", name))
 		return response, nil
 	} else if err != nil {
 		glg.Errorf("Failed to read loadout from the database")

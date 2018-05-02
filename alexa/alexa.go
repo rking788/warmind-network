@@ -331,7 +331,7 @@ func EquipNamedLoadout(request *skillserver.EchoRequest) (response *skillserver.
 	response, err := bungie.EquipNamedLoadout(accessToken, loadoutName)
 
 	if err != nil {
-		glg.Errorf("Error occurred creating loadout: %s", err.Error())
+		glg.Errorf("Error occurred equipping loadout: %s", err.Error())
 		response.OutputSpeech("Sorry Guardian, an error occurred equipping your loadout.")
 	}
 

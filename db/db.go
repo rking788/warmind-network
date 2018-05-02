@@ -16,6 +16,8 @@ const (
 	UnknownItemTable = "unknown_items"
 )
 
+// LookupDB is a wrapper around the database connection pool that stores the commonly used queries
+// as prepared statements.
 type LookupDB struct {
 	Database                *sql.DB
 	HashFromNameStmt        *sql.Stmt
@@ -173,31 +175,6 @@ func LoadItemMetadata() (*sql.Rows, error) {
 	}
 
 	return rows, nil
-}
-
-// GetItemHashFromName is in charge of querying the database and reading
-// the item hash value for the given item name.
-func GetItemHashFromName_old(itemName string) (uint, error) {
-
-	db, err := GetDBConnection()
-	if err != nil {
-		return 0, err
-	}
-
-	row := db.HashFromNameStmt.QueryRow(itemName)
-
-	var hash uint
-	err = row.Scan(&hash)
-
-	if err == sql.ErrNoRows {
-		glg.Warnf("Didn't find any transferrable items with that name: %s", itemName)
-		InsertUnknownValueIntoTable(itemName, UnknownItemTable)
-		return 0, errors.New("No items found")
-	} else if err != nil {
-		return 0, errors.New(err.Error())
-	}
-
-	return hash, nil
 }
 
 // GetItemNameFromHash is in charge of querying the database and reading

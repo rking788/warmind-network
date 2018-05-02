@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 	"testing"
 
@@ -47,7 +48,7 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -64,7 +65,7 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -85,7 +86,7 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -106,7 +107,7 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -127,7 +128,7 @@ func BenchmarkFilteringPassthrough(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -163,7 +164,7 @@ func TestFilteringSingleFilterBubble(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 
@@ -186,7 +187,7 @@ func TestFilteringMultipleFilter(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 
@@ -248,7 +249,7 @@ func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -265,7 +266,7 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -286,7 +287,7 @@ func BenchmarkMaxLight(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -303,7 +304,7 @@ func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -321,7 +322,7 @@ func BenchmarkFindRandomLoadoutAll(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse)
+	profile := fixupProfileFromProfileResponse(profileResponse, false)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -338,7 +339,7 @@ func BenchmarkGroupAndSort(b *testing.B) {
 	if err != nil {
 		b.FailNow()
 	}
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -357,7 +358,7 @@ func BenchmarkBestItemForBucket(b *testing.B) {
 	if err != nil {
 		b.FailNow()
 	}
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	grouped := groupAndSortGear(profile.AllItems)
 	largestBucket := Kinetic
 	largestBucketSize := len(grouped[Kinetic])
@@ -389,7 +390,7 @@ func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		profile := fixupProfileFromProfileResponse(response)
+		profile := fixupProfileFromProfileResponse(response, false)
 		if profile == nil {
 			b.FailNow()
 		}
@@ -444,26 +445,31 @@ func TestParseGetProfileResponse(t *testing.T) {
 	}
 
 	if len(response.Response.Characters.Data) != 3 {
+		fmt.Println("Character count incorrect")
 		t.FailNow()
 	}
 
-	if len(response.Response.ProfileCurrencies.Data.Items) != 1 {
+	if len(response.Response.ProfileCurrencies.Data.Items) != 3 {
+		fmt.Println("Currency count incorrect")
 		t.FailNow()
 	}
 
 	if len(response.Response.CharacterEquipment.Data) == 0 || len(response.Response.CharacterInventories.Data) == 0 {
+		fmt.Println("Incorrect number of character equipment and character inventory items.")
 		t.FailNow()
 	}
 
 	for _, char := range response.Response.CharacterEquipment.Data {
 		for _, item := range char.Items {
 			if item.InstanceID == "" {
+				fmt.Println("Found a character equiment item without an instance ID")
 				t.FailNow()
 			}
 		}
 	}
 
 	if response.Response.ProfileCurrencies.Data.Items[0].InstanceID != "" {
+		fmt.Println("Found a profile currency entry with an instance ID")
 		t.FailNow()
 	}
 }
@@ -476,7 +482,21 @@ func TestFixupProfileFromProfileResponse(t *testing.T) {
 		t.FailNow()
 	}
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
+	if profile == nil {
+		t.FailNow()
+	}
+}
+
+func TestFixupProfileFromProfileResponseOnlyInstanced(t *testing.T) {
+
+	setup()
+	response, err := getCurrentProfileResponse()
+	if err != nil {
+		t.FailNow()
+	}
+
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -491,7 +511,7 @@ func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
 	}
 	response.Response.Profile = nil
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -513,7 +533,7 @@ func TestFixupProfileFromProfileResponseMissingProfileInventory(t *testing.T) {
 	}
 	response.Response.ProfileInventory = nil
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -528,7 +548,7 @@ func TestFixupProfileFromProfileResponseMissingCharacters(t *testing.T) {
 	}
 	response.Response.Characters = nil
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -553,7 +573,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterEquipment(t *testing.T) 
 	}
 	response.Response.CharacterEquipment = nil
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -574,9 +594,40 @@ func TestFixupProfileFromProfileResponseMissingCharacterInventories(t *testing.T
 	}
 	response.Response.CharacterInventories = nil
 
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
+	}
+}
+
+func TestGroupAndSort(t *testing.T) {
+	setup()
+	response, err := getCurrentProfileResponse()
+	if err != nil {
+		t.Fatal("Failed to get current profile for test")
+	}
+
+	profile := fixupProfileFromProfileResponse(response, false)
+	if profile == nil {
+		t.Fatal("Failed to fixup profile from response")
+	}
+
+	groupedAndSorted := groupAndSortGear(profile.AllItems)
+	for bkt, items := range groupedAndSorted {
+		targetHash := BucketHashLookup[bkt]
+		lastPower := math.MaxInt64
+
+		for _, item := range items {
+			if item.BucketHash != targetHash {
+				t.Fatalf("Item did not have the correct bucket hash: Required=%d, Found=%d", targetHash, item.BucketHash)
+			}
+
+			if lastPower < item.Power() {
+				t.Fatalf("Found new Power higher than a previous value: Previous=%d, Current=%d", lastPower, item.Power())
+			}
+
+			lastPower = item.Power()
+		}
 	}
 }
 
@@ -588,12 +639,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 		t.FailNow()
 	}
 
-	response.Response.CharacterInventories = nil
-	response.Response.ProfileInventory = nil
-	response.Response.ProfileCurrencies = nil
-	response.Response.Profile = nil
-
-	profile := fixupProfileFromProfileResponse(response)
+	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
 		t.FailNow()
 	}

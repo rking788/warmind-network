@@ -307,16 +307,20 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 
 	result := make(map[EquipmentBucket]ItemList)
 
-	result[Kinetic] = sortGearBucket(BucketHashLookup[Kinetic], inventory)
-	result[Energy] = sortGearBucket(BucketHashLookup[Energy], inventory)
-	result[Power] = sortGearBucket(BucketHashLookup[Power], inventory)
-	result[Ghost] = sortGearBucket(BucketHashLookup[Ghost], inventory)
+	for i := Kinetic; i <= Artifact; i++ {
+		result[i] = make(ItemList, 0, 20)
+	}
 
-	result[Helmet] = sortGearBucket(BucketHashLookup[Helmet], inventory)
-	result[Gauntlets] = sortGearBucket(BucketHashLookup[Gauntlets], inventory)
-	result[Chest] = sortGearBucket(BucketHashLookup[Chest], inventory)
-	result[Legs] = sortGearBucket(BucketHashLookup[Legs], inventory)
-	result[ClassArmor] = sortGearBucket(BucketHashLookup[ClassArmor], inventory)
+	for _, item := range inventory {
+		bkt := EquipmentBucketLookup[item.BucketHash]
+		if bkt != 0 {
+			result[bkt] = append(result[bkt], item)
+		}
+	}
+
+	for i := Kinetic; i <= Artifact; i++ {
+		sort.Sort(sort.Reverse(LightSort(result[i])))
+	}
 
 	return result
 }

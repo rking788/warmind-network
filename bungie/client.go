@@ -33,7 +33,10 @@ type BaseResponse struct {
 	MessageData     interface{} `json:"MessageData"`
 }
 
-func (b *BaseResponse) ErrCode() int      { return b.ErrorCode }
+// ErrCode returns the err code field from a Bungie response
+func (b *BaseResponse) ErrCode() int { return b.ErrorCode }
+
+// ErrStatus returns the status string provided in the Bungie response
 func (b *BaseResponse) ErrStatus() string { return b.ErrorStatus }
 func (b *BaseResponse) String() string {
 	if b != nil {
@@ -61,19 +64,21 @@ type CurrentUserMemberships struct {
 	DestinyMembership *DestinyMembership
 }
 
+// BungieNetUser holds fields relating to a specific Bungie membership
 type BungieNetUser struct {
 	MembershipID string `json:"membershipId"`
 }
 
+// DestinyMembership holds information about a specific Destiny membership
 type DestinyMembership struct {
 	DisplayName    string `json:"displayName"`
 	MembershipType int    `json:"membershipType"`
 	MembershipID   string `json:"membershipId"`
 }
 
-// GetProfileResponse is the response from the GetProfile endpoint. This data contains information about
-// the characeters, inventories, profile inventory, and equipped loadouts.
-// https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile
+// GetProfileResponse is the response from the GetProfile endpoint. This data contains
+// information about the characeters, inventories, profile inventory, and equipped loadouts.
+//https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile
 type GetProfileResponse struct {
 	*BaseResponse
 	Response *struct {
@@ -102,19 +107,56 @@ type GetProfileResponse struct {
 	} `json:"Response"`
 }
 
+func (r *GetProfileResponse) membershipID() string {
+	if r.Response.Profile == nil {
+		return ""
+	}
+
+	return r.Response.Profile.Data.UserInfo.MembershipID
+}
+
+func (r *GetProfileResponse) membershipType() int {
+	if r.Response.Profile == nil {
+		return 0
+	}
+
+	return r.Response.Profile.Data.UserInfo.MembershipType
+}
+
+func (r *GetProfileResponse) character(charID string) *Character {
+	if r.Response.Characters == nil {
+		return nil
+	}
+
+	return r.Response.Characters.Data[charID]
+}
+
+func (r *GetProfileResponse) instanceData(ID string) *ItemInstance {
+	if ID == "" || r.Response.ItemComponents == nil ||
+		r.Response.ItemComponents.Instances == nil {
+		return nil
+	}
+
+	return r.Response.ItemComponents.Instances.Data[ID]
+}
+
+// ItemListData contains the list of Items in the format returned by the Bungie.net API
 type ItemListData struct {
 	Data *struct {
 		Items ItemList `json:"items"`
 	} `json:"data"`
 }
 
+// CharacterMappedItemListData contains the lists of item data mapped by the character ID
+// to which they are associated.
 type CharacterMappedItemListData struct {
 	Data map[string]*struct {
 		Items ItemList `json:"items"`
 	} `json:"data"`
 }
 
-// ClientPool is a simple client buffer that will provided round robin access to a collection of Clients.
+// ClientPool is a simple client buffer that will provided round robin access to a collection
+// of Clients.
 type ClientPool struct {
 	Clients []*Client
 	current int
