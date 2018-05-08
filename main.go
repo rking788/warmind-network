@@ -36,6 +36,7 @@ var (
 		"CreateLoadout":            alexa.AuthWrapper(alexa.CreateLoadout),
 		"EquipNamedLoadout":        alexa.AuthWrapper(alexa.EquipNamedLoadout),
 		"ListLoadouts":             alexa.AuthWrapper(alexa.ListLoadouts),
+		"TopActivities":            alexa.TopActivities,
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
 	}
 )

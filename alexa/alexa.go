@@ -8,6 +8,7 @@ import (
 
 	"github.com/kpango/glg"
 	"github.com/rking788/warmind-network/bungie"
+	"github.com/rking788/warmind-network/charlemagne"
 	"github.com/rking788/warmind-network/db"
 	"github.com/rking788/warmind-network/trials"
 
@@ -417,15 +418,30 @@ func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver
 
 // PopularWeaponTypes will return info about what classes of weapons are getting
 // the most kills in Trials of the Nine.
-func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
+func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
 
 	response, err := trials.GetPopularWeaponTypes()
 	if err != nil {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
 			"this time, please try again later")
-		return
+		return response
 	}
 
-	return
+	return response
+}
+
+/**
+ * Charlemagne
+ */
+func TopActivities(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
+
+	platform, _ := echoRequest.GetSlotValue("platform")
+	response, err := charlemagne.FindMostPopularActivities(platform)
+	if err != nil {
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, there was an issue contacting Charlemagne, " +
+			"please try again later.")
+	}
+	return response
 }

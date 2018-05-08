@@ -1,0 +1,264 @@
+{
+    "response": {
+        "windowSizeInSec": 10800,
+        "averageConcurrentPlayers": 40810,
+        "activityByModeType": {
+            "competitive": {
+                "mode": 9,
+                "percentagePlayed": 0.9725175476406106,
+                "rawScore": 396
+            },
+            "iron-banner": {
+                "mode": 19,
+                "percentagePlayed": 31.91226893581317,
+                "rawScore": 13023
+            },
+            "nightfall": {
+                "mode": 16,
+                "percentagePlayed": 14.980071423284574,
+                "rawScore": 6113
+            },
+            "patrol": {
+                "mode": 6,
+                "percentagePlayed": 23.404336287332576,
+                "rawScore": 9551
+            },
+            "quickplay": {
+                "mode": 8,
+                "percentagePlayed": 2.406239205272507,
+                "rawScore": 982
+            },
+            "raid": {
+                "mode": 4,
+                "percentagePlayed": 5.98399868908953,
+                "rawScore": 2442
+            },
+            "story": {
+                "mode": 2,
+                "percentagePlayed": 9.274934795424564,
+                "rawScore": 3785
+            },
+            "strikes": {
+                "mode": 3,
+                "percentagePlayed": 11.06563311614247,
+                "rawScore": 4515
+            }
+        },
+        "activityByRaid": {
+            "1685065161": {
+                "activityHash": "1685065161",
+                "percentagePlayed": 22.09791987813845,
+                "rawScore": 539
+            },
+            "2693136600": {
+                "activityHash": "2693136600",
+                "percentagePlayed": 52.54934350524623,
+                "rawScore": 1283
+            },
+            "3089205900": {
+                "activityHash": "3089205900",
+                "percentagePlayed": 25.352736616615324,
+                "rawScore": 619
+            }
+        },
+        "activityByPlatform": {
+            "1": {
+                "membershipType": 1,
+                "displayName": "Xbox",
+                "rawScore": 13615,
+                "percent": 33.362233357532574,
+                "activityByModeType": {
+                    "competitive": {
+                        "mode": 9,
+                        "percentagePlayed": 0.8965274863773534,
+                        "rawScore": 122
+                    },
+                    "iron-banner": {
+                        "mode": 19,
+                        "percentagePlayed": 33.04873240019172,
+                        "rawScore": 4499
+                    },
+                    "nightfall": {
+                        "mode": 16,
+                        "percentagePlayed": 13.578261184195847,
+                        "rawScore": 1848
+                    },
+                    "patrol": {
+                        "mode": 6,
+                        "percentagePlayed": 24.026240798865484,
+                        "rawScore": 3271
+                    },
+                    "quickplay": {
+                        "mode": 8,
+                        "percentagePlayed": 2.294881838205157,
+                        "rawScore": 312
+                    },
+                    "raid": {
+                        "mode": 4,
+                        "percentagePlayed": 4.822666774922943,
+                        "rawScore": 656
+                    },
+                    "story": {
+                        "mode": 2,
+                        "percentagePlayed": 9.165881975284586,
+                        "rawScore": 1247
+                    },
+                    "strikes": {
+                        "mode": 3,
+                        "percentagePlayed": 12.166807541956917,
+                        "rawScore": 1656
+                    }
+                },
+                "activityByRaid": {
+                    "1685065161": {
+                        "activityHash": "1685065161",
+                        "percentagePlayed": 15.5720650436541,
+                        "rawScore": 102
+                    },
+                    "2693136600": {
+                        "activityHash": "2693136600",
+                        "percentagePlayed": 54.5225053214779,
+                        "rawScore": 358
+                    },
+                    "3089205900": {
+                        "activityHash": "3089205900",
+                        "percentagePlayed": 29.905429634868003,
+                        "rawScore": 196
+                    }
+                }
+            },
+            "2": {
+                "membershipType": 2,
+                "displayName": "Playstation",
+                "rawScore": 21630,
+                "percent": 53.001519572281154,
+                "activityByModeType": {
+                    "competitive": {
+                        "mode": 9,
+                        "percentagePlayed": 1.0708379730777242,
+                        "rawScore": 231
+                    },
+                    "iron-banner": {
+                        "mode": 19,
+                        "percentagePlayed": 32.8579067085414,
+                        "rawScore": 7107
+                    },
+                    "nightfall": {
+                        "mode": 16,
+                        "percentagePlayed": 16.30547445097839,
+                        "rawScore": 3526
+                    },
+                    "patrol": {
+                        "mode": 6,
+                        "percentagePlayed": 21.82700396580132,
+                        "rawScore": 4721
+                    },
+                    "quickplay": {
+                        "mode": 8,
+                        "percentagePlayed": 2.305466480344466,
+                        "rawScore": 498
+                    },
+                    "raid": {
+                        "mode": 4,
+                        "percentagePlayed": 6.49472251357391,
+                        "rawScore": 1404
+                    },
+                    "story": {
+                        "mode": 2,
+                        "percentagePlayed": 8.637719050795784,
+                        "rawScore": 1868
+                    },
+                    "strikes": {
+                        "mode": 3,
+                        "percentagePlayed": 10.500868856886997,
+                        "rawScore": 2271
+                    }
+                },
+                "activityByRaid": {
+                    "1685065161": {
+                        "activityHash": "1685065161",
+                        "percentagePlayed": 23.25447398392846,
+                        "rawScore": 326
+                    },
+                    "2693136600": {
+                        "activityHash": "2693136600",
+                        "percentagePlayed": 53.09412107438888,
+                        "rawScore": 745
+                    },
+                    "3089205900": {
+                        "activityHash": "3089205900",
+                        "percentagePlayed": 23.65140494168266,
+                        "rawScore": 332
+                    }
+                }
+            },
+            "4": {
+                "membershipType": 4,
+                "displayName": "PC/Blizzard",
+                "rawScore": 5565,
+                "percent": 13.636247070186272,
+                "activityByModeType": {
+                    "competitive": {
+                        "mode": 9,
+                        "percentagePlayed": 0.7762807250992565,
+                        "rawScore": 43
+                    },
+                    "iron-banner": {
+                        "mode": 19,
+                        "percentagePlayed": 25.456299212814592,
+                        "rawScore": 1416
+                    },
+                    "nightfall": {
+                        "mode": 16,
+                        "percentagePlayed": 13.258127396224854,
+                        "rawScore": 737
+                    },
+                    "patrol": {
+                        "mode": 6,
+                        "percentagePlayed": 28.013587362665916,
+                        "rawScore": 1558
+                    },
+                    "quickplay": {
+                        "mode": 8,
+                        "percentagePlayed": 3.070369003756958,
+                        "rawScore": 170
+                    },
+                    "raid": {
+                        "mode": 4,
+                        "percentagePlayed": 6.840208428209269,
+                        "rawScore": 380
+                    },
+                    "story": {
+                        "mode": 2,
+                        "percentagePlayed": 12.018479130017193,
+                        "rawScore": 668
+                    },
+                    "strikes": {
+                        "mode": 3,
+                        "percentagePlayed": 10.566648741211967,
+                        "rawScore": 588
+                    }
+                },
+                "activityByRaid": {
+                    "1685065161": {
+                        "activityHash": "1685065161",
+                        "percentagePlayed": 29.08647811898586,
+                        "rawScore": 110
+                    },
+                    "2693136600": {
+                        "activityHash": "2693136600",
+                        "percentagePlayed": 47.135225620897735,
+                        "rawScore": 179
+                    },
+                    "3089205900": {
+                        "activityHash": "3089205900",
+                        "percentagePlayed": 23.778296260116406,
+                        "rawScore": 90
+                    }
+                }
+            }
+        }
+    },
+    "errorCode": 0,
+    "errorMessage": "Success"
+}

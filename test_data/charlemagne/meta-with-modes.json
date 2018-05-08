@@ -1,0 +1,195 @@
+{
+    "response": {
+        "weekNumber": 35,
+        "modeTypes": "10,12,15,31,37,38,41,42,43,44,45",
+        "membershipTypes": "2",
+        "topKineticWeapons": [
+            {
+                "weaponId": 3628991659,
+                "weaponName": "Vigilance Wing",
+                "totalKills": 1253161,
+                "weaponType": "Pulse Rifle"
+            },
+            {
+                "weaponId": 1644162710,
+                "weaponName": "Origin Story",
+                "totalKills": 309466,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 566976653,
+                "weaponName": "Antiope-D",
+                "totalKills": 253323,
+                "weaponType": "Submachine Gun"
+            },
+            {
+                "weaponId": 1369487074,
+                "weaponName": "Orimund's Anvil",
+                "totalKills": 250020,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 1331482397,
+                "weaponName": "MIDA Multi-Tool",
+                "totalKills": 193286,
+                "weaponType": "Scout Rifle"
+            },
+            {
+                "weaponId": 1048266744,
+                "weaponName": "Better Devils",
+                "totalKills": 153795,
+                "weaponType": "Hand Cannon"
+            },
+            {
+                "weaponId": 3762467078,
+                "weaponName": "Scathelocke",
+                "totalKills": 141375,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 2014642399,
+                "weaponName": "The Forward Path",
+                "totalKills": 97981,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 1960218487,
+                "weaponName": "Nameless Midnight",
+                "totalKills": 91078,
+                "weaponType": "Scout Rifle"
+            },
+            {
+                "weaponId": 4425887,
+                "weaponName": "The Time-Worn Spire",
+                "totalKills": 66387,
+                "weaponType": "Pulse Rifle"
+            }
+        ],
+        "topEnergyWeapons": [
+            {
+                "weaponId": 3762467076,
+                "weaponName": "Uriel's Gift",
+                "totalKills": 658547,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3393130645,
+                "weaponName": "Positive Outlook",
+                "totalKills": 417470,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 1911843791,
+                "weaponName": "Last Hope",
+                "totalKills": 177607,
+                "weaponType": "Sidearm"
+            },
+            {
+                "weaponId": 1909527966,
+                "weaponName": "Prosecutor",
+                "totalKills": 124586,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3336215727,
+                "weaponName": "Martyr's Make",
+                "totalKills": 100648,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 325519402,
+                "weaponName": "Darkest Before",
+                "totalKills": 89092,
+                "weaponType": "Pulse Rifle"
+            },
+            {
+                "weaponId": 4124984448,
+                "weaponName": "Hard Light",
+                "totalKills": 67228,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3854359821,
+                "weaponName": "The Number",
+                "totalKills": 62180,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3628991658,
+                "weaponName": "Graviton Lance",
+                "totalKills": 58304,
+                "weaponType": "Pulse Rifle"
+            },
+            {
+                "weaponId": 3762467079,
+                "weaponName": "Valakadyn",
+                "totalKills": 56143,
+                "weaponType": "Auto Rifle"
+            }
+        ],
+        "topPowerWeapons": [
+            {
+                "weaponId": 3899270607,
+                "weaponName": "The Colony",
+                "totalKills": 289326,
+                "weaponType": "Grenade Launcher"
+            },
+            {
+                "weaponId": 3691881271,
+                "weaponName": "Sins of the Past",
+                "totalKills": 165378,
+                "weaponType": "Rocket Launcher"
+            },
+            {
+                "weaponId": 3445437901,
+                "weaponName": "Main Ingredient",
+                "totalKills": 94856,
+                "weaponType": "Fusion Rifle"
+            },
+            {
+                "weaponId": 1180270692,
+                "weaponName": "Quickfang",
+                "totalKills": 86875,
+                "weaponType": "Sword"
+            },
+            {
+                "weaponId": 3580904580,
+                "weaponName": "Legend of Acrius",
+                "totalKills": 85935,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 2208405142,
+                "weaponName": "Telesto",
+                "totalKills": 65721,
+                "weaponType": "Fusion Rifle"
+            },
+            {
+                "weaponId": 1508896098,
+                "weaponName": "The Wardcliff Coil",
+                "totalKills": 57623,
+                "weaponType": "Rocket Launcher"
+            },
+            {
+                "weaponId": 731147177,
+                "weaponName": "Hawthorne's Field-Forged Shotgun",
+                "totalKills": 46594,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 2248667690,
+                "weaponName": "Perfect Paradox",
+                "totalKills": 41316,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 2621637518,
+                "weaponName": "Play of the Game",
+                "totalKills": 36943,
+                "weaponType": "Grenade Launcher"
+            }
+        ]
+    },
+    "errorCode": 0,
+    "errorMessage": "Success"
+}

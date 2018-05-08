@@ -1,0 +1,194 @@
+{
+    "response": {
+        "weekNumber": 35,
+        "activityHash": "1685065161",
+        "topKineticWeapons": [
+            {
+                "weaponId": 1048266744,
+                "weaponName": "Better Devils",
+                "totalKills": 259448,
+                "weaponType": "Hand Cannon"
+            },
+            {
+                "weaponId": 1128225405,
+                "weaponName": "Midnight Coup",
+                "totalKills": 116568,
+                "weaponType": "Hand Cannon"
+            },
+            {
+                "weaponId": 1960218487,
+                "weaponName": "Nameless Midnight",
+                "totalKills": 108794,
+                "weaponType": "Scout Rifle"
+            },
+            {
+                "weaponId": 1644162710,
+                "weaponName": "Origin Story",
+                "totalKills": 37760,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 4238497225,
+                "weaponName": "D.F.A.",
+                "totalKills": 36377,
+                "weaponType": "Hand Cannon"
+            },
+            {
+                "weaponId": 2505533224,
+                "weaponName": "Ghost Primus",
+                "totalKills": 29184,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 2516360525,
+                "weaponName": "Purpose",
+                "totalKills": 17924,
+                "weaponType": "Scout Rifle"
+            },
+            {
+                "weaponId": 1457979868,
+                "weaponName": "Duty Bound",
+                "totalKills": 15876,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 1369487074,
+                "weaponName": "Orimund's Anvil",
+                "totalKills": 6703,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3762467078,
+                "weaponName": "Scathelocke",
+                "totalKills": 6645,
+                "weaponType": "Auto Rifle"
+            }
+        ],
+        "topEnergyWeapons": [
+            {
+                "weaponId": 3393130645,
+                "weaponName": "Positive Outlook",
+                "totalKills": 67381,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3762467076,
+                "weaponName": "Uriel's Gift",
+                "totalKills": 42444,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 3762467079,
+                "weaponName": "Valakadyn",
+                "totalKills": 24373,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 925326393,
+                "weaponName": "Manannan SR4",
+                "totalKills": 17121,
+                "weaponType": "Scout Rifle"
+            },
+            {
+                "weaponId": 3325744914,
+                "weaponName": "Inaugural Address",
+                "totalKills": 11022,
+                "weaponType": "Pulse Rifle"
+            },
+            {
+                "weaponId": 1909527966,
+                "weaponName": "Prosecutor",
+                "totalKills": 8189,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 1345867571,
+                "weaponName": "Coldheart",
+                "totalKills": 6668,
+                "weaponType": "Trace Rifle"
+            },
+            {
+                "weaponId": 3188460622,
+                "weaponName": "Null Calamity 9",
+                "totalKills": 5160,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 4124984448,
+                "weaponName": "Hard Light",
+                "totalKills": 5012,
+                "weaponType": "Auto Rifle"
+            },
+            {
+                "weaponId": 325519402,
+                "weaponName": "Darkest Before",
+                "totalKills": 4926,
+                "weaponType": "Pulse Rifle"
+            }
+        ],
+        "topPowerWeapons": [
+            {
+                "weaponId": 3691881271,
+                "weaponName": "Sins of the Past",
+                "totalKills": 74573,
+                "weaponType": "Rocket Launcher"
+            },
+            {
+                "weaponId": 3580904580,
+                "weaponName": "Legend of Acrius",
+                "totalKills": 39888,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 1508896098,
+                "weaponName": "The Wardcliff Coil",
+                "totalKills": 35601,
+                "weaponType": "Rocket Launcher"
+            },
+            {
+                "weaponId": 137879537,
+                "weaponName": "Curtain Call",
+                "totalKills": 15065,
+                "weaponType": "Rocket Launcher"
+            },
+            {
+                "weaponId": 4190156464,
+                "weaponName": "Merciless",
+                "totalKills": 9899,
+                "weaponType": "Fusion Rifle"
+            },
+            {
+                "weaponId": 2208405142,
+                "weaponName": "Telesto",
+                "totalKills": 6183,
+                "weaponType": "Fusion Rifle"
+            },
+            {
+                "weaponId": 2707464805,
+                "weaponName": "Zenith of Your Kind",
+                "totalKills": 5376,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 2248667690,
+                "weaponName": "Perfect Paradox",
+                "totalKills": 2755,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 1744115122,
+                "weaponName": "Legend of Acrius",
+                "totalKills": 1550,
+                "weaponType": "Shotgun"
+            },
+            {
+                "weaponId": 731147177,
+                "weaponName": "Hawthorne's Field-Forged Shotgun",
+                "totalKills": 1479,
+                "weaponType": "Shotgun"
+            }
+        ]
+    },
+    "errorCode": 0,
+    "errorMessage": "Success"
+}
