@@ -28,7 +28,7 @@ coverage:
 #	go test --coverprofile=coverage.out
 #	go tool cover -html=coverage.out
 deploy: genversion
-	GOOS=linux GOARCH=amd64 go build
+	GOOS=linux GOARCH=amd64 /usr/local/opt/go\@1.8/bin/go build
 	scp ./$(APP_NAME) do:
 	rm $(APP_NAME)
 clean:

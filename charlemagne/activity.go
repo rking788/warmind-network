@@ -2,7 +2,6 @@ package charlemagne
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 
 	"github.com/rking788/go-alexa/skillserver"
@@ -27,8 +26,9 @@ type InnerActivityResponse struct {
 // ActivitySummary contains data that summarizes the activity stats. It seems
 // (from the sample responses) that either activity hash or mode will be provided but not both
 type ActivitySummary struct {
-	ActivityHash     string  `json:"activityHash"`
-	Mode             int     `json:"mode"`
+	ActivityHash     string `json:"activityHash"`
+	Mode             int    `json:"mode"`
+	ModeName         string
 	PercentagePlayed float64 `json:"percentagePlayed"`
 	RawScore         int     `json:"rawScore"`
 }
@@ -86,13 +86,14 @@ func FindMostPopularActivities(platform string) (*skillserver.EchoResponse, erro
 	} else {
 		activity = activityResp.ActivityByPlatform[translatedPlatform].ActivityByMode
 	}
-	fmt.Println(activity)
+
 	ordered := sortPlayerActivityModes(activity)
 
 	speechBuffer := bytes.NewBuffer([]byte("Guardian, according to Charlemagne, " +
 		"the top three activities being played right now are: "))
-	for _, activity := range ordered[:3] {
-		speechBuffer.WriteString(modeTypeToName[activity.Mode])
+	for i := 0; i < 3; i++ {
+		activity := ordered[i]
+		speechBuffer.WriteString(activity.ModeName + ", ")
 	}
 	speechBuffer.Write([]byte(". Go get that loot!"))
 
@@ -118,6 +119,6 @@ func sortPlayerActivityModes(activity map[string]*ActivitySummary) []*ActivitySu
 		result = append(result, summary)
 	}
 
-	sort.Sort(activitySort(result))
+	sort.Sort(sort.Reverse(activitySort(result)))
 	return result
 }
