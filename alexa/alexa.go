@@ -128,9 +128,9 @@ func AuthWrapper(handler Handler) Handler {
 func WelcomePrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
 	response = skillserver.NewEchoResponse()
 
-	response.OutputSpeech("Welcome Guardian, would you like to equip max power, unload engrams, or transfer an item to a specific character, " +
+	response.OutputSpeech("Welcome Guardian, would you like to equip max power, or transfer an item to a specific character, " +
 		"find out how many of an item you have, or ask about Trials of the Nine?").
-		Reprompt("Do you want to equip max power, unload engrams, transfer an item, find out how much of an item you have, or ask about Trials of the Nine?").
+		Reprompt("Do you want to equip max power, transfer an item, find out how much of an item you have, or ask about Trials of the Nine?").
 		EndSession(false)
 
 	return
@@ -143,7 +143,7 @@ func HelpPrompt(echoRequest *skillserver.EchoRequest) (response *skillserver.Ech
 	response = skillserver.NewEchoResponse()
 
 	response.OutputSpeech("Welcome Guardian, I am here to help manage your Destiny in-game inventory. You can ask " +
-		"me to equip your max power loadout, unload engrams from your inventory, or transfer items between your available " +
+		"me to equip your max power loadout, or transfer items between your available " +
 		"characters including the vault. You can also ask how many of an " +
 		"item you have. Trials of the Nine statistics provided by Trials Report are available too.").
 		EndSession(false)

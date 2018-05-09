@@ -98,14 +98,17 @@ func TestSortedActivityByMode(t *testing.T) {
 
 	sorted := sortPlayerActivityModes(response.ActivityByMode)
 	prev := sorted[0]
-	for _, activity := range sorted[1:] {
-		if activity.PercentagePlayed < prev.PercentagePlayed {
-			t.Fatal("Not actually sorted, current is less than the previous percentage played")
+
+	for _, activity := range sorted {
+		if activity.PercentagePlayed > prev.PercentagePlayed {
+			t.Fatal("Not actually sorted, current is greater than the previous percentage played")
 		}
 
 		if _, ok := modeTypeToName[activity.Mode]; !ok {
 			t.Fatalf("Could not find %d mode value in mode type lookup table", activity.Mode)
 		}
+
+		prev = activity
 	}
 }
 

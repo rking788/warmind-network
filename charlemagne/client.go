@@ -51,6 +51,21 @@ func (c *Client) GetPlayerActivity() (*ActivityResponse, error) {
 	result := &ActivityResponse{}
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(result)
+	if err != nil {
+		return nil, err
+	}
+
+	// The activity summary objects contain game modes as ints. Instead of having to do the lookup
+	// for each one, inject the map key into the summary struct.
+	for name, summary := range result.ActivityByMode {
+		summary.ModeName = name
+	}
+
+	for _, platformActivity := range result.ActivityByPlatform {
+		for name, summary := range platformActivity.ActivityByMode {
+			summary.ModeName = name
+		}
+	}
 
 	return result, err
 }
@@ -58,7 +73,7 @@ func (c *Client) GetPlayerActivity() (*ActivityResponse, error) {
 // GetCurrentMeta will request informatino about the current "meta" in Destiny 2. The parameters
 // can be used to filter the meta information returned by the API if a particular activity
 // is requested, a set of game modes, or a specific platform.
-func (c *Client) GetCurrentMeta(activityHash string, gameModes []string, membershipType int) (*MetaResponse, error) {
+func (c *Client) GetCurrentMeta(activityHash string, gameModes []string, membershipType string) (*MetaResponse, error) {
 
 	reqURL := c.BaseURL + metaResourcePath
 	req, err := http.NewRequest("GET", reqURL, nil)
@@ -73,7 +88,7 @@ func (c *Client) GetCurrentMeta(activityHash string, gameModes []string, members
 	if len(gameModes) != 0 {
 		vals.Add("modeType", strings.Join(gameModes, ","))
 	}
-	if membershipType != 0 {
+	if membershipType != "" {
 		vals.Add("membershipType", string(membershipType))
 	}
 	req.URL.RawQuery = vals.Encode()

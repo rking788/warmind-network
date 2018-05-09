@@ -40,15 +40,15 @@ func FindCurrentMeta(platform, requestedActivity string) (*skillserver.EchoRespo
 
 	activityHash := ""
 	gameModes := []string{}
-	membershipType := 0
+	translatedPlatform := platformNameToMapKey[platform]
 
-	meta, err := client.GetCurrentMeta(activityHash, gameModes, membershipType)
+	meta, err := client.GetCurrentMeta(activityHash, gameModes, translatedPlatform)
 	if err != nil {
 		return nil, err
 	}
 
 	speechBuffer := bytes.NewBuffer([]byte{})
-	speechBuffer.Write([]byte("The most commonly used weapons "))
+	speechBuffer.Write([]byte("The most commonly used weapons according to Charlemagne "))
 	if requestedActivity != "" {
 		speechBuffer.WriteString(fmt.Sprintf("for %s ", requestedActivity))
 	}
