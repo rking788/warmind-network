@@ -434,14 +434,38 @@ func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) *skillserver.EchoR
 /**
  * Charlemagne
  */
+
+// TopActivities is responsible for describing to the user, the most popular activities currently
+// being played in game. This could help users decide what activities have the best rewards
+// or can be part of the "grind" for better gear.
 func TopActivities(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
 
-	platform, _ := echoRequest.GetSlotValue("platform")
+	platform, _ := echoRequest.GetSlotValue("Platform")
+
 	response, err := charlemagne.FindMostPopularActivities(platform)
 	if err != nil {
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, there was an issue contacting Charlemagne, " +
 			"please try again later.")
 	}
+
+	return response
+}
+
+// CurrentMeta will present data to the user from Charlemagne about which weapons are currently
+// being used the most in game. This could be on a particular platform or in a particular
+// game mode (PvP, nightfall, raid, etc.)
+func CurrentMeta(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
+
+	platform, _ := echoRequest.GetSlotValue("Platform")
+	activity, _ := echoRequest.GetSlotValue("Activity")
+
+	response, err := charlemagne.FindCurrentMeta(platform, activity)
+	if err != nil {
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, there was a problem contacting Charlemagne, " +
+			" please try again later.")
+	}
+
 	return response
 }

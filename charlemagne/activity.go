@@ -1,6 +1,7 @@
 package charlemagne
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
 
@@ -58,6 +59,7 @@ var (
 		"playstation":  "2",
 		"play station": "2",
 		"psn":          "2",
+		"ps4":          "2",
 		"xbox":         "1",
 		"microsoft":    "1",
 		"pc":           "4",
@@ -87,13 +89,14 @@ func FindMostPopularActivities(platform string) (*skillserver.EchoResponse, erro
 	fmt.Println(activity)
 	ordered := sortPlayerActivityModes(activity)
 
-	response.OutputSpeech("Guardian, according to Charlemagne, the top three activities " +
-		"being played right now are: ")
+	speechBuffer := bytes.NewBuffer([]byte("Guardian, according to Charlemagne, " +
+		"the top three activities being played right now are: "))
 	for _, activity := range ordered[:3] {
-		response.OutputSpeech(modeTypeToName[activity.Mode])
+		speechBuffer.WriteString(modeTypeToName[activity.Mode])
 	}
-	response.OutputSpeech(". Go get that loot!")
+	speechBuffer.Write([]byte(". Go get that loot!"))
 
+	response.OutputSpeech(speechBuffer.String())
 	return response, nil
 }
 
