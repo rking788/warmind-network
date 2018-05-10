@@ -5,6 +5,8 @@ import (
 	"sort"
 	"time"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 )
 
@@ -48,6 +50,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 	currentAccount, _ := client.GetCurrentAccount()
 
 	if currentAccount == nil {
+		raven.CaptureError(errors.New("Could not load profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
 		return nil, errors.New("Couldn't load current user information")
 	}
@@ -59,6 +62,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 	err := client.Execute(NewUserProfileRequest(membership.MembershipType,
 		membership.MembershipID), &profileResponse)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}

@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 )
 
@@ -170,6 +172,7 @@ func NewClientPool() *ClientPool {
 	for _, addr := range addresses {
 		client, err := NewCustomAddrClient(addr)
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Error creating custom ipv6 client: %s", err.Error())
 			continue
 		}
@@ -215,6 +218,7 @@ func readClientAddresses() (result []string) {
 	}
 
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read local clients: %s", err.Error())
 	}
 
@@ -370,11 +374,13 @@ func (c *Client) Execute(request *APIRequest, response StatusResponse) error {
 
 		resp, err = c.Do(req)
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Error executing request: %s", err.Error())
 			return err
 		}
 
 		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			raven.CaptureError(err, nil)
 			glg.Warnf("Error executing API request: %s", err.Error())
 			return err
 		}

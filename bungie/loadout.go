@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"sort"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 )
 
@@ -253,6 +255,7 @@ func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membe
 	// Move all items to the destination character
 	err := moveLoadoutToCharacter(loadout, destinationID, characters, membershipType, client)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error moving loadout to destination character: %s", err.Error())
 		return err
 	}

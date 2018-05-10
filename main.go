@@ -9,6 +9,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	raven "github.com/getsentry/raven-go"
 	"github.com/rking788/warmind-network/db"
 	"github.com/rking788/warmind-network/trials"
 
@@ -74,6 +75,7 @@ func InitEnv(c *EnvConfig) {
 	}
 
 	ConfigureLogging(c.LogLevel, c.LogFilePath)
+	raven.SetDSN(c.SentryDSN)
 
 	// This provides and explicit configuration point as opposed to the package level
 	// init functions, as well as making it easier to write unit tests.
@@ -103,6 +105,7 @@ func main() {
 		port := ":" + config.Port
 		err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Error starting the application! : %s", err.Error())
 		}
 	} else {

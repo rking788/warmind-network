@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/db"
@@ -65,16 +67,19 @@ func InitEnv(apiKey, warmindKey string) {
 
 	err := PopulateEngramHashes()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating engram hashes: %s\nExiting...", err.Error())
 		return
 	}
 	err = PopulateBucketHashLookup()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating bucket hash values: %s\nExiting...", err.Error())
 		return
 	}
 	err = PopulateItemMetadata()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating item metadata lookup table: %s\nExiting...", err.Error())
 		return
 	}
@@ -116,9 +121,11 @@ func PopulateEngramHashes() error {
 	var err error
 	engramHashes, err = db.FindEngramHashes()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating engram item_hash values: %s", err.Error())
 		return err
 	} else if len(engramHashes) <= 0 {
+		raven.CaptureError(err, nil)
 		glg.Error("Didn't find any engram item hashes in the database.")
 		return errors.New("No engram item_hash values found")
 	}
@@ -281,6 +288,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 
 	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
 	}
@@ -297,6 +305,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	destCharacter, err := profile.Characters.findDestinationCharacter(destinationClass)
 	if err != nil {
 		output := fmt.Sprintf("Sorry Guardian, I could not transfer your %s because you do not have any %s characters in Destiny.", itemName, destinationClass)
+		raven.CaptureError(err, nil)
 		glg.Error(output)
 		response.OutputSpeech(output)
 
@@ -328,6 +337,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 
 	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
 	}
@@ -346,6 +356,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 
 	err = equipLoadout(loadout, destinationID, profile, membershipType, client)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
 		return nil, err
 	}
@@ -366,6 +377,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 
 	profile, err := GetProfileForCurrentUser(client, true)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
 	}
@@ -384,6 +396,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 
 	err = equipLoadout(randomLoadout, destinationID, profile, membershipType, client)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
 		return nil, err
 	}
@@ -403,6 +416,7 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 
 	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
 		return nil, err
 	}
@@ -453,6 +467,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	currentAccount, _ := client.GetCurrentAccount()
 
 	if currentAccount == nil {
+		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
 		return nil, errors.New("Couldn't load the current account")
 	}
@@ -477,6 +492,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	err := client.Execute(NewGetCurrentEquipmentRequest(membership.MembershipType,
 		membership.MembershipID), &profileResponse)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
@@ -493,6 +509,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	persistedLoadout := loadout.toPersistedLoadout()
 	persistedBytes, err := json.Marshal(persistedLoadout)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to marshal the loadout to JSON: %s", err.Error())
 		return nil, err
 	}
@@ -523,6 +540,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	currentAccount, _ := client.GetCurrentAccount()
 
 	if currentAccount == nil {
+		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
 		return nil, errors.New("CLouldn't load the current account")
 	}
@@ -534,6 +552,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	err := client.Execute(NewUserProfileRequest(membership.MembershipType,
 		membership.MembershipID), &profileResponse)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
@@ -543,10 +562,12 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
+		raven.CaptureError(errors.New("No loadout matching name"), map[string]string{"name": name})
 		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s."+
 			"You need to create a loadout with that name before it can be equipped.", name))
 		return response, nil
 	} else if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read loadout from the database")
 		return nil, err
 	}
@@ -554,6 +575,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	var peristedLoadout PersistedLoadout
 	err = json.NewDecoder(bytes.NewReader([]byte(loadoutJSON))).Decode(&peristedLoadout)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to decode JSON: %s", err.Error())
 		return nil, err
 	}
@@ -580,6 +602,7 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 	currentAccount, _ := client.GetCurrentAccount()
 
 	if currentAccount == nil {
+		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
 		return nil, errors.New("Couldn't load the current account")
 	}
@@ -734,6 +757,7 @@ func equipItems(itemSet []*Item, characterID string,
 
 		instanceID, err := strconv.ParseInt(item.InstanceID, 10, 64)
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Not equipping item, the instance ID could not be parsed to an Int:  %s",
 				err.Error())
 			continue

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sort"
 
+	raven "github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/bungie"
@@ -55,6 +56,7 @@ func GetCurrentMap() (*skillserver.EchoResponse, error) {
 	err := client.Execute(NineCurrentWeekStatsPath, &resp)
 
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the current map from Trials Report!: %s", err.Error())
 		return nil, err
 	}
@@ -171,6 +173,7 @@ func GetPersonalTopWeapons(token string) (*skillserver.EchoResponse, error) {
 
 	membershipID, err := findMembershipID(token)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error loading membership ID for linked account: %s", err.Error())
 		return nil, err
 	}
@@ -214,6 +217,7 @@ func (client *NineClient) Execute(endpoint string, response interface{}) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the current week stats response from Trials Report!: %s", err.Error())
 		return err
 	}
@@ -221,6 +225,7 @@ func (client *NineClient) Execute(endpoint string, response interface{}) error {
 
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error parsing trials report response: %s", err.Error())
 		return err
 	}
@@ -237,6 +242,7 @@ func findMembershipID(token string) (string, error) {
 
 	currentAccount, err := client.GetCurrentAccount()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error loading current account info from Bungie.net: %s", err.Error())
 		return "", err
 	} else if currentAccount == nil || currentAccount.DestinyMembership == nil {

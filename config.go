@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 )
 
@@ -23,6 +25,7 @@ type EnvConfig struct {
 	SSLCertPath              string `json:"ssl_cert_path"`
 	SSLKeyPath               string `json:"ssl_key_path"`
 	Port                     string `json:"port"`
+	SentryDSN                string `json:"sentry_dsn"`
 }
 
 // NewEnvConfig will create a default instance of the EnvConfig struct
@@ -38,6 +41,7 @@ func NewEnvConfig() *EnvConfig {
 		WarmindNetworkAlexaAppID: os.Getenv("WARMIND_NETWORK_APP_ID"),
 		LogLevel:                 os.Getenv("GUARDIAN_HELPER_LOG_LEVEL"),
 		Port:                     os.Getenv("PORT"),
+		SentryDSN:                os.Getenv("SENTRY_DSN"),
 	}
 
 	return config
@@ -51,12 +55,14 @@ func loadConfig(path *string) (config *EnvConfig) {
 
 	in, err := os.Open(*path)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error trying to open the specified config file: %s", err.Error())
 		return
 	}
 
 	err = json.NewDecoder(in).Decode(&config)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error deserializing config JSON: %s", err.Error())
 		return
 	}

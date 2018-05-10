@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/charlemagne"
@@ -77,6 +79,7 @@ func SaveSession(session *Session) {
 
 	sessionBytes, err := json.Marshal(session)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Couldn't marshal session to string: %s", err.Error())
 		return
 	}
@@ -84,6 +87,7 @@ func SaveSession(session *Session) {
 	key := fmt.Sprintf("sessions:%s", session.ID)
 	_, err = conn.Do("SET", key, string(sessionBytes))
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to set session: %s", err.Error())
 	}
 }
@@ -98,6 +102,7 @@ func ClearSession(sessionID string) {
 	key := fmt.Sprintf("sessions:%s", sessionID)
 	_, err := conn.Do("DEL", key)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to delete the session from the Redis cache: %s", err.Error())
 	}
 }
@@ -160,6 +165,7 @@ func CountItem(echoRequest *skillserver.EchoRequest) (response *skillserver.Echo
 	lowerItem := strings.ToLower(item)
 	response, err := bungie.CountItem(lowerItem, accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error counting the number of items: %s", err.Error())
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred counting that item.")
@@ -205,6 +211,7 @@ func TransferItem(request *skillserver.EchoRequest) (response *skillserver.EchoR
 	glg.Infof("Transferring %d of your %s from your %s to your %s", count, strings.ToLower(item), strings.ToLower(sourceClass), strings.ToLower(destinationClass))
 	response, err := bungie.TransferItem(strings.ToLower(item), accessToken, strings.ToLower(sourceClass), strings.ToLower(destinationClass), count)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred trying to transfer that item.")
 		return
@@ -220,6 +227,7 @@ func MaxPower(request *skillserver.EchoRequest) (response *skillserver.EchoRespo
 	accessToken := request.Session.User.AccessToken
 	response, err := bungie.EquipMaxLightGear(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error occurred equipping max power: %s", err.Error())
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred equipping your max power gear.")
@@ -236,6 +244,7 @@ func RandomGear(request *skillserver.EchoRequest) (response *skillserver.EchoRes
 	accessToken := request.Session.User.AccessToken
 	response, err := bungie.RandomizeLoadout(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error occurred equipping random gear: %s", err.Error())
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred equipping random gear.")
@@ -251,6 +260,7 @@ func UnloadEngrams(request *skillserver.EchoRequest) (response *skillserver.Echo
 	accessToken := request.Session.User.AccessToken
 	response, err := bungie.UnloadEngrams(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error occurred unloading engrams: %s", err.Error())
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred moving your engrams.")
@@ -265,6 +275,7 @@ func DestinyJoke(request *skillserver.EchoRequest) (response *skillserver.EchoRe
 	response = skillserver.NewEchoResponse()
 	setup, punchline, err := db.GetRandomJoke()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error loading joke from DB: %s", err.Error())
 		response.OutputSpeech("Sorry Guardian, I was unable to load a joke right now.")
 		return
@@ -311,6 +322,7 @@ func CreateLoadout(request *skillserver.EchoRequest) (response *skillserver.Echo
 		intentConfirmation == "CONFIRMED")
 
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error occurred creating loadout: %s", err.Error())
 		response.OutputSpeech("Sorry Guardian, an error occurred saving your loadout.")
 	}
@@ -332,6 +344,7 @@ func EquipNamedLoadout(request *skillserver.EchoRequest) (response *skillserver.
 	response, err := bungie.EquipNamedLoadout(accessToken, loadoutName)
 
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error occurred equipping loadout: %s", err.Error())
 		response.OutputSpeech("Sorry Guardian, an error occurred equipping your loadout.")
 	}
@@ -346,6 +359,7 @@ func ListLoadouts(request *skillserver.EchoRequest) (response *skillserver.EchoR
 	accessToken := request.Session.User.AccessToken
 	response, err := bungie.GetLoadoutNames(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, there was an error getting your loadout names, please try again later")
 		return
@@ -364,6 +378,7 @@ func CurrentTrialsMap(request *skillserver.EchoRequest) (response *skillserver.E
 
 	response, err := trials.GetCurrentMap()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information right now, please try again later.")
 		return
@@ -379,6 +394,7 @@ func CurrentTrialsWeek(request *skillserver.EchoRequest) (response *skillserver.
 	accessToken := request.Session.User.AccessToken
 	response, err := trials.GetCurrentWeek(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information right now, " +
 			"please try again later.")
@@ -393,6 +409,7 @@ func PopularWeapons(request *skillserver.EchoRequest) (response *skillserver.Ech
 
 	response, err := trials.GetWeaponUsagePercentages()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information at this time, please try again later")
 		return
@@ -407,6 +424,7 @@ func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver
 	accessToken := request.Session.User.AccessToken
 	response, err := trials.GetPersonalTopWeapons(accessToken)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
 			"this time, please try again later")
@@ -422,6 +440,7 @@ func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) *skillserver.EchoR
 
 	response, err := trials.GetPopularWeaponTypes()
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
 			"this time, please try again later")
@@ -444,6 +463,7 @@ func TopActivities(echoRequest *skillserver.EchoRequest) *skillserver.EchoRespon
 
 	response, err := charlemagne.FindMostPopularActivities(platform)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, there was an issue contacting Charlemagne, " +
 			"please try again later.")
@@ -462,6 +482,7 @@ func CurrentMeta(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse
 
 	response, err := charlemagne.FindCurrentMeta(platform, activity)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, there was a problem contacting Charlemagne, " +
 			" please try again later.")

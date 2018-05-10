@@ -5,6 +5,7 @@ import (
 
 	"database/sql"
 
+	raven "github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
 	_ "github.com/lib/pq" // Only want to import the interface here
 )
@@ -45,17 +46,20 @@ func InitDatabase() error {
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB errror: %s", err.Error())
 		return err
 	}
 
 	stmt, err := db.Prepare("SELECT item_hash FROM items WHERE item_name = $1 AND item_type_name NOT IN ('Material Exchange', '') ORDER BY max_stack_size DESC LIMIT 1")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB error: %s", err.Error())
 		return err
 	}
 	nameFromHashStmt, err := db.Prepare("SELECT item_name FROM items WHERE item_hash = $1 LIMIT 1")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB prepare error: %s", err.Error())
 		return err
 	}
@@ -63,42 +67,49 @@ func InitDatabase() error {
 	// 8 is the item_type value for engrams
 	engramHashStmt, err := db.Prepare("SELECT item_hash FROM items WHERE item_name LIKE '%engram%'")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB prepare error: %s", err.Error())
 		return err
 	}
 
 	itemMetadataStmt, err := db.Prepare("SELECT item_hash, item_name, tier_type, class_type, bucket_type_hash FROM items")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB error: %s", err.Error())
 		return err
 	}
 
 	randomJokeStmt, err := db.Prepare("SELECT * FROM jokes offset random() * (SELECT COUNT(*) FROM jokes) LIMIT 1")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("DB prepare error: %s", err.Error())
 		return err
 	}
 
 	insertLoadoutStmt, err := db.Prepare("INSERT INTO loadouts VALUES ($1,$2,$3)")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error preparing insert loadout statement: %s", err.Error())
 		return err
 	}
 
 	updateLoadoutStmt, err := db.Prepare("UPDATE loadouts SET loadout=$1 WHERE bungie_membership_id=$2 AND name=$3")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Failed preparing update loadout statement: %s", err.Error())
 		return err
 	}
 
 	selectLoadoutStmt, err := db.Prepare("SELECT name FROM loadouts WHERE bungie_membership_id=$1")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error preparing the select loadout statement: %s", err.Error())
 		return err
 	}
 
 	selectLoadoutByNameStmt, err := db.Prepare("SELECT loadout FROM loadouts WHERE bungie_membership_id=$1 AND name=$2")
 	if err != nil {
+		raven.CaptureError(err, nil)
 		glg.Errorf("Error preparing the select loadout by name statement: %s", err.Error())
 		return err
 	}
@@ -127,6 +138,7 @@ func GetDBConnection() (*LookupDB, error) {
 		glg.Info("Initializing db!")
 		err := InitDatabase()
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Failed to initialize the database: %s", err.Error())
 			return nil, err
 		}
@@ -273,6 +285,7 @@ func SelectLoadouts(membershipID string) ([]string, error) {
 		var name string
 		err = rows.Scan(&name)
 		if err != nil {
+			raven.CaptureError(err, nil)
 			glg.Errorf("Error retrieving loadout name from DB...%s\n", err.Error())
 			continue
 		}
