@@ -55,6 +55,16 @@ func NewGetCurrentEquipmentRequest(membershipType int, membershipID string) *API
 	}
 }
 
+// NewGetProgressionsRequest will be an APIRequest initialized with the correct values
+// to request the character progression data from the Bungie.net API.
+func NewGetProgressionsRequest(membershipType int, membershipID string) *APIRequest {
+	return &APIRequest{
+		HTTPMethod: "GET",
+		Endpoint:   fmt.Sprintf(GetProfileEndpointFormat, membershipType, membershipID),
+		Components: []string{CharacterProgressionsComponent},
+	}
+}
+
 // NewPostTransferItemRequest is a helper function for creating a new request to send an
 // API request to transfer one or more items.
 func NewPostTransferItemRequest(body map[string]interface{}) *APIRequest {

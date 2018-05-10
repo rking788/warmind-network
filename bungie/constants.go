@@ -125,6 +125,17 @@ const (
 	DEMON    = uint(10)
 )
 
+var (
+	pvpRankSteps = [6]string{
+		"Guardian",
+		"Brave",
+		"Heroic",
+		"Fabled",
+		"Mythic",
+		"Legend",
+	}
+)
+
 // Alexa doesn't understand some of the dsetiny items or splits them into separate words
 // This will allow us to translate to the correct name before doing the lookup.
 var commonAlexaItemTranslations = map[string]string{

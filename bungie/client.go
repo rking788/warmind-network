@@ -78,6 +78,130 @@ type DestinyMembership struct {
 	MembershipID   string `json:"membershipId"`
 }
 
+// CharacterProgressionResponse is the JSON response representation of the character progression
+// data from the GetProfile endpoint.
+type CharacterProgressionResponse struct {
+	*BaseResponse
+	Response *struct {
+		CharacterProgressions *struct {
+			Data map[string]*CharacterProgression `json:"data"`
+		} `json:"characterProgressions"`
+	} `json:"Response"`
+}
+
+const (
+	valorHash = "3882308435"
+	gloryHash = "2679551909"
+)
+
+func (r *CharacterProgressionResponse) valorProgressionForChar(charID string) *DestinyProgression {
+
+	charProgress := r.Response.CharacterProgressions.Data[charID]
+	if charProgress == nil {
+		return nil
+	}
+
+	return charProgress.Progressions[valorHash]
+}
+
+func (r *CharacterProgressionResponse) valorProgression() *DestinyProgression {
+
+	charProgress := r.Response.CharacterProgressions.Data
+	if charProgress == nil {
+		return nil
+	}
+
+	for _, progress := range charProgress {
+		return progress.Progressions[valorHash]
+	}
+
+	return nil
+}
+
+func (r *CharacterProgressionResponse) gloryProgressionForChar(charID string) *DestinyProgression {
+
+	charProgress := r.Response.CharacterProgressions.Data[charID]
+	if charProgress == nil {
+		return nil
+	}
+
+	return charProgress.Progressions[gloryHash]
+}
+
+func (r *CharacterProgressionResponse) gloryProgression() *DestinyProgression {
+
+	charProgress := r.Response.CharacterProgressions.Data
+	if charProgress == nil {
+		return nil
+	}
+
+	for _, progress := range charProgress {
+		return progress.Progressions[gloryHash]
+	}
+
+	return nil
+}
+
+// CharacterProgression contains data for different progressions tied to a specific character
+type CharacterProgression struct {
+	Progressions map[string]*DestinyProgression   `json:"progressions"`
+	Factions     map[string]*FactionProgression   `json:"factions"`
+	Milestones   map[string]*MilestoneProgression `json:"milestones"`
+	// NOTE: Not using these two yet, not sure what they could be used for
+	// Quests
+	// uninstancedItemObjectives
+}
+
+// BaseProgression contains data relevant to all of the different progression types
+type BaseProgression struct {
+	ProgressionHash     int `json:"progressionHash"`
+	DailyProgress       int `json:"dailyProgress"`
+	DailyLimit          int `json:"dailyLimit"`
+	WeeklyProgress      int `json:"weeklyProgress"`
+	WeeklyLimit         int `json:"weeklyLimit"`
+	CurrentProgress     int `json:"currentProgress"`
+	Level               int `json:"level"`
+	LevelCap            int `json:"levelCap"`
+	StepIndex           int `json:"stepIndex"`
+	ProgressToNextLevel int `json:"progressToNextLevel"`
+	NextLevelAt         int `json:"nextLevelAt"`
+}
+
+func (b *BaseProgression) String() string {
+	return fmt.Sprintf("%+v", *b)
+}
+
+// DestinyProgression contains data about progression through different Destiny related achievements
+type DestinyProgression struct {
+	*BaseProgression
+}
+
+func (p *DestinyProgression) String() string {
+	return fmt.Sprintf("%+v", *p)
+}
+
+// FactionProgression wraps data related to the progression through levels related
+// to the different factions
+type FactionProgression struct {
+	*BaseProgression
+	FactionHash        int `json:"factionHash"`
+	FactionVendorIndex int `json:"factionVendorIndex"`
+}
+
+func (p *FactionProgression) String() string {
+	return fmt.Sprintf("%+v", *p)
+}
+
+// MilestoneProgression contains data about progress through different milestones
+type MilestoneProgression struct {
+	MilestoneHash int `json:"milestoneHash"`
+	// NOTE: Not sure how much information from here could be provided. Seems
+	// like it could be more information than could be useful
+	// AvailableQuests []
+	StartDate time.Time `json:"startDate"`
+	EndDate   time.Time `json:"endDate"`
+}
+
 // GetProfileResponse is the response from the GetProfile endpoint. This data contains
 // information about the characeters, inventories, profile inventory, and equipped loadouts.
 //https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile

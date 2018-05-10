@@ -678,6 +678,84 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 	}
 }
 
+func TestParseCharacterProgressionsResponse(t *testing.T) {
+
+	data, err := readSample("GetProgressions.json")
+	if err != nil {
+		t.Fatalf("Error reading in sample progressions file: %s\n", err.Error())
+	}
+
+	var response CharacterProgressionResponse
+	err = json.Unmarshal(data, &response)
+	if err != nil {
+		t.Fatalf("Error unmarshaling character progressions: %s\n", err.Error())
+	}
+
+	if len(response.Response.CharacterProgressions.Data) == 0 {
+		t.Fatal("Empty character progression data from sample response")
+	}
+
+	for charID, charProgress := range response.Response.CharacterProgressions.Data {
+		if charID == "" {
+			t.Fatal("Found empty character ID when iterating through character progressions")
+		}
+
+		if len(charProgress.Progressions) == 0 {
+			t.Fatalf("Found empty Destiny progression when iterating through character(%s)\n", charID)
+		}
+
+		if len(charProgress.Factions) == 0 {
+			t.Fatalf("Found empty faction progression when iterating through character(%s)", charID)
+		}
+
+		if len(charProgress.Milestones) == 0 {
+			t.Fatalf("Found empty milestones progression when iterating through character(%s)", charID)
+		}
+	}
+}
+
+func TestProgressionAccessors(t *testing.T) {
+
+	resp, err := getProgressions()
+	if err != nil {
+		t.Fatalf("Error reading in sample progressions file: %s\n", err.Error())
+	}
+
+	if len(resp.Response.CharacterProgressions.Data) == 0 {
+		t.Fatal("Empty character progression data from sample response\n")
+	}
+
+	valorBlank := resp.valorProgressionForChar("<blank>")
+	if valorBlank != nil {
+		t.Fatal("Valor accessor returned a non-nil progression for bogus character ID\n")
+	}
+	gloryBlank := resp.gloryProgressionForChar("<blank>")
+	if gloryBlank != nil {
+		t.Fatal("Glory accessor returned a non-nil progression for bogus character ID\n")
+	}
+
+	for charID, charProgress := range resp.Response.CharacterProgressions.Data {
+		valor := resp.valorProgressionForChar(charID)
+		if valor == nil {
+			t.Fatal("Found nil valor from accessor with a valid character ID\n")
+		}
+		if valor != charProgress.Progressions[valorHash] || fmt.Sprintf("%d", valor.ProgressionHash) != valorHash {
+			t.Fatal("Valor accessor is potentially returning the progression for " +
+				"the wrong character\n")
+		}
+		fmt.Printf("Valor: %+v\n", valor)
+
+		glory := resp.gloryProgressionForChar(charID)
+		if glory == nil {
+			t.Fatal("Found nil glory from accessor with a valid character ID\n")
+		}
+		if glory != charProgress.Progressions[gloryHash] || fmt.Sprintf("%d", glory.ProgressionHash) != gloryHash {
+			t.Fatal("Glory accessor is potentially returning glory for the wrong character\n")
+		}
+		fmt.Printf("Glory: %+v\n", glory)
+	}
+}
+
 func getCurrentProfileResponse() (*GetProfileResponse, error) {
 	data, err := readSample("GetProfile.json")
 	if err != nil {
@@ -686,6 +764,23 @@ func getCurrentProfileResponse() (*GetProfileResponse, error) {
 	}
 
 	var response GetProfileResponse
+	err = json.Unmarshal(data, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling json: ", err.Error())
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func getProgressions() (*CharacterProgressionResponse, error) {
+	data, err := readSample("GetProgressions.json")
+	if err != nil {
+		fmt.Println("Error reading sample file: ", err.Error())
+		return nil, err
+	}
+
+	var response CharacterProgressionResponse
 	err = json.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())

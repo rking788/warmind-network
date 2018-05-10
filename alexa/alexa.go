@@ -368,6 +368,23 @@ func ListLoadouts(request *skillserver.EchoRequest) (response *skillserver.EchoR
 	return
 }
 
+// GetCurrentCrucibleRank will summarize the player's current ranking in the Crucible.
+// This is broken down into Glory and Valor.
+func GetCurrentCrucibleRank(request *skillserver.EchoRequest) *skillserver.EchoResponse {
+
+	accessToken := request.Session.User.AccessToken
+	response, err := bungie.GetCurrentCrucibleRanking(accessToken)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, there was an error getting your current " +
+			"Crucible ranking, please try again later.")
+		return response
+	}
+
+	return response
+}
+
 /**
  * Trials of the Nine
  */

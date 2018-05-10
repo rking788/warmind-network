@@ -2806,19 +2806,19 @@
                 "dateLastPlayed": "2018-04-21T13:41:56Z",
                 "versionsOwned": 3,
                 "characterIds": [
-                    "2305843009266790466",
-                    "2305843009266790467",
-                    "2305843009266790468"
+                    "1000000000000000000",
+                    "1000000000000000001",
+                    "1000000000000000002"
                 ]
             },
             "privacy": 1
         },
         "characters": {
             "data": {
-                "2305843009266790466": {
+                "1000000000000000000": {
                     "membershipId": "4611686018437694484",
                     "membershipType": 1,
-                    "characterId": "2305843009266790466",
+                    "characterId": "1000000000000000000",
                     "dateLastPlayed": "2018-04-21T13:41:56Z",
                     "minutesPlayedThisSession": "62",
                     "minutesPlayedTotal": "5347",
@@ -2860,10 +2860,10 @@
                     "baseCharacterLevel": 25,
                     "percentToNextLevel": 0
                 },
-                "2305843009266790467": {
+                "1000000000000000001": {
                     "membershipId": "4611686018437694484",
                     "membershipType": 1,
-                    "characterId": "2305843009266790467",
+                    "characterId": "1000000000000000001",
                     "dateLastPlayed": "2018-02-17T04:48:59Z",
                     "minutesPlayedThisSession": "68",
                     "minutesPlayedTotal": "761",
@@ -2905,10 +2905,10 @@
                     "baseCharacterLevel": 23,
                     "percentToNextLevel": 22.34
                 },
-                "2305843009266790468": {
+                "1000000000000000002": {
                     "membershipId": "4611686018437694484",
                     "membershipType": 1,
-                    "characterId": "2305843009266790468",
+                    "characterId": "1000000000000000002",
                     "dateLastPlayed": "2017-12-14T01:35:11Z",
                     "minutesPlayedThisSession": "2",
                     "minutesPlayedTotal": "657",
@@ -2955,7 +2955,7 @@
         },
         "characterInventories": {
             "data": {
-                "2305843009266790466": {
+                "1000000000000000000": {
                     "items": [
                         {
                             "itemHash": 3437746471,
@@ -4132,7 +4132,7 @@
                         }
                     ]
                 },
-                "2305843009266790467": {
+                "1000000000000000001": {
                     "items": [
                         {
                             "itemHash": 3890960908,
@@ -4744,7 +4744,7 @@
                         }
                     ]
                 },
-                "2305843009266790468": {
+                "1000000000000000002": {
                     "items": [
                         {
                             "itemHash": 1189790632,
@@ -5348,7 +5348,7 @@
         },
         "characterEquipment": {
             "data": {
-                "2305843009266790466": {
+                "1000000000000000000": {
                     "items": [
                         {
                             "itemHash": 472169727,
@@ -5532,7 +5532,7 @@
                         }
                     ]
                 },
-                "2305843009266790467": {
+                "1000000000000000001": {
                     "items": [
                         {
                             "itemHash": 1644162710,
@@ -5716,7 +5716,7 @@
                         }
                     ]
                 },
-                "2305843009266790468": {
+                "1000000000000000002": {
                     "items": [
                         {
                             "itemHash": 1706536806,

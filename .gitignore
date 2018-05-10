@@ -6,3 +6,4 @@ warmind-network
 *.prof
 *.test
 coverage.out
+skill-config/

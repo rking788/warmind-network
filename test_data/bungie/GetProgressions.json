@@ -1,0 +1,3802 @@
+{
+    "Response": {
+        "characterProgressions": {
+            "data": {
+                "1000000000000000000": {
+                    "progressions": {
+                        "2679551909": {
+                            "progressionHash": 2679551909,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 200
+                        },
+                        "3882308435": {
+                            "progressionHash": 3882308435,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 50
+                        },
+                        "3298204156": {
+                            "progressionHash": 3298204156,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 20,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 100000
+                        },
+                        "3455936608": {
+                            "progressionHash": 3455936608,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "2424694449": {
+                            "progressionHash": 2424694449,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 5000
+                        },
+                        "1716568313": {
+                            "progressionHash": 1716568313,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 246000,
+                            "level": 30,
+                            "levelCap": 30,
+                            "stepIndex": 30,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 0
+                        },
+                        "2030054750": {
+                            "progressionHash": 2030054750,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 3474900,
+                            "level": 31,
+                            "levelCap": -1,
+                            "stepIndex": 11,
+                            "progressToNextLevel": 69900,
+                            "nextLevelAt": 120000
+                        },
+                        "540048094": {
+                            "progressionHash": 540048094,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 21,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "3122728759": {
+                            "progressionHash": 3122728759,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 7,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 7,
+                            "nextLevelAt": 50
+                        },
+                        "2318284751": {
+                            "progressionHash": 2318284751,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 3,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 30
+                        },
+                        "1490278642": {
+                            "progressionHash": 1490278642,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 2,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 10000
+                        },
+                        "584850370": {
+                            "progressionHash": 584850370,
+                            "dailyProgress": 18750,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 3750,
+                            "weeklyLimit": 100000,
+                            "currentProgress": 18750,
+                            "level": 1,
+                            "levelCap": 6,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 18750,
+                            "nextLevelAt": 100000
+                        }
+                    },
+                    "factions": {
+                        "697030790": {
+                            "factionHash": 697030790,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 697030790,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 34500,
+                            "level": 17,
+                            "levelCap": -1,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 500,
+                            "nextLevelAt": 2000
+                        },
+                        "3398051042": {
+                            "factionHash": 3398051042,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 3398051042,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "828982195": {
+                            "factionHash": 828982195,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 828982195,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 5500,
+                            "level": 2,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "4235119312": {
+                            "factionHash": 4235119312,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4235119312,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 12235,
+                            "level": 4,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 1235,
+                            "nextLevelAt": 2750
+                        },
+                        "4196149087": {
+                            "factionHash": 4196149087,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4196149087,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 12070,
+                            "level": 4,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 1070,
+                            "nextLevelAt": 2750
+                        },
+                        "1714509342": {
+                            "factionHash": 1714509342,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1714509342,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1021210278": {
+                            "factionHash": 1021210278,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 1021210278,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 140500,
+                            "level": 46,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 2500,
+                            "nextLevelAt": 3000
+                        },
+                        "3231773039": {
+                            "factionHash": 3231773039,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 3231773039,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 3000,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 3000,
+                            "nextLevelAt": 7000
+                        },
+                        "1761642340": {
+                            "factionHash": 1761642340,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1761642340,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 33300,
+                            "level": 16,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 1300,
+                            "nextLevelAt": 2000
+                        },
+                        "24856709": {
+                            "factionHash": 24856709,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1482334108,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1660497607": {
+                            "factionHash": 1660497607,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1660497607,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 6990,
+                            "level": 2,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 1490,
+                            "nextLevelAt": 2750
+                        },
+                        "2105209711": {
+                            "factionHash": 2105209711,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 2105209711,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "469305170": {
+                            "factionHash": 469305170,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 3468066401,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "611314723": {
+                            "factionHash": 611314723,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 611314723,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 22000,
+                            "level": 11,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "2677528157": {
+                            "factionHash": 2677528157,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 2677528157,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 8250,
+                            "level": 3,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "3859807381": {
+                            "factionHash": 3859807381,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 3859807381,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 3450,
+                            "level": 1,
+                            "levelCap": -1,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 700,
+                            "nextLevelAt": 2750
+                        }
+                    },
+                    "milestones": {
+                        "2171429505": {
+                            "milestoneHash": 2171429505,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2296274682,
+                                    "status": {
+                                        "questHash": 2296274682,
+                                        "stepHash": 1060100991,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 2670916374,
+                                                "destinationHash": 2512542997,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625845778",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    },
+                                    "activity": {
+                                        "activityHash": 2179568029,
+                                        "activityModeHash": 547513715,
+                                        "activityModeType": 46,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2179568029,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            },
+                                            {
+                                                "activityHash": 1794007817,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 809261084,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 786874008,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4042386064,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4234035164,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "4109359897": {
+                            "milestoneHash": 4109359897
+                        },
+                        "202035466": {
+                            "milestoneHash": 202035466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1923022191,
+                                    "status": {
+                                        "questHash": 1923022191,
+                                        "stepHash": 1765393780,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3992709603,
+                                                "destinationHash": 2777041980,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055620226340",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "463010297": {
+                            "milestoneHash": 463010297,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1268260813,
+                                    "status": {
+                                        "questHash": 1268260813,
+                                        "stepHash": 1406527486,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3812101921,
+                                                "destinationHash": 308080871,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625843753",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3660836525": {
+                            "milestoneHash": 3660836525,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 82550967,
+                                    "status": {
+                                        "questHash": 82550967,
+                                        "stepHash": 3128644588,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1228559841,
+                                                "destinationHash": 3093898507,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625844499",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    },
+                                    "activity": {
+                                        "activityHash": 2693136605,
+                                        "activityModeHash": 2043403989,
+                                        "activityModeType": 4,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2693136605,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            },
+                                            {
+                                                "activityHash": 1685065161,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 643172939,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3093556426,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3130639820,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1361822600,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1631837981,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2122634728": {
+                            "milestoneHash": 2122634728,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3741857065,
+                                    "status": {
+                                        "questHash": 3741857065,
+                                        "stepHash": 726388122,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 340409949,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625851321",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-16T17:00:00Z"
+                        },
+                        "3245985898": {
+                            "milestoneHash": 3245985898,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 255819671,
+                                    "status": {
+                                        "questHash": 255819671,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    },
+                                    "activity": {
+                                        "activityHash": 255819671,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 255819671,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "questItemHash": 3982474534,
+                                    "status": {
+                                        "questHash": 3982474534,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 3982474534,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 3982474534,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "3603098564": {
+                            "milestoneHash": 3603098564,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1433913940,
+                                    "status": {
+                                        "questHash": 1433913940,
+                                        "stepHash": 2158062501,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3289403948,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625847279",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "1142551194": {
+                            "milestoneHash": 1142551194,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2148117737,
+                                    "status": {
+                                        "questHash": 2148117737,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1478219986": {
+                            "milestoneHash": 1478219986,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3957339989,
+                                    "status": {
+                                        "questHash": 3957339989,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3875745925": {
+                            "milestoneHash": 3875745925,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2234606252,
+                                    "status": {
+                                        "questHash": 2234606252,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2311040624": {
+                            "milestoneHash": 2311040624,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 981091409,
+                                    "status": {
+                                        "questHash": 981091409,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "347073893": {
+                            "milestoneHash": 347073893,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1022868936,
+                                    "status": {
+                                        "questHash": 1022868936,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1680677066": {
+                            "milestoneHash": 1680677066,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3791214989,
+                                    "status": {
+                                        "questHash": 3791214989,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "828676398": {
+                            "milestoneHash": 828676398,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4199920776,
+                                    "status": {
+                                        "questHash": 4199920776,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597245": {
+                            "milestoneHash": 3194597245,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597246": {
+                            "milestoneHash": 3194597246,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4158155169,
+                                    "status": {
+                                        "questHash": 4158155169,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3360209900": {
+                            "milestoneHash": 3360209900,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1223846615,
+                                    "status": {
+                                        "questHash": 1223846615,
+                                        "stepHash": 1520167422,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1978666638,
+                                                "destinationHash": 308080871,
+                                                "activityHash": 1233767907,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055509733505",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "4028522574": {
+                            "milestoneHash": 4028522574,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3716034648,
+                                    "status": {
+                                        "questHash": 3716034648,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "342166397": {
+                            "milestoneHash": 342166397,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4026286266,
+                                    "status": {
+                                        "questHash": 4026286266,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1510166140": {
+                            "milestoneHash": 1510166140,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2981626471,
+                                    "status": {
+                                        "questHash": 2981626471,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "4253138191": {
+                            "milestoneHash": 4253138191,
+                            "rewards": [
+                                {
+                                    "rewardCategoryHash": 1064137897,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 3789021730,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2112637710,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2043403989,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 964120289,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rewardCategoryHash": 4258746474,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 305996677,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1685071777,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 783563440,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1478801436,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354207": {
+                            "milestoneHash": 3109354207,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2173086903,
+                                    "status": {
+                                        "questHash": 2173086903,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354204": {
+                            "milestoneHash": 3109354204,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 289324730,
+                                    "status": {
+                                        "questHash": 289324730,
+                                        "stepHash": 14190826,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 4277921304,
+                                                "destinationHash": 2512542997,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529054782510709",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2415418481": {
+                            "milestoneHash": 2415418481
+                        },
+                        "1581997784": {
+                            "milestoneHash": 1581997784,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 139551572,
+                                    "status": {
+                                        "questHash": 139551572,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2299173667": {
+                            "milestoneHash": 2299173667,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2151517341,
+                                    "status": {
+                                        "questHash": 2151517341,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3219235466": {
+                            "milestoneHash": 3219235466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1730486624,
+                                    "status": {
+                                        "questHash": 1730486624,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "4128810957": {
+                            "milestoneHash": 4128810957,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3688853099,
+                                    "status": {
+                                        "questHash": 3688853099,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "1520809393": {
+                            "milestoneHash": 1520809393,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "quests": [],
+                    "uninstancedItemObjectives": {
+                        "432848324": [
+                            {
+                                "objectiveHash": 788707520,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 1977965959,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 84088458,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 4012243269,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ],
+                        "2540008660": [
+                            {
+                                "objectiveHash": 2432519051,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ]
+                    }
+                },
+                "1000000000000000001": {
+                    "progressions": {
+                        "2679551909": {
+                            "progressionHash": 2679551909,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 200
+                        },
+                        "3882308435": {
+                            "progressionHash": 3882308435,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 50
+                        },
+                        "3298204156": {
+                            "progressionHash": 3298204156,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 20,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 100000
+                        },
+                        "3455936608": {
+                            "progressionHash": 3455936608,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "2424694449": {
+                            "progressionHash": 2424694449,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 5000
+                        },
+                        "1716568313": {
+                            "progressionHash": 1716568313,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 178234,
+                            "level": 23,
+                            "levelCap": 30,
+                            "stepIndex": 23,
+                            "progressToNextLevel": 2234,
+                            "nextLevelAt": 10000
+                        },
+                        "2030054750": {
+                            "progressionHash": 2030054750,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 75000
+                        },
+                        "540048094": {
+                            "progressionHash": 540048094,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 21,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "3122728759": {
+                            "progressionHash": 3122728759,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 3,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 3,
+                            "nextLevelAt": 50
+                        },
+                        "2318284751": {
+                            "progressionHash": 2318284751,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 3,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 30
+                        },
+                        "1490278642": {
+                            "progressionHash": 1490278642,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 2,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 10000
+                        },
+                        "584850370": {
+                            "progressionHash": 584850370,
+                            "dailyProgress": 18750,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 3750,
+                            "weeklyLimit": 100000,
+                            "currentProgress": 18750,
+                            "level": 1,
+                            "levelCap": 6,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 18750,
+                            "nextLevelAt": 100000
+                        }
+                    },
+                    "factions": {
+                        "697030790": {
+                            "factionHash": 697030790,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 697030790,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 2000,
+                            "level": 1,
+                            "levelCap": -1,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "3398051042": {
+                            "factionHash": 3398051042,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 3398051042,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "828982195": {
+                            "factionHash": 828982195,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 828982195,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 900,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 900,
+                            "nextLevelAt": 2750
+                        },
+                        "4235119312": {
+                            "factionHash": 4235119312,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4235119312,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 2070,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 2070,
+                            "nextLevelAt": 2750
+                        },
+                        "4196149087": {
+                            "factionHash": 4196149087,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4196149087,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 2750,
+                            "level": 1,
+                            "levelCap": -1,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "1714509342": {
+                            "factionHash": 1714509342,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1714509342,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1021210278": {
+                            "factionHash": 1021210278,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 1021210278,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 9700,
+                            "level": 3,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 700,
+                            "nextLevelAt": 3000
+                        },
+                        "3231773039": {
+                            "factionHash": 3231773039,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 3231773039,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 7000
+                        },
+                        "1761642340": {
+                            "factionHash": 1761642340,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1761642340,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "24856709": {
+                            "factionHash": 24856709,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1482334108,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1660497607": {
+                            "factionHash": 1660497607,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1660497607,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 2550,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 2550,
+                            "nextLevelAt": 2750
+                        },
+                        "2105209711": {
+                            "factionHash": 2105209711,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 2105209711,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "469305170": {
+                            "factionHash": 469305170,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 3468066401,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "611314723": {
+                            "factionHash": 611314723,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 611314723,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "2677528157": {
+                            "factionHash": 2677528157,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 2677528157,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "3859807381": {
+                            "factionHash": 3859807381,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 3859807381,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        }
+                    },
+                    "milestones": {
+                        "2171429505": {
+                            "milestoneHash": 2171429505,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2296274682,
+                                    "status": {
+                                        "questHash": 2296274682,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 2179568029,
+                                        "activityModeHash": 547513715,
+                                        "activityModeType": 46,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2179568029,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            },
+                                            {
+                                                "activityHash": 1794007817,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 809261084,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 786874008,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4042386064,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4234035164,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "4109359897": {
+                            "milestoneHash": 4109359897
+                        },
+                        "202035466": {
+                            "milestoneHash": 202035466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1923022191,
+                                    "status": {
+                                        "questHash": 1923022191,
+                                        "stepHash": 1765393780,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3992709603,
+                                                "destinationHash": 2777041980,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625849135",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "463010297": {
+                            "milestoneHash": 463010297,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1268260813,
+                                    "status": {
+                                        "questHash": 1268260813,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3660836525": {
+                            "milestoneHash": 3660836525,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 82550967,
+                                    "status": {
+                                        "questHash": 82550967,
+                                        "stepHash": 3128644588,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1228559841,
+                                                "destinationHash": 3093898507,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625842102",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    },
+                                    "activity": {
+                                        "activityHash": 2693136605,
+                                        "activityModeHash": 2043403989,
+                                        "activityModeType": 4,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2693136605,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            },
+                                            {
+                                                "activityHash": 1685065161,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 643172939,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3093556426,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3130639820,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1361822600,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1631837981,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2122634728": {
+                            "milestoneHash": 2122634728,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3741857065,
+                                    "status": {
+                                        "questHash": 3741857065,
+                                        "stepHash": 726388122,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 340409949,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625842145",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-16T17:00:00Z"
+                        },
+                        "3245985898": {
+                            "milestoneHash": 3245985898,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 255819671,
+                                    "status": {
+                                        "questHash": 255819671,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 255819671,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 255819671,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "questItemHash": 3982474534,
+                                    "status": {
+                                        "questHash": 3982474534,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 3982474534,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 3982474534,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "3603098564": {
+                            "milestoneHash": 3603098564,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1433913940,
+                                    "status": {
+                                        "questHash": 1433913940,
+                                        "stepHash": 2158062501,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3289403948,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625849859",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "1142551194": {
+                            "milestoneHash": 1142551194,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2148117737,
+                                    "status": {
+                                        "questHash": 2148117737,
+                                        "stepHash": 1041160127,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1111075118,
+                                                "destinationHash": 2512542997,
+                                                "activityHash": 492869759,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529051387384454",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1478219986": {
+                            "milestoneHash": 1478219986,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3957339989,
+                                    "status": {
+                                        "questHash": 3957339989,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "3875745925": {
+                            "milestoneHash": 3875745925,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2234606252,
+                                    "status": {
+                                        "questHash": 2234606252,
+                                        "stepHash": 4190289764,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 973130707,
+                                                "progress": 2,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529051387383497",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2311040624": {
+                            "milestoneHash": 2311040624,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 981091409,
+                                    "status": {
+                                        "questHash": 981091409,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "347073893": {
+                            "milestoneHash": 347073893,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1022868936,
+                                    "status": {
+                                        "questHash": 1022868936,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1680677066": {
+                            "milestoneHash": 1680677066,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3791214989,
+                                    "status": {
+                                        "questHash": 3791214989,
+                                        "stepHash": 3253223475,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3712299666,
+                                                "destinationHash": 1199524104,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529051387382689",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "828676398": {
+                            "milestoneHash": 828676398,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4199920776,
+                                    "status": {
+                                        "questHash": 4199920776,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597245": {
+                            "milestoneHash": 3194597245,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 762093713,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 189464344,
+                                                "destinationHash": 126924919,
+                                                "activityHash": 2199986157,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529051622522318",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597246": {
+                            "milestoneHash": 3194597246,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4158155169,
+                                    "status": {
+                                        "questHash": 4158155169,
+                                        "stepHash": 865296439,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 2872040958,
+                                                "destinationHash": 308080871,
+                                                "activityHash": 1967025365,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529054782509906",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3360209900": {
+                            "milestoneHash": 3360209900,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1223846615,
+                                    "status": {
+                                        "questHash": 1223846615,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "4028522574": {
+                            "milestoneHash": 4028522574,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3716034648,
+                                    "status": {
+                                        "questHash": 3716034648,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "342166397": {
+                            "milestoneHash": 342166397,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4026286266,
+                                    "status": {
+                                        "questHash": 4026286266,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1510166140": {
+                            "milestoneHash": 1510166140,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2981626471,
+                                    "status": {
+                                        "questHash": 2981626471,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "4253138191": {
+                            "milestoneHash": 4253138191,
+                            "rewards": [
+                                {
+                                    "rewardCategoryHash": 1064137897,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 3789021730,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2112637710,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2043403989,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 964120289,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rewardCategoryHash": 4258746474,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 305996677,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1685071777,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 783563440,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1478801436,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354207": {
+                            "milestoneHash": 3109354207,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2173086903,
+                                    "status": {
+                                        "questHash": 2173086903,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354204": {
+                            "milestoneHash": 3109354204,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 289324730,
+                                    "status": {
+                                        "questHash": 289324730,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2415418481": {
+                            "milestoneHash": 2415418481
+                        },
+                        "1581997784": {
+                            "milestoneHash": 1581997784,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 139551572,
+                                    "status": {
+                                        "questHash": 139551572,
+                                        "stepHash": 581402281,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3186245683,
+                                                "destinationHash": 333456177,
+                                                "activityHash": 3903562779,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529054775995845",
+                                        "completed": true,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2299173667": {
+                            "milestoneHash": 2299173667,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2151517341,
+                                    "status": {
+                                        "questHash": 2151517341,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "3219235466": {
+                            "milestoneHash": 3219235466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1730486624,
+                                    "status": {
+                                        "questHash": 1730486624,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "4128810957": {
+                            "milestoneHash": 4128810957,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3688853099,
+                                    "status": {
+                                        "questHash": 3688853099,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "1520809393": {
+                            "milestoneHash": 1520809393,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 762093713,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 189464344,
+                                                "destinationHash": 126924919,
+                                                "activityHash": 2199986157,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529051622522318",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "quests": [],
+                    "uninstancedItemObjectives": {
+                        "432848324": [
+                            {
+                                "objectiveHash": 788707520,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 1977965959,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 84088458,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 4012243269,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ],
+                        "2540008660": [
+                            {
+                                "objectiveHash": 2432519051,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ]
+                    }
+                },
+                "1000000000000000002": {
+                    "progressions": {
+                        "2679551909": {
+                            "progressionHash": 2679551909,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 200
+                        },
+                        "3882308435": {
+                            "progressionHash": 3882308435,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 6,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 50
+                        },
+                        "3298204156": {
+                            "progressionHash": 3298204156,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 20,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 100000
+                        },
+                        "3455936608": {
+                            "progressionHash": 3455936608,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "2424694449": {
+                            "progressionHash": 2424694449,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 5000
+                        },
+                        "1716568313": {
+                            "progressionHash": 1716568313,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 148500,
+                            "level": 20,
+                            "levelCap": 30,
+                            "stepIndex": 20,
+                            "progressToNextLevel": 2500,
+                            "nextLevelAt": 10000
+                        },
+                        "2030054750": {
+                            "progressionHash": 2030054750,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 152251,
+                            "level": 2,
+                            "levelCap": -1,
+                            "stepIndex": 2,
+                            "progressToNextLevel": 2251,
+                            "nextLevelAt": 75000
+                        },
+                        "540048094": {
+                            "progressionHash": 540048094,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 21,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 250
+                        },
+                        "3122728759": {
+                            "progressionHash": 3122728759,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 1,
+                            "level": 0,
+                            "levelCap": 1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 1,
+                            "nextLevelAt": 50
+                        },
+                        "2318284751": {
+                            "progressionHash": 2318284751,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": 3,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 30
+                        },
+                        "1490278642": {
+                            "progressionHash": 1490278642,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 1,
+                            "levelCap": 2,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 10000
+                        },
+                        "584850370": {
+                            "progressionHash": 584850370,
+                            "dailyProgress": 18750,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 3750,
+                            "weeklyLimit": 100000,
+                            "currentProgress": 18750,
+                            "level": 1,
+                            "levelCap": 6,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 18750,
+                            "nextLevelAt": 100000
+                        }
+                    },
+                    "factions": {
+                        "697030790": {
+                            "factionHash": 697030790,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 697030790,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 100,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 100,
+                            "nextLevelAt": 2000
+                        },
+                        "3398051042": {
+                            "factionHash": 3398051042,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 3398051042,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "828982195": {
+                            "factionHash": 828982195,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 828982195,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 1940,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 1940,
+                            "nextLevelAt": 2750
+                        },
+                        "4235119312": {
+                            "factionHash": 4235119312,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4235119312,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 2035,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 2035,
+                            "nextLevelAt": 2750
+                        },
+                        "4196149087": {
+                            "factionHash": 4196149087,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 4196149087,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "1714509342": {
+                            "factionHash": 1714509342,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1714509342,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1021210278": {
+                            "factionHash": 1021210278,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 1021210278,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 4800,
+                            "level": 1,
+                            "levelCap": -1,
+                            "stepIndex": 1,
+                            "progressToNextLevel": 1800,
+                            "nextLevelAt": 3000
+                        },
+                        "3231773039": {
+                            "factionHash": 3231773039,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 3231773039,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 7000
+                        },
+                        "1761642340": {
+                            "factionHash": 1761642340,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1761642340,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 1900,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 1900,
+                            "nextLevelAt": 2000
+                        },
+                        "24856709": {
+                            "factionHash": 24856709,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 1482334108,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "1660497607": {
+                            "factionHash": 1660497607,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 1660497607,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 200,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 200,
+                            "nextLevelAt": 2750
+                        },
+                        "2105209711": {
+                            "factionHash": 2105209711,
+                            "factionVendorIndex": 0,
+                            "progressionHash": 2105209711,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "469305170": {
+                            "factionHash": 469305170,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 3468066401,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "611314723": {
+                            "factionHash": 611314723,
+                            "factionVendorIndex": 1,
+                            "progressionHash": 611314723,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2000
+                        },
+                        "2677528157": {
+                            "factionHash": 2677528157,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 2677528157,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        },
+                        "3859807381": {
+                            "factionHash": 3859807381,
+                            "factionVendorIndex": -1,
+                            "progressionHash": 3859807381,
+                            "dailyProgress": 0,
+                            "dailyLimit": 0,
+                            "weeklyProgress": 0,
+                            "weeklyLimit": 0,
+                            "currentProgress": 0,
+                            "level": 0,
+                            "levelCap": -1,
+                            "stepIndex": 0,
+                            "progressToNextLevel": 0,
+                            "nextLevelAt": 2750
+                        }
+                    },
+                    "milestones": {
+                        "2171429505": {
+                            "milestoneHash": 2171429505,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2296274682,
+                                    "status": {
+                                        "questHash": 2296274682,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 2179568029,
+                                        "activityModeHash": 547513715,
+                                        "activityModeType": 46,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2179568029,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            },
+                                            {
+                                                "activityHash": 1794007817,
+                                                "activityModeHash": 547513715,
+                                                "activityModeType": 46
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 809261084,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 786874008,
+                                                "activityHash": 2179568029,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4042386064,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 4234035164,
+                                                "activityHash": 1794007817,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "4109359897": {
+                            "milestoneHash": 4109359897
+                        },
+                        "202035466": {
+                            "milestoneHash": 202035466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1923022191,
+                                    "status": {
+                                        "questHash": 1923022191,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "463010297": {
+                            "milestoneHash": 463010297,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1268260813,
+                                    "status": {
+                                        "questHash": 1268260813,
+                                        "stepHash": 1406527486,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3812101921,
+                                                "destinationHash": 308080871,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625842271",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3660836525": {
+                            "milestoneHash": 3660836525,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 82550967,
+                                    "status": {
+                                        "questHash": 82550967,
+                                        "stepHash": 3128644588,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1228559841,
+                                                "destinationHash": 3093898507,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055625849804",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    },
+                                    "activity": {
+                                        "activityHash": 2693136605,
+                                        "activityModeHash": 2043403989,
+                                        "activityModeType": 4,
+                                        "variants": [
+                                            {
+                                                "activityHash": 2693136605,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            },
+                                            {
+                                                "activityHash": 1685065161,
+                                                "completionStatus": {
+                                                    "completed": false,
+                                                    "phases": [
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        },
+                                                        {
+                                                            "complete": false
+                                                        }
+                                                    ]
+                                                },
+                                                "activityModeHash": 2043403989,
+                                                "activityModeType": 4
+                                            }
+                                        ]
+                                    },
+                                    "challenges": [
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 643172939,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3093556426,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 3130639820,
+                                                "activityHash": 2693136605,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1361822600,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        },
+                                        {
+                                            "objective": {
+                                                "objectiveHash": 1631837981,
+                                                "activityHash": 1685065161,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2122634728": {
+                            "milestoneHash": 2122634728,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3741857065,
+                                    "status": {
+                                        "questHash": 3741857065,
+                                        "stepHash": 726388122,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 340409949,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055623173405",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-16T17:00:00Z"
+                        },
+                        "3245985898": {
+                            "milestoneHash": 3245985898,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 255819671,
+                                    "status": {
+                                        "questHash": 255819671,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 255819671,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 255819671,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "questItemHash": 3982474534,
+                                    "status": {
+                                        "questHash": 3982474534,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    },
+                                    "activity": {
+                                        "activityHash": 3982474534,
+                                        "activityModeHash": 1686739444,
+                                        "activityModeType": 2,
+                                        "variants": [
+                                            {
+                                                "activityHash": 3982474534,
+                                                "activityModeHash": 1686739444,
+                                                "activityModeType": 2
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "3603098564": {
+                            "milestoneHash": 3603098564,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1433913940,
+                                    "status": {
+                                        "questHash": 1433913940,
+                                        "stepHash": 2158062501,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3289403948,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529055614120782",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "1142551194": {
+                            "milestoneHash": 1142551194,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2148117737,
+                                    "status": {
+                                        "questHash": 2148117737,
+                                        "stepHash": 1041160127,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 1111075118,
+                                                "destinationHash": 2512542997,
+                                                "activityHash": 492869759,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529037515537467",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1478219986": {
+                            "milestoneHash": 1478219986,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3957339989,
+                                    "status": {
+                                        "questHash": 3957339989,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "3875745925": {
+                            "milestoneHash": 3875745925,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2234606252,
+                                    "status": {
+                                        "questHash": 2234606252,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2311040624": {
+                            "milestoneHash": 2311040624,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 981091409,
+                                    "status": {
+                                        "questHash": 981091409,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "347073893": {
+                            "milestoneHash": 347073893,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1022868936,
+                                    "status": {
+                                        "questHash": 1022868936,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1680677066": {
+                            "milestoneHash": 1680677066,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3791214989,
+                                    "status": {
+                                        "questHash": 3791214989,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "828676398": {
+                            "milestoneHash": 828676398,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4199920776,
+                                    "status": {
+                                        "questHash": 4199920776,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": true,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597245": {
+                            "milestoneHash": 3194597245,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 3900642287,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 188156342,
+                                                "destinationHash": 1993421442,
+                                                "activityHash": 1512980468,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529046009220025",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3194597246": {
+                            "milestoneHash": 3194597246,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4158155169,
+                                    "status": {
+                                        "questHash": 4158155169,
+                                        "stepHash": 865296439,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 2872040958,
+                                                "destinationHash": 308080871,
+                                                "activityHash": 1967025365,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529054782506880",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "3360209900": {
+                            "milestoneHash": 3360209900,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1223846615,
+                                    "status": {
+                                        "questHash": 1223846615,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "4028522574": {
+                            "milestoneHash": 4028522574,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3716034648,
+                                    "status": {
+                                        "questHash": 3716034648,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "342166397": {
+                            "milestoneHash": 342166397,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 4026286266,
+                                    "status": {
+                                        "questHash": 4026286266,
+                                        "stepHash": 2781140917,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 323792500,
+                                                "destinationHash": 2777041980,
+                                                "activityHash": 0,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529037358391438",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "1510166140": {
+                            "milestoneHash": 1510166140,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2981626471,
+                                    "status": {
+                                        "questHash": 2981626471,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": true,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "4253138191": {
+                            "milestoneHash": 4253138191,
+                            "rewards": [
+                                {
+                                    "rewardCategoryHash": 1064137897,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 3789021730,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2112637710,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 2043403989,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 964120289,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rewardCategoryHash": 4258746474,
+                                    "entries": [
+                                        {
+                                            "rewardEntryHash": 305996677,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1685071777,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 783563440,
+                                            "earned": false,
+                                            "redeemed": false
+                                        },
+                                        {
+                                            "rewardEntryHash": 1478801436,
+                                            "earned": false,
+                                            "redeemed": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354207": {
+                            "milestoneHash": 3109354207,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2173086903,
+                                    "status": {
+                                        "questHash": 2173086903,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "3109354204": {
+                            "milestoneHash": 3109354204,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 289324730,
+                                    "status": {
+                                        "questHash": 289324730,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ],
+                            "startDate": "2018-05-15T17:00:00Z",
+                            "endDate": "2018-05-22T17:00:00Z"
+                        },
+                        "2415418481": {
+                            "milestoneHash": 2415418481
+                        },
+                        "1581997784": {
+                            "milestoneHash": 1581997784,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 139551572,
+                                    "status": {
+                                        "questHash": 139551572,
+                                        "stepHash": 581402281,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 3186245683,
+                                                "destinationHash": 333456177,
+                                                "activityHash": 3903562779,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529054779168268",
+                                        "completed": true,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        },
+                        "2299173667": {
+                            "milestoneHash": 2299173667,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2151517341,
+                                    "status": {
+                                        "questHash": 2151517341,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "3219235466": {
+                            "milestoneHash": 3219235466,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 1730486624,
+                                    "status": {
+                                        "questHash": 1730486624,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "4128810957": {
+                            "milestoneHash": 4128810957,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 3688853099,
+                                    "status": {
+                                        "questHash": 3688853099,
+                                        "stepHash": 0,
+                                        "stepObjectives": [],
+                                        "tracked": false,
+                                        "itemInstanceId": "0",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": false
+                                    }
+                                }
+                            ]
+                        },
+                        "1520809393": {
+                            "milestoneHash": 1520809393,
+                            "availableQuests": [
+                                {
+                                    "questItemHash": 2208283297,
+                                    "status": {
+                                        "questHash": 2208283297,
+                                        "stepHash": 3900642287,
+                                        "stepObjectives": [
+                                            {
+                                                "objectiveHash": 188156342,
+                                                "destinationHash": 1993421442,
+                                                "activityHash": 1512980468,
+                                                "progress": 0,
+                                                "complete": false,
+                                                "visible": true
+                                            }
+                                        ],
+                                        "tracked": false,
+                                        "itemInstanceId": "6917529046009220025",
+                                        "completed": false,
+                                        "redeemed": false,
+                                        "started": true
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "quests": [],
+                    "uninstancedItemObjectives": {
+                        "432848324": [
+                            {
+                                "objectiveHash": 788707520,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 1977965959,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 84088458,
+                                "complete": false,
+                                "visible": true
+                            },
+                            {
+                                "objectiveHash": 4012243269,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ],
+                        "2540008660": [
+                            {
+                                "objectiveHash": 2432519051,
+                                "complete": false,
+                                "visible": true
+                            }
+                        ]
+                    }
+                }
+            },
+            "privacy": 2
+        },
+        "itemComponents": {}
+    },
+    "ErrorCode": 1,
+    "ThrottleSeconds": 0,
+    "ErrorStatus": "Success",
+    "Message": "Ok",
+    "MessageData": {}
+}

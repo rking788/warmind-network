@@ -628,6 +628,73 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 	return response, nil
 }
 
+// GetCurrentCrucibleRanking will look up the current Glory and Valor rankings for the
+// current user and summarize it including the name of the rank and the points
+// required to hit the next rank (if they aren't at the top most rank).
+func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) {
+
+	response := skillserver.NewEchoResponse()
+
+	client := Clients.Get()
+	client.AddAuthValues(token, warmindAPIKey)
+
+	// TODO: check error
+	currentAccount, _ := client.GetCurrentAccount()
+
+	if currentAccount == nil {
+		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
+		glg.Error("Failed to load current account with the specified access token!")
+		return nil, errors.New("Couldn't load the current account")
+	}
+
+	membership := currentAccount.DestinyMembership
+
+	progressionResponse := CharacterProgressionResponse{}
+	err := client.Execute(NewGetProgressionsRequest(membership.MembershipType,
+		membership.MembershipID), &progressionResponse)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
+		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+	}
+
+	glory := progressionResponse.gloryProgression()
+	valor := progressionResponse.valorProgression()
+
+	buf := bytes.NewBuffer([]byte{})
+	if glory == nil && valor == nil {
+		buf.WriteString("There was an error trying to find your current Crucible rankings, " +
+			" please try again later.")
+	} else {
+		if glory != nil {
+			buf.WriteString(fmt.Sprintf("You've achieved %s glory rank, ",
+				pvpRankSteps[glory.Level]))
+			if glory.Level == (glory.LevelCap - 1) {
+				buf.WriteString("congratulations on becoming Legend! ")
+			} else {
+				buf.WriteString(fmt.Sprintf("only %d glory points to the next rank. ",
+					glory.NextLevelAt))
+			}
+		}
+		if valor != nil {
+			buf.WriteString(fmt.Sprintf("Your current valor rank is %s, ",
+				pvpRankSteps[valor.Level]))
+			if valor.Level == (valor.LevelCap - 1) {
+				buf.WriteString("congratulations on becoming Legend! ")
+			} else {
+				buf.WriteString(fmt.Sprintf("only %d valor points to the next rank. ",
+					valor.NextLevelAt))
+			}
+		}
+
+		buf.WriteString("Goodluck!")
+	}
+
+	response.OutputSpeech(buf.String())
+
+	return response, nil
+}
+
 // GetOutboundIP gets preferred outbound ip of this machine
 // func GetOutboundIP() net.IP {
 // 	conn, err := net.Dial("udp", "8.8.8.8:80")
