@@ -6,6 +6,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "j5lrUUvdX/IICLK/vg9TG9h6Zvs=",
+			"path": "github.com/certifi/gocertifi",
+			"revision": "deb3ae2ef2610fde3330947281941c562861188b",
+			"revisionTime": "2018-01-18T20:34:23Z"
+		},
+		{
 			"checksumSHA1": "yTxfr36sEqdDSoqXaV5aMmTyLrc=",
 			"path": "github.com/codegangsta/negroni",
 			"revision": "423835657b6c73d9d894487168624f4ae7b1cc64",
@@ -22,6 +28,12 @@
 			"path": "github.com/garyburd/redigo/redis",
 			"revision": "ac91d6ff49bd0d278a90201de77a4f8ad9628e25",
 			"revisionTime": "2017-04-26T21:28:18Z"
+		},
+		{
+			"checksumSHA1": "SmEP0JfsilDTRExH6LadhVehPyo=",
+			"path": "github.com/getsentry/raven-go",
+			"revision": "263040ce1a362270b5897a5982572ddc1fe807be",
+			"revisionTime": "2018-04-30T18:20:53Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -64,6 +76,12 @@
 			"path": "github.com/mikeflynn/go-alexa/skillserver",
 			"revision": "107980aa6911cf257d62f5d4e9d575e88fde29e4",
 			"revisionTime": "2017-07-19T02:51:28Z"
+		},
+		{
+			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
+			"path": "github.com/pkg/errors",
+			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
+			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
 			"checksumSHA1": "4r4riJT5c3X4tuY3baAtWcdk9+E=",
