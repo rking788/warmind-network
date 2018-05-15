@@ -1,6 +1,8 @@
-Version 1.7.0
+Version 1.8.1
 ===============
-- Added an intent for randomizing loadouts.
-- Requiring confirmation for loadout names now to avoid accidental loadout names.
-- Adding support for Canada and Australia (English only still).
+- Added intents for requesting top activities and meta stats from Charlemagne.
+- Performance improvements around filtering items from a list.
+- Added the Sentry.io library for reporting unexpected errors so alerts can be provided.
+- Improved documentation to silence Go linter warnings
+- Fixed a bug causing users to not be able to equip a named loadout.
 
