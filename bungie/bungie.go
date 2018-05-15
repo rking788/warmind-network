@@ -558,12 +558,12 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	}
 
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
-	profile.BungieNetMembershipID = currentAccount.DestinyMembership.MembershipID
+	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
 		raven.CaptureError(errors.New("No loadout matching name"), map[string]string{"name": name})
-		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s."+
+		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s. "+
 			"You need to create a loadout with that name before it can be equipped.", name))
 		return response, nil
 	} else if err != nil {
