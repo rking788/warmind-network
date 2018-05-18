@@ -1,10 +1,14 @@
 package charlemagne
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/kpango/glg"
 )
 
 const (
@@ -92,14 +96,18 @@ func (c *Client) GetCurrentMeta(activityHash string, gameModes []string, members
 		vals.Add("membershipType", string(membershipType))
 	}
 	req.URL.RawQuery = vals.Encode()
+	glg.Warnf("Request query : %s with URL %s", req.URL.RawQuery, req.URL)
 
 	resp, err := c.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
+	fullResponse, _ := ioutil.ReadAll(resp.Body)
+	buf := bytes.NewReader([]byte(fullResponse))
+
 	result := &MetaResponse{}
-	decoder := json.NewDecoder(resp.Body)
+	decoder := json.NewDecoder(buf)
 	err = decoder.Decode(result)
 
 	return result, err

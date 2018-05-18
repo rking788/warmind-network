@@ -4,7 +4,38 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
+)
+
+var (
+	// Charlemagne understands the following aggregate modeTypes
+	// raid - 4
+	// allPvp - 5
+	// allPve - 7
+	metaActivityTranslation = map[string]string{
+		"pvp":                "5",
+		"crucible":           "5",
+		"trials":             "5",
+		"quickplay":          "5",
+		"quick play":         "5",
+		"competitive":        "5",
+		"pve":                "7",
+		"strikes":            "7",
+		"strike":             "7",
+		"story":              "7",
+		"faction":            "7",
+		"nightfall":          "7",
+		"prestige":           "7",
+		"prestige nightfall": "7",
+		"public event":       "7",
+		"adventure":          "7",
+		"patrol":             "7",
+		"raid":               "4",
+		"leviathan":          "4",
+		"spire of stars":     "4",
+		"eater of worlds":    "4",
+	}
 )
 
 // MetaResponse contains the fields returned from the Charlemagne API for meta endpoints
@@ -40,6 +71,11 @@ func FindCurrentMeta(platform, requestedActivity string) (*skillserver.EchoRespo
 
 	activityHash := ""
 	gameModes := []string{}
+	if val, ok := metaActivityTranslation[requestedActivity]; ok {
+		// At some ponit this could be a list of activities but for now let's leave it as one
+		gameModes = append(gameModes, val)
+		glg.Warnf("Found translated game mode of: %s", val)
+	}
 	translatedPlatform := platformNameToMapKey[platform]
 
 	meta, err := client.GetCurrentMeta(activityHash, gameModes, translatedPlatform)

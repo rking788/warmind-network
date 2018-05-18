@@ -495,9 +495,11 @@ func TopActivities(echoRequest *skillserver.EchoRequest) *skillserver.EchoRespon
 func CurrentMeta(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
 
 	platform, _ := echoRequest.GetSlotValue("Platform")
-	activity, _ := echoRequest.GetSlotValue("Activity")
+	activity, _ := echoRequest.GetSlotValue("GameMode")
 
-	response, err := charlemagne.FindCurrentMeta(platform, activity)
+	glg.Warnf("Requesting current meta with game mode name: %s", activity)
+	response, err := charlemagne.FindCurrentMeta(strings.ToLower(platform),
+		strings.ToLower(activity))
 	if err != nil {
 		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
