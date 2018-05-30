@@ -421,20 +421,6 @@ func CurrentTrialsWeek(request *skillserver.EchoRequest) (response *skillserver.
 	return
 }
 
-// PopularWeapons will check Trials Report for the most popular specific weapons for the current week.
-func PopularWeapons(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
-
-	response, err := trials.GetWeaponUsagePercentages()
-	if err != nil {
-		raven.CaptureError(err, nil)
-		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, I cannot access this information at this time, please try again later")
-		return
-	}
-
-	return
-}
-
 // PersonalTopWeapons will check Trials Report for the most used weapons for the current user.
 func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
 
@@ -449,22 +435,6 @@ func PersonalTopWeapons(request *skillserver.EchoRequest) (response *skillserver
 	}
 
 	return
-}
-
-// PopularWeaponTypes will return info about what classes of weapons are getting
-// the most kills in Trials of the Nine.
-func PopularWeaponTypes(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
-
-	response, err := trials.GetPopularWeaponTypes()
-	if err != nil {
-		raven.CaptureError(err, nil)
-		response = skillserver.NewEchoResponse()
-		response.OutputSpeech("Sorry Guardian, I cannot access this information at " +
-			"this time, please try again later")
-		return response
-	}
-
-	return response
 }
 
 /**
@@ -497,9 +467,25 @@ func CurrentMeta(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse
 	platform, _ := echoRequest.GetSlotValue("Platform")
 	activity, _ := echoRequest.GetSlotValue("GameMode")
 
+	platform = strings.ToLower(platform)
+	activity = strings.ToLower(activity)
+
 	glg.Warnf("Requesting current meta with game mode name: %s", activity)
-	response, err := charlemagne.FindCurrentMeta(strings.ToLower(platform),
-		strings.ToLower(activity))
+
+	// If game mode is Trials related, use Trials Report data.
+	if strings.Contains(activity, "trials") {
+		response, err := trials.GetWeaponUsagePercentages()
+		if err != nil {
+			raven.CaptureError(err, nil)
+			response = skillserver.NewEchoResponse()
+			response.OutputSpeech("Sorry Guardian, I cannot access this information at this " +
+				" time, please try again later")
+		}
+
+		return response
+	}
+
+	response, err := charlemagne.FindCurrentMeta(platform, activity)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()

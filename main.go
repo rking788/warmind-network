@@ -27,8 +27,6 @@ var (
 		"TransferItem":             alexa.AuthWrapper(alexa.TransferItem),
 		"TrialsCurrentMap":         alexa.CurrentTrialsMap,
 		"TrialsCurrentWeek":        alexa.AuthWrapper(alexa.CurrentTrialsWeek),
-		"TrialsTopWeapons":         alexa.PopularWeapons,
-		"TrialsPopularWeaponTypes": alexa.PopularWeaponTypes,
 		"TrialsPersonalTopWeapons": alexa.AuthWrapper(alexa.PersonalTopWeapons),
 		"UnloadEngrams":            alexa.AuthWrapper(alexa.UnloadEngrams),
 		"EquipMaxLight":            alexa.AuthWrapper(alexa.MaxPower),
