@@ -798,3 +798,18 @@ func readSample(name string) ([]byte, error) {
 
 	return ioutil.ReadAll(f)
 }
+
+// NOTE: This should never really be run normally. Really just for testing a
+// full get profile request chain
+// func TestFullGetItemCountTest(t *testing.T) {
+
+// 	setup()
+
+// 	testAccessToken := "<TEST_ACCESS_TOKEN>"
+// 	client := Clients.Get()
+
+// 	client.AddAuthValues(testAccessToken, "<TEST_API_KEY>")
+
+// 	// Load all items on all characters
+// 	_, _ = GetProfileForCurrentUser(client, false)
+// }
