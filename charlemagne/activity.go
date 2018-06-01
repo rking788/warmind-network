@@ -2,9 +2,18 @@ package charlemagne
 
 import (
 	"bytes"
+	"fmt"
 	"sort"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/rking788/go-alexa/skillserver"
+)
+
+var (
+	cachedActivityByMode []*ActivitySummary
+	// cachedActivityByPlatform uses platform as the key and a slice of activity summary structs
+	cachedActivityByPlatform map[string][]*ActivitySummary
 )
 
 // ActivityResponse contains all the stats returned by the Charlemagne API
@@ -73,27 +82,24 @@ func FindMostPopularActivities(platform string) (*skillserver.EchoResponse, erro
 
 	translatedPlatform := platformNameToMapKey[platform]
 
-	activityResp, err := client.GetPlayerActivity()
-	if err != nil || activityResp == nil {
-		response.OutputSpeech("Sorry Guardian, there was a problem contacting Charlemagne, " +
-			"please try again later.")
-		return response, nil
-	}
-
-	var activity map[string]*ActivitySummary
+	var activity []*ActivitySummary
 	if translatedPlatform == "" {
-		activity = activityResp.ActivityByMode
+		activity = cachedActivityByMode
 	} else {
-		activity = activityResp.ActivityByPlatform[translatedPlatform].ActivityByMode
+		activity = cachedActivityByPlatform[translatedPlatform]
 	}
 
-	ordered := sortPlayerActivityModes(activity)
+	if activity == nil {
+		err := fmt.Errorf("Failed to get player activity response from cache for platform=%s", translatedPlatform)
+		raven.CaptureError(err, nil, nil)
+		return nil, err
+	}
 
 	speechBuffer := bytes.NewBuffer([]byte("Guardian, according to Charlemagne, " +
 		"the top three activities being played right now are: "))
 	for i := 0; i < 3; i++ {
-		activity := ordered[i]
-		speechBuffer.WriteString(activity.ModeName + ", ")
+		act := activity[i]
+		speechBuffer.WriteString(act.ModeName + ", ")
 	}
 	speechBuffer.Write([]byte(". Go get that loot!"))
 

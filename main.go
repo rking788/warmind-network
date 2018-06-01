@@ -10,6 +10,7 @@ import (
 	"time"
 
 	raven "github.com/getsentry/raven-go"
+	"github.com/rking788/warmind-network/charlemagne"
 	"github.com/rking788/warmind-network/db"
 	"github.com/rking788/warmind-network/trials"
 
@@ -83,6 +84,7 @@ func InitEnv(c *EnvConfig) {
 	db.InitEnv(c.DatabaseURL)
 	alexa.InitEnv(c.RedisURL)
 	bungie.InitEnv(c.BungieAPIKey, c.WarmindBungieAPIKey)
+	charlemagne.InitEnv()
 }
 
 func main() {

@@ -29,6 +29,22 @@ type CurrentMap struct {
 	} `json:"Response"`
 }
 
+func (m *CurrentMap) startMonth() string {
+	return m.Response.StartDate.Month().String()
+}
+
+func (m *CurrentMap) startDay() int {
+	return m.Response.StartDate.Day()
+}
+
+func (m *CurrentMap) mode() string {
+	return m.Response.Mode
+}
+
+func (m *CurrentMap) mapName() string {
+	return m.Response.MapName
+}
+
 type nineWeaponStats struct {
 	Bucket     int    `json:"bucket"`
 	Headshots  int    `json:"headshots"`

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/getsentry/raven-go"
+
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
 )
@@ -36,7 +38,32 @@ var (
 		"spire of stars":     "4",
 		"eater of worlds":    "4",
 	}
+
+	cachedMetaResponses map[string]map[string]*MetaResponse
 )
+
+func uniqueModeTypes() []string {
+	uniques := make([]string, 0, 10)
+
+	// blank game mode is also possible
+	uniques = append(uniques, "")
+
+	for _, modeType := range metaActivityTranslation {
+		found := false
+		for _, t := range uniques {
+			if t == modeType {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			uniques = append(uniques, modeType)
+		}
+	}
+
+	return uniques
+}
 
 // MetaResponse contains the fields returned from the Charlemagne API for meta endpoints
 type MetaResponse struct {
@@ -69,17 +96,23 @@ func FindCurrentMeta(platform, requestedActivity string) (*skillserver.EchoRespo
 
 	response := skillserver.NewEchoResponse()
 
-	activityHash := ""
+	// TODO: activity hash is currently unused. may be useful to be able to request meta
+	// for a current activity
+	//activityHash := ""
 	gameModes := []string{}
-	if val, ok := metaActivityTranslation[requestedActivity]; ok {
+	translatedGameMode, ok := metaActivityTranslation[requestedActivity]
+	if ok {
 		// At some ponit this could be a list of activities but for now let's leave it as one
-		gameModes = append(gameModes, val)
-		glg.Warnf("Found translated game mode of: %s", val)
+		gameModes = append(gameModes, translatedGameMode)
+		glg.Infof("Found translated game mode of: %s", translatedGameMode)
 	}
 	translatedPlatform := platformNameToMapKey[platform]
 
-	meta, err := client.GetCurrentMeta(activityHash, gameModes, translatedPlatform)
-	if err != nil {
+	glg.Warnf("Translated game mode for lookup in cache: %s", translatedGameMode)
+	meta := cachedMetaResponses[translatedPlatform][translatedGameMode]
+	if meta == nil {
+		err := fmt.Errorf("Trying to return meta for mode=%s and platform=%s but not in cache", translatedGameMode, translatedPlatform)
+		raven.CaptureError(err, nil, nil)
 		return nil, err
 	}
 

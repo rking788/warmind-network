@@ -8,6 +8,7 @@ import (
 	"math"
 	"net/http"
 	"sort"
+	"time"
 
 	raven "github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
@@ -20,13 +21,17 @@ const (
 	RequestOrigin = "https://warmind-network.herokuapp.com"
 )
 
-var bungieAPIKey string
-var warmindAPIKey string
-var client *NineClient
-var destinyTrialsReportClient *NineClient
+var (
+	bungieAPIKey              string
+	warmindAPIKey             string
+	client                    *NineClient
+	destinyTrialsReportClient *NineClient
+	currentMapResponse        *CurrentMap
+)
 
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey, baseURL string) {
+
 	bungieAPIKey = apiKey
 	warmindAPIKey = warmindKey
 	if baseURL == "" {
@@ -44,6 +49,36 @@ func InitEnv(apiKey, warmindKey, baseURL string) {
 			BaseURL: baseURL,
 		}
 	}
+
+	startCachePopulation()
+}
+
+func startCachePopulation() {
+
+	ticker := time.NewTicker(10 * time.Minute)
+	go func() {
+		for {
+			var err error
+			currentMapResponse, err = requestCurrentMap()
+			if err == nil {
+				glg.Debug("Updated current map cache successfully")
+			}
+			<-ticker.C
+		}
+	}()
+}
+
+func requestCurrentMap() (*CurrentMap, error) {
+	resp := &CurrentMap{}
+	err := client.Execute(NineCurrentWeekStatsPath, resp)
+
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to read the current map from Trials Report!: %s", err.Error())
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // GetCurrentMap will make a request to the Trials Report API endpoint and
@@ -52,17 +87,12 @@ func GetCurrentMap() (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
 
-	resp := CurrentMap{}
-	err := client.Execute(NineCurrentWeekStatsPath, &resp)
-
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Failed to read the current map from Trials Report!: %s", err.Error())
-		return nil, err
+	if currentMapResponse == nil {
+		return nil, errors.New("Unable to load current map information from Trials Report")
 	}
 
 	response.OutputSpeech(fmt.Sprintf("According to Trials Report, the current Trials of "+
-		"the Nine map beginning %s %d is %s on %s, goodluck Guardian.", resp.Response.StartDate.Month().String(), resp.Response.StartDate.Day(), resp.Response.Mode, resp.Response.MapName))
+		"the Nine map beginning %s %d is %s on %s, goodluck Guardian.", currentMapResponse.startMonth(), currentMapResponse.startDay(), currentMapResponse.mode(), currentMapResponse.mapName()))
 
 	return response, nil
 }
@@ -98,16 +128,14 @@ func GetPopularWeaponTypes() (*skillserver.EchoResponse, error) {
 
 	response := skillserver.NewEchoResponse()
 
-	currentMapInfo := CurrentMap{}
-	err := client.Execute(NineCurrentWeekStatsPath, &currentMapInfo)
-	if err != nil {
-		return nil, err
+	if currentMapResponse == nil {
+		return nil, errors.New("Failed to load current map details from Trials Report")
 	}
 
 	kineticID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Kinetic])
 	energyID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Energy])
-	kinetic := currentMapInfo.Response.Weapons[kineticID]
-	energy := currentMapInfo.Response.Weapons[energyID]
+	kinetic := currentMapResponse.Response.Weapons[kineticID]
+	energy := currentMapResponse.Response.Weapons[energyID]
 
 	output := fmt.Sprintf("For kinetics it looks like %ss and %ss are the most popular "+
 		"this week. %ss and %ss seem to be the most popular energy weapons acoording to "+
@@ -123,15 +151,13 @@ func GetPopularWeaponTypes() (*skillserver.EchoResponse, error) {
 func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 	response := skillserver.NewEchoResponse()
 
-	currentWeekStats := CurrentMap{}
-	err := client.Execute(NineCurrentWeekStatsPath, &currentWeekStats)
-	if err != nil {
-		return nil, err
+	if currentMapResponse == nil {
+		return nil, errors.New("Failed to load current map details from Trials Report")
 	}
 
 	weaponStatsMap := make(map[string]*nineWeaponStats)
 
-	for _, val := range currentWeekStats.Response.WeaponsByPlatform {
+	for _, val := range currentMapResponse.Response.WeaponsByPlatform {
 		for _, stats := range val {
 			for _, stat := range stats {
 				if _, ok := weaponStatsMap[stat.Name]; ok {
@@ -157,7 +183,7 @@ func GetWeaponUsagePercentages() (*skillserver.EchoResponse, error) {
 	// TODO: Maybe it would be good to have the user specify the number of top weapons
 	// they want returned.
 	for i := 0; i < TopWeaponUsageLimit; i++ {
-		usagePercent := (float64(combinedWeapons[i].Kills) / float64(currentWeekStats.Response.WeaponKills)) * 100.0
+		usagePercent := (float64(combinedWeapons[i].Kills) / float64(currentMapResponse.Response.WeaponKills)) * 100.0
 		buffer.WriteString(fmt.Sprintf("%s with %.0f%%, ",
 			combinedWeapons[i].Name, math.Floor(usagePercent+0.5)))
 	}
