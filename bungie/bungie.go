@@ -667,9 +667,16 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 			" please try again later.")
 	} else {
 		if glory != nil {
-			buf.WriteString(fmt.Sprintf("You've achieved %s glory rank, ",
-				pvpRankSteps[glory.Level]))
-			if glory.Level == (glory.LevelCap - 1) {
+			var gloryRank string
+			if glory.Level < len(pvpRankSteps) {
+				gloryRank = pvpRankSteps[glory.Level]
+			} else {
+				gloryRank = pvpRankSteps[len(pvpRankSteps)-1]
+			}
+			buf.WriteString(fmt.Sprintf("You've achieved %s glory rank, ", gloryRank))
+			if glory.Level == glory.LevelCap {
+				buf.WriteString("you have reached max glory, time to reset it and do it again!")
+			} else if glory.Level == (glory.LevelCap - 1) {
 				buf.WriteString("congratulations on becoming Legend! ")
 			} else {
 				buf.WriteString(fmt.Sprintf("only %d glory points to the next rank. ",
@@ -677,9 +684,16 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 			}
 		}
 		if valor != nil {
-			buf.WriteString(fmt.Sprintf("Your current valor rank is %s, ",
-				pvpRankSteps[valor.Level]))
-			if valor.Level == (valor.LevelCap - 1) {
+			var valorRank string
+			if valor.Level < len(pvpRankSteps) {
+				valorRank = pvpRankSteps[valor.Level]
+			} else {
+				valorRank = pvpRankSteps[len(pvpRankSteps)-1]
+			}
+			buf.WriteString(fmt.Sprintf("Your current valor rank is %s, ", valorRank))
+			if valor.Level == valor.LevelCap {
+				buf.WriteString("you have reached max valor, time to reset it and do it again!")
+			} else if valor.Level == (valor.LevelCap - 1) {
 				buf.WriteString("congratulations on becoming Legend! ")
 			} else {
 				buf.WriteString(fmt.Sprintf("only %d valor points to the next rank. ",

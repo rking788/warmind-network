@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/kpango/glg"
 )
 
 const (
@@ -96,7 +94,6 @@ func (c *Client) GetCurrentMeta(activityHash string, gameModes []string, members
 		vals.Add("membershipType", string(membershipType))
 	}
 	req.URL.RawQuery = vals.Encode()
-	glg.Warnf("Request query : %s with URL %s", req.URL.RawQuery, req.URL)
 
 	resp, err := c.Do(req)
 	if err != nil {

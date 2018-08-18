@@ -58,11 +58,7 @@ func startCachePopulation() {
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
 		for {
-			var err error
-			currentMapResponse, err = requestCurrentMap()
-			if err == nil {
-				glg.Debug("Updated current map cache successfully")
-			}
+            currentMapResponse, _ = requestCurrentMap()
 			<-ticker.C
 		}
 	}()

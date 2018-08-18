@@ -23,7 +23,6 @@ func startCachePopulation() {
 		for {
 			activityResponse, err := requestCurrentPlayerActivity()
 			if err == nil {
-				glg.Debug("Updated player activity cache successfully")
 				cachedActivityByMode = sortPlayerActivityModes(activityResponse.ActivityByMode)
 				for platform, activity := range activityResponse.ActivityByPlatform {
 					cachedActivityByPlatform[platform] = sortPlayerActivityModes(activity.ActivityByMode)
@@ -37,7 +36,7 @@ func startCachePopulation() {
 				for _, mode := range uniqueModeTypes() {
 					cachedMetaResponses[platform][mode], err = requestCurrentMetaForMode(mode, platform)
 					if err == nil {
-						glg.Debugf("Successfully populated meta cache for mode=%s and platform=%s", mode, platform)
+                        // Success
 					} else {
 						glg.Warnf("Failed to request cached meta for mode=%s and platform=%s", mode, platform)
 					}
