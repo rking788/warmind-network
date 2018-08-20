@@ -223,6 +223,9 @@ type GetProfileResponse struct {
 		Characters *struct {
 			Data CharacterMap `json:"data"`
 		} `json:"Characters"`
+		CharacterActivities *struct {
+			Data map[string]*CharacterActivities `json:"data"`
+		} `json:"characterActivities"`
 	} `json:"Response"`
 }
 

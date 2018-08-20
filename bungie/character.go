@@ -35,7 +35,8 @@ type CharacterList []*Character
 // CharacterMap will be a map that contains Character values with characterID keys.
 type CharacterMap map[string]*Character
 
-// LastPlayedSort specifies a specific type for CharacterList that can be sorted by the date the character was last played.
+// LastPlayedSort specifies a specific type for CharacterList that can be sorted by
+// the date the character was last played.
 type LastPlayedSort CharacterList
 
 func (characters LastPlayedSort) Len() int { return len(characters) }

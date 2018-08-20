@@ -43,7 +43,7 @@ func setup() {
 func BenchmarkFilteringSingleFilter(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -60,7 +60,7 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 func BenchmarkFilteringMultipleFilters(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -81,7 +81,7 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -102,7 +102,7 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -123,7 +123,7 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 func BenchmarkFilteringPassthrough(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -159,7 +159,7 @@ func (items ItemList) FilterBaseline(filters ...ItemFilter) ItemList {
 func TestFilteringSingleFilterBubble(t *testing.T) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 		return
@@ -182,7 +182,7 @@ func TestFilteringSingleFilterBubble(t *testing.T) {
 func TestFilteringMultipleFilter(t *testing.T) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 		return
@@ -244,7 +244,7 @@ func TestFilteringMultipleFilter(t *testing.T) {
 func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -261,7 +261,7 @@ func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -282,7 +282,7 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 func BenchmarkMaxLight(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -299,7 +299,7 @@ func BenchmarkMaxLight(b *testing.B) {
 func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -317,7 +317,7 @@ func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
 func BenchmarkFindRandomLoadoutAll(b *testing.B) {
 
 	setup()
-	profileResponse, err := getCurrentProfileResponse()
+	profileResponse, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 		return
@@ -335,7 +335,7 @@ func BenchmarkFindRandomLoadoutAll(b *testing.B) {
 func BenchmarkGroupAndSort(b *testing.B) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 	}
@@ -354,7 +354,7 @@ func BenchmarkGroupAndSort(b *testing.B) {
 func BenchmarkBestItemForBucket(b *testing.B) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 	}
@@ -382,7 +382,7 @@ func BenchmarkBestItemForBucket(b *testing.B) {
 func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		b.FailNow()
 	}
@@ -432,7 +432,7 @@ func TestParseCurrentMembershipsResponse(t *testing.T) {
 func TestParseGetProfileResponse(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -477,7 +477,7 @@ func TestParseGetProfileResponse(t *testing.T) {
 func TestFixupProfileFromProfileResponse(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -491,7 +491,7 @@ func TestFixupProfileFromProfileResponse(t *testing.T) {
 func TestFixupProfileFromProfileResponseOnlyInstanced(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -505,7 +505,7 @@ func TestFixupProfileFromProfileResponseOnlyInstanced(t *testing.T) {
 func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -527,7 +527,7 @@ func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
 func TestFixupProfileFromProfileResponseMissingProfileInventory(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -542,7 +542,7 @@ func TestFixupProfileFromProfileResponseMissingProfileInventory(t *testing.T) {
 func TestFixupProfileFromProfileResponseMissingCharacters(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -567,7 +567,7 @@ func TestFixupProfileFromProfileResponseMissingCharacters(t *testing.T) {
 func TestFixupProfileFromProfileResponseMissingCharacterEquipment(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -588,7 +588,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterEquipment(t *testing.T) 
 func TestFixupProfileFromProfileResponseMissingCharacterInventories(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -602,7 +602,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterInventories(t *testing.T
 
 func TestGroupAndSort(t *testing.T) {
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.Fatal("Failed to get current profile for test")
 	}
@@ -634,7 +634,7 @@ func TestGroupAndSort(t *testing.T) {
 func TestRandomLoadoutFromProfile(t *testing.T) {
 
 	setup()
-	response, err := getCurrentProfileResponse()
+	response, err := getCurrentProfileResponse("GetProfile.json")
 	if err != nil {
 		t.FailNow()
 	}
@@ -793,8 +793,55 @@ func TestProgressionAccessors(t *testing.T) {
 	}
 }
 
-func getCurrentProfileResponse() (*GetProfileResponse, error) {
-	data, err := readSample("GetProfile.json")
+func TestParseCharacterActivities(t *testing.T) {
+	setup()
+	response, err := getCurrentProfileResponse("GetActivities.json")
+	if err != nil {
+		t.Fatal("Failed to get current activities profile for test")
+	}
+
+	profile := fixupProfileFromProfileResponse(response, false)
+	if profile == nil {
+		t.Fatal("Failed to fixup profile from response")
+	}
+
+	if profile.Activities == nil {
+		t.Fatal("Missing CharacterActivities in parsed profile response")
+	}
+
+	activities := profile.Activities[0]
+	if activities.DateActivityStarted.Unix() == 0 {
+		t.Fatal("Activities date started is empty (probably not parsed correctly)")
+	}
+
+	if activities.CurrentActivityHash == 0 {
+		t.Fatal("Missing current activity hash")
+	}
+
+	if activities.CurrentActivityModeHash == 0 {
+		t.Fatal("Missing current activity mode hash")
+	}
+
+	if activities.CurrentPlaylistActivityHash == 0 {
+		t.Fatal("Missing current playlist activity hash")
+	}
+
+	if len(activities.CurrentActivityModeHashes) == 0 {
+		t.Fatal("Missing current activity mode hash")
+	}
+
+	prevDateStarted := activities.DateActivityStarted.Unix()
+	for _, act := range profile.Activities {
+		if prevDateStarted < act.DateActivityStarted.Unix() {
+			t.Fatalf("Incorrectly sorted character activities: %d > %d", prevDateStarted, act.DateActivityStarted.Unix())
+		}
+
+		prevDateStarted = act.DateActivityStarted.Unix()
+	}
+}
+
+func getCurrentProfileResponse(filename string) (*GetProfileResponse, error) {
+	data, err := readSample(filename)
 	if err != nil {
 		fmt.Println("Error reading sample file: ", err.Error())
 		return nil, err

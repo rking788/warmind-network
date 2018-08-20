@@ -26,6 +26,9 @@ type Profile struct {
 	Loadouts map[string]Loadout
 
 	Equipments map[string]Equipment
+	// A list of the current and available character activities sorted by most
+	// recent activity start date
+	Activities []*CharacterActivities
 
 	// NOTE: Still not sure this is the best approach to flatten items into a single list,
 	// it works well for now so we will go with it. There are too many potential spots to
@@ -195,6 +198,19 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	}
 
 	profile.AllItems = items
+
+	// CharacterActivities component
+	if response.Response.CharacterActivities != nil {
+
+		profile.Activities = make([]*CharacterActivities, 0, len(response.Response.CharacterActivities.Data))
+		for charID, activities := range response.Response.CharacterActivities.Data {
+			a := activities
+			a.Character = response.character(charID)
+			profile.Activities = append(profile.Activities, a)
+		}
+
+		sort.Sort(sort.Reverse(ActivityStartSort(profile.Activities)))
+	}
 
 	//fmt.Printf("Found %d items in fixed up profile response\n", len(profile.AllItems))
 	return profile
