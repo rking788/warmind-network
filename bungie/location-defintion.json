@@ -1,0 +1,75 @@
+{
+    "vendorHash": 0,
+    "locationReleases": [
+        {
+            "displayProperties": {
+                "description": "",
+                "name": "Public Event Incoming",
+                "hasIcon": false
+            },
+            "spawnPoint": 0,
+            "destinationHash": 126924919,
+            "activityHash": 445417088,
+            "activityGraphHash": 64384765,
+            "activityGraphNodeHash": 0,
+            "activityBubbleName": 933267223,
+            "activityPathBundle": 943914827,
+            "activityPathDestination": 4187350074,
+            "navPointType": 0,
+            "worldPosition": [
+                85,
+                201,
+                -18,
+                0
+            ]
+        },
+        {
+            "displayProperties": {
+                "description": "",
+                "name": "Public Event Incoming",
+                "hasIcon": false
+            },
+            "spawnPoint": 0,
+            "destinationHash": 126924919,
+            "activityHash": 445417088,
+            "activityGraphHash": 64384765,
+            "activityGraphNodeHash": 0,
+            "activityBubbleName": 933267223,
+            "activityPathBundle": 943914827,
+            "activityPathDestination": 4187350074,
+            "navPointType": 0,
+            "worldPosition": [
+                85,
+                201,
+                -18,
+                0
+            ]
+        },
+        {
+            "displayProperties": {
+                "description": "",
+                "name": "Public Event Incoming",
+                "hasIcon": false
+            },
+            "spawnPoint": 0,
+            "destinationHash": 126924919,
+            "activityHash": 445417088,
+            "activityGraphHash": 64384765,
+            "activityGraphNodeHash": 0,
+            "activityBubbleName": 933267223,
+            "activityPathBundle": 943914827,
+            "activityPathDestination": 4187350074,
+            "navPointType": 0,
+            "worldPosition": [
+                85,
+                201,
+                -18,
+                0
+            ]
+        }
+    ],
+    "hash": 2091578323,
+    "index": 152,
+    "redacted": false,
+    "blacklisted": false
+}

@@ -30,7 +30,7 @@ type ItemInstance struct {
 	CanEquip           bool `json:"canEquip"`
 	Quality            int  `json:"quality"`
 	CannotEquipReason  int  `json:"cannotEquipReason"`
-	DamageType         int
+	DamageType         `json:"damageTypeHash"`
 	EquipRequiredLevel int `json:"equipRequiredLevel"`
 	PrimaryStat        *struct {
 		//https://bungie-net.github.io/multi/schema_Destiny-DestinyStat.html#schema_Destiny-DestinyStat
@@ -74,6 +74,17 @@ func (i *Item) Power() int {
 // IsInVault will determine if the item is in the vault or not. True if it is; False if it is not.
 func (i *Item) IsInVault() bool {
 	return i.Character == nil
+}
+
+// Damage is a helper function to return the damage type of a specific item.
+// NoDamage will be returned if the item does not represent a weapon which would
+// not make sense to have a damage type.
+func (i *Item) Damage() DamageType {
+	if i == nil || i.ItemInstance == nil {
+		return KineticDamage
+	}
+
+	return i.DamageType
 }
 
 // ItemFilter is a type that will be used as a paramter to a filter function.
