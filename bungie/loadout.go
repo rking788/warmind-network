@@ -48,7 +48,10 @@ func (l Loadout) toSlice() []*Item {
 
 	result := make([]*Item, 0, ClassArmor-Kinetic)
 	for i := Kinetic; i <= ClassArmor; i++ {
-		result = append(result, l[i])
+		item := l[i]
+		if item != nil {
+			result = append(result, l[i])
+		}
 	}
 
 	return result
@@ -310,7 +313,7 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 
 	result := make(map[EquipmentBucket]ItemList)
 
-	for i := Kinetic; i <= Artifact; i++ {
+	for i := Kinetic; i <= Subclass; i++ {
 		result[i] = make(ItemList, 0, 20)
 	}
 
@@ -321,7 +324,7 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 		}
 	}
 
-	for i := Kinetic; i <= Artifact; i++ {
+	for i := Kinetic; i <= Subclass; i++ {
 		sort.Sort(sort.Reverse(LightSort(result[i])))
 	}
 

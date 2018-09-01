@@ -35,6 +35,7 @@ const (
 	Legs
 	ClassArmor
 	Artifact
+	Subclass
 )
 
 // Clients stores a list of bungie.Client instances that can be used to make HTTP requests to the Bungie API
@@ -110,6 +111,8 @@ func (bucket EquipmentBucket) String() string {
 		return "ClassArmor"
 	case Artifact:
 		return "Artifact"
+	case Subclass:
+		return "Subclass"
 	}
 
 	return ""
@@ -169,6 +172,7 @@ func PopulateItemMetadata() error {
 
 // PopulateBucketHashLookup will fill the map that will be used to lookup bucket type hashes
 // which will be used to determine which type of equipment a specific Item represents.
+// From the DestinyInventoryBucketDefinition table in the manifest.
 func PopulateBucketHashLookup() error {
 
 	// TODO: This absolutely needs to be done dynamically from the manifest. Not from a
@@ -186,6 +190,7 @@ func PopulateBucketHashLookup() error {
 	BucketHashLookup[Legs] = 20886954
 	BucketHashLookup[Artifact] = 434908299
 	BucketHashLookup[ClassArmor] = 1585787867
+	BucketHashLookup[Subclass] = 3284755031
 
 	EquipmentBucketLookup = make(map[uint]EquipmentBucket)
 	EquipmentBucketLookup[1498876634] = Kinetic
@@ -199,6 +204,7 @@ func PopulateBucketHashLookup() error {
 	EquipmentBucketLookup[20886954] = Legs
 	EquipmentBucketLookup[434908299] = Artifact
 	EquipmentBucketLookup[1585787867] = ClassArmor
+	EquipmentBucketLookup[3284755031] = Subclass
 
 	return nil
 }

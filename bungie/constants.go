@@ -89,6 +89,25 @@ var classNameToHash = map[string]uint{
 	"hunter":  HUNTER,
 }
 
+// SubclassHash holds the hash representing the exact subclass "item". These are represented with
+// items and a subclass bucket definition.
+type SubclassHash uint
+
+// Subclass hashes (from the subclass inventory bucket)
+const (
+	Striker    SubclassHash = 2958378809
+	Sunbreaker SubclassHash = 3105935002
+	Sentinel   SubclassHash = 3382391785
+
+	Arcstrider   SubclassHash = 1334959255
+	Gunslinger   SubclassHash = 3635991036
+	Nightstalker SubclassHash = 3225959819
+
+	Stormcaller SubclassHash = 1751782730
+	Dawnblade   SubclassHash = 3481861797
+	Voidwalker  SubclassHash = 3887892656
+)
+
 // Class Enum value passed in some of the Destiny API responses
 const (
 	TitanClassType   = 0
