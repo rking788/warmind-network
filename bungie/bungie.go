@@ -14,7 +14,7 @@ import (
 
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
-	"github.com/rking788/warmind-network/db"
+	"github.com/rking788/warmind-network/storage"
 )
 
 const (
@@ -118,11 +118,12 @@ func (bucket EquipmentBucket) String() string {
 	return ""
 }
 
-// PopulateEngramHashes will intialize the map holding all item_hash values that represent engram types.
+// PopulateEngramHashes will intialize the map holding all item_hash values that
+// represent engram types.
 func PopulateEngramHashes() error {
 
 	var err error
-	engramHashes, err = db.FindEngramHashes()
+	engramHashes, err = storage.FindEngramHashes()
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating engram item_hash values: %s", err.Error())
@@ -141,7 +142,7 @@ func PopulateEngramHashes() error {
 // to be loaded into memory for common inventory related operations.
 func PopulateItemMetadata() error {
 
-	rows, err := db.LoadItemMetadata()
+	rows, err := storage.LoadItemMetadata()
 	if err != nil {
 		return err
 	}
@@ -315,7 +316,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		glg.Error(output)
 		response.OutputSpeech(output)
 
-		db.InsertUnknownValueIntoTable(destinationClass, db.UnknownClassTable)
+		storage.InsertUnknownValueIntoTable(destinationClass, storage.UnknownClassTable)
 		return response, nil
 	}
 
@@ -482,7 +483,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	// confirmation to overwrite
 	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
 	if !shouldOverwrite {
-		existing, _ := db.SelectLoadout(bnetMembershipID, name)
+		existing, _ := storage.SelectLoadout(bnetMembershipID, name)
 		if existing != "" {
 			// Prompt the user to see if they want to overwrite the existing loadout
 			response.ConfirmIntent("CreateLoadout", nil).
@@ -522,10 +523,10 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 
 	if shouldOverwrite {
 		// The user has confirmed they want to overwrite the existing loadout
-		db.UpdateLoadout(persistedBytes, bnetMembershipID, name)
+		storage.UpdateLoadout(persistedBytes, bnetMembershipID, name)
 	} else {
 		// The user does not have a loadout with this name so save a new one
-		db.SaveLoadout(persistedBytes, bnetMembershipID, name)
+		storage.SaveLoadout(persistedBytes, bnetMembershipID, name)
 	}
 
 	response.OutputSpeech("All set Guardian, your " + name + " loadout was saved for you.")
@@ -566,7 +567,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
-	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
+	loadoutJSON, err := storage.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
 		raven.CaptureError(errors.New("No loadout matching name"), map[string]string{"name": name})
 		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s. "+
@@ -615,7 +616,7 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 
 	// Retrieve the existing loadouts from the database
 	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
-	existing, _ := db.SelectLoadouts(bnetMembershipID)
+	existing, _ := storage.SelectLoadouts(bnetMembershipID)
 
 	if len(existing) == 0 {
 		glg.Debug("No loadouts found for user")

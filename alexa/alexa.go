@@ -1,24 +1,27 @@
 package alexa
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/getsentry/raven-go"
 
 	"github.com/kpango/glg"
 	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/charlemagne"
-	"github.com/rking788/warmind-network/db"
+	"github.com/rking788/warmind-network/storage"
 	"github.com/rking788/warmind-network/trials"
 
 	"strings"
 
-	"github.com/garyburd/redigo/redis"
 	"github.com/rking788/go-alexa/skillserver"
 )
+
+type SessionCache interface {
+	GetSession(id string, session interface{}) error
+	SaveSession(id string, session interface{})
+	ClearSession(id string)
+}
 
 // Session is responsible for storing information related to a specific skill invocation.
 // A session will remain open if the LaunchRequest was received.
@@ -31,87 +34,38 @@ type Session struct {
 	Quantity             int
 }
 
-var redisConnPool *redis.Pool
+var (
+	cache SessionCache
+)
 
 // InitEnv provides a package level initialization point for any work that is environment specific
-func InitEnv(redisURL string) {
-	redisConnPool = newRedisPool(redisURL)
-}
-
-// Redis related functions
-
-func newRedisPool(addr string) *redis.Pool {
-	// 25 is the maximum number of active connections for the Heroku Redis free tier
-	return &redis.Pool{
-		MaxIdle:     3,
-		MaxActive:   25,
-		IdleTimeout: 240 * time.Second,
-		Dial:        func() (redis.Conn, error) { return redis.DialURL(addr) },
-	}
-}
-
-// GetSession will attempt to read a session from the cache, if an existing one is not found, an empty session
-// will be created with the specified sessionID.
-func GetSession(sessionID string) (session *Session) {
-	session = &Session{ID: sessionID}
-
-	conn := redisConnPool.Get()
-	defer conn.Close()
-
-	key := fmt.Sprintf("sessions:%s", sessionID)
-	reply, err := redis.String(conn.Do("GET", key))
-	if err != nil {
-		// NOTE: This is a normal situation, if the session is not stored in the cache, it will hit this condition.
-		return
-	}
-
-	err = json.Unmarshal([]byte(reply), session)
-
-	return
-}
-
-// SaveSession will persist the given session to the cache. This will allow support for long running
-// Alexa sessions that continually prompt the user for more information.
-func SaveSession(session *Session) {
-
-	conn := redisConnPool.Get()
-	defer conn.Close()
-
-	sessionBytes, err := json.Marshal(session)
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Couldn't marshal session to string: %s", err.Error())
-		return
-	}
-
-	key := fmt.Sprintf("sessions:%s", session.ID)
-	_, err = conn.Do("SET", key, string(sessionBytes))
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Failed to set session: %s", err.Error())
-	}
-}
-
-// ClearSession will remove the specified session from the local cache, this will be done
-// when the user completes a full request session.
-func ClearSession(sessionID string) {
-
-	conn := redisConnPool.Get()
-	defer conn.Close()
-
-	key := fmt.Sprintf("sessions:%s", sessionID)
-	_, err := conn.Do("DEL", key)
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Failed to delete the session from the Redis cache: %s", err.Error())
-	}
+func InitEnv(sessionCache SessionCache) {
+	cache = sessionCache
 }
 
 // Handler is the type of function that should be used to respond to a specific intent.
 type Handler func(*skillserver.EchoRequest) *skillserver.EchoResponse
 
-// AuthWrapper is a handler function wrapper that will fail the chain of handlers if an access token was not provided
-// as part of the Alexa request
+func GetSession(id string) *Session {
+	s := &Session{ID: id}
+
+	// At this point most of the errors will be from missing sessions in the cache (new sessions)
+	// so ignore the warning here and let Sentry report the connection pool exhausted errors
+	_ = cache.GetSession(id, s)
+
+	return s
+}
+
+func SaveSession(session *Session) {
+	cache.SaveSession(session.ID, session)
+}
+
+func ClearSession(id string) {
+	cache.ClearSession(id)
+}
+
+// AuthWrapper is a handler function wrapper that will fail the chain of handlers
+// if an access token was not provided as part of the Alexa request
 func AuthWrapper(handler Handler) Handler {
 
 	return func(req *skillserver.EchoRequest) *skillserver.EchoResponse {
@@ -273,7 +227,7 @@ func UnloadEngrams(request *skillserver.EchoRequest) (response *skillserver.Echo
 func DestinyJoke(request *skillserver.EchoRequest) (response *skillserver.EchoResponse) {
 
 	response = skillserver.NewEchoResponse()
-	setup, punchline, err := db.GetRandomJoke()
+	setup, punchline, err := storage.GetRandomJoke()
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Error loading joke from DB: %s", err.Error())

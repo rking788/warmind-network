@@ -1,4 +1,4 @@
-package db
+package storage
 
 import (
 	"errors"
@@ -34,11 +34,6 @@ type LookupDB struct {
 
 var db1 *LookupDB
 var dbURL string
-
-// InitEnv provides a package level initialization point for any work that is environment specific
-func InitEnv(url string) {
-	dbURL = url
-}
 
 // InitDatabase is in charge of preparing any Statements that will be commonly used as well
 // as setting up the database connection pool.
