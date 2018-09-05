@@ -244,7 +244,7 @@ func itemIsEngramFilter(item *Item, wantEngram interface{}) bool {
 func itemTierTypeFilter(item *Item, tierType interface{}) bool {
 	metadata, ok := itemMetadata[item.ItemHash]
 	if !ok {
-		glg.Warnf("No metadata found for item: %s", item.ItemHash)
+		glg.Warnf("No metadata found for item: %d", item.ItemHash)
 		return false
 	}
 	return metadata.TierType == tierType.(int)

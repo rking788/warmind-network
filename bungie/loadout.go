@@ -9,9 +9,28 @@ import (
 	"github.com/kpango/glg"
 )
 
-// Loadout will hold all items for a unique set of weapons, armor, ghost, class
-// item, and artifact
+// Loadout will hold all currently equipped items indexed by the equipment bucket for
+// which they are equipped.
 type Loadout map[EquipmentBucket]*Item
+
+func newLoadout() Loadout {
+	return make(map[EquipmentBucket]*Item)
+}
+
+// Equipment is very similar to the Loadout type but contains all items in an
+// equipment bucket instead of just the currently equipped item
+type Equipment map[EquipmentBucket]ItemList
+
+func newEquipment() Equipment {
+	e := make(Equipment)
+	for bkt := range BucketHashLookup {
+		// Equipment buckets should really only have 10 items total, at least that is
+		// how character inventories/equipment slots work at the time of this writing
+		e[bkt] = make(ItemList, 0, 10)
+	}
+
+	return e
+}
 
 // PersistedItem represents the data from a specific Item entry that should be
 // persisted. Not all of the Item data should be stored as most of it

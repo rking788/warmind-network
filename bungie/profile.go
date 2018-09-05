@@ -25,6 +25,8 @@ type Profile struct {
 	// A map between the character ID and the Loadout currently equipped on that character
 	Loadouts map[string]Loadout
 
+	Equipments map[string]Equipment
+
 	// NOTE: Still not sure this is the best approach to flatten items into a single list,
 	// it works well for now so we will go with it. There are too many potential spots to
 	// look for an item.
@@ -128,10 +130,13 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 
 		// If the character equipment fields were provided, populate the profile's loadouts map
 		profile.Loadouts = make(map[string]Loadout)
+		profile.Equipments = make(map[string]Equipment)
 
 		for charID, list := range response.Response.CharacterEquipment.Data {
 
-			currentLoadout := make(Loadout)
+			currentLoadout := newLoadout()
+			currentEquipment := newEquipment()
+
 			for _, item := range list.Items {
 
 				item.Character = response.character(charID)
@@ -141,6 +146,11 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 				// group means, just make sure its on the right character.
 				if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
 					currentLoadout[equipmentBucket] = item
+
+					// By doing equipped items before the rest of the inventory below, this will
+					// ensure that the first item in the slice is always the currently
+					// equipped item for that bucket
+					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
 				}
 				if !requireInstanceData || item.ItemInstance != nil {
 					items = append(items, item)
@@ -148,16 +158,35 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 			}
 
 			profile.Loadouts[charID] = currentLoadout
+			profile.Equipments[charID] = currentEquipment
 		}
 	}
 
 	// CharacterInventories Component
 	if response.Response.CharacterInventories != nil {
+
+		if profile.Equipments == nil {
+			profile.Equipments = make(map[string]Equipment)
+		}
+
 		for charID, list := range response.Response.CharacterInventories.Data {
+
+			currentEquipment := profile.Equipments[charID]
+			if currentEquipment == nil {
+				currentEquipment = newEquipment()
+				profile.Equipments[charID] = currentEquipment
+			}
+
 			for _, item := range list.Items {
 				item.Character = response.character(charID)
 				item.ItemInstance = response.instanceData(item.InstanceID)
 
+				if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
+
+					// Since this is going after the CharacterEquipment (above),
+					// the rest of the slice will be the currnet unequipped items
+					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
+				}
 				if !requireInstanceData || item.ItemInstance != nil {
 					items = append(items, item)
 				}
