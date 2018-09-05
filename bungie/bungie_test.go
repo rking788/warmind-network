@@ -676,6 +676,43 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 		fmt.Println("Calculated a random loadout that was exactly equal to the starting loadout")
 		t.FailNow()
 	}
+
+	// Make sure we don't end up with multiple exotic weapons or multiple exotic armor pieces
+	exoticWeaponCount := 0
+	exoticBuckets := make([]EquipmentBucket, 0, 10)
+	for i := Kinetic; i < Ghost; i++ {
+		item := loadout[i]
+		meta, ok := itemMetadata[item.ItemHash]
+		if !ok {
+			t.Fatalf("Could not find metadata for item hash: %d", item.ItemHash)
+		}
+		if meta.TierType == ExoticTier {
+			exoticWeaponCount++
+			exoticBuckets = append(exoticBuckets, i)
+		}
+	}
+
+	if exoticWeaponCount > 1 {
+		t.Fatalf("Found %d exotic weapons in random loadout: %v", exoticWeaponCount, exoticBuckets)
+	}
+
+	exoticArmorCount := 0
+	exoticBuckets = make([]EquipmentBucket, 0, 10)
+	for i := Helmet; i < ClassArmor; i++ {
+		item := loadout[i]
+		meta, ok := itemMetadata[item.ItemHash]
+		if !ok {
+			t.Fatalf("Could not find metadata for item hash: %d", item.ItemHash)
+		}
+		if meta.TierType == ExoticTier {
+			exoticArmorCount++
+			exoticBuckets = append(exoticBuckets, i)
+		}
+	}
+
+	if exoticArmorCount > 1 {
+		t.Fatalf("Found %d exotic armor pieces in random loadout: %v", exoticArmorCount, exoticBuckets)
+	}
 }
 
 func TestParseCharacterProgressionsResponse(t *testing.T) {

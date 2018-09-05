@@ -23,7 +23,7 @@ type Equipment map[EquipmentBucket]ItemList
 
 func newEquipment() Equipment {
 	e := make(Equipment)
-	for bkt := range BucketHashLookup {
+	for _, bkt := range EquipmentBucketLookup {
 		// Equipment buckets should really only have 10 items total, at least that is
 		// how character inventories/equipment slots work at the time of this writing
 		e[bkt] = make(ItemList, 0, 10)
@@ -195,18 +195,12 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 
 func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool) Loadout {
 
-	// Start by filtering all items that are NOT exotics
 	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
 	destinationClassType := destinationCharacter.ClassType
-	filteredItems := profile.AllItems.
-		FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
-			createItemNotTierTypeFilter(ExoticTier),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
-	gearSortedByLight := groupAndSortGear(filteredItems)
-
-	// Find the best loadout given just legendary weapons
 	loadout := profile.Loadouts[destinationID]
-	glg.Debugf("Starting with loadout as base Loadout for charID(%s): %+v", destinationID, loadout)
+	equipment := profile.Equipments[destinationID]
+
+	glg.Debugf("Starting randomize with loadout charID(%s): %+v", destinationID, loadout)
 
 	// Only randomize weapons unless specified
 	upperBound := Power
@@ -219,41 +213,55 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 			continue
 		}
 
-		bucketCount := len(gearSortedByLight[i])
+		unequippedItems := equipment[i][1:]
+		filteredBucket := unequippedItems.FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
+			createItemNotTierTypeFilter(ExoticTier),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+
+		bucketCount := len(filteredBucket)
 		if bucketCount <= 0 {
 			continue
 		}
 
+		// This will give a number in the range [0, n-1), that way it'll be safe to do the +1
+		// adjustment below. This will skip past the curently equipped item at index 0 and only
+		// select a non-equipped weapon in the bucket
 		randIndex := rand.Intn(bucketCount)
-		loadout[i] = gearSortedByLight[i][randIndex]
+		loadout[i] = filteredBucket[randIndex]
 	}
-
-	// Determine the best exotics to use for both weapons and armor
-	exotics := profile.AllItems.
-		FilterItemsMultipleBubble(createItemTierTypeFilter(ExoticTier),
-			createItemClassTypeFilter(destinationClassType),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
-	exoticsSortedAndGrouped := groupAndSortGear(exotics)
 
 	// Override inventory items with exotics as needed
 
 	// Exotic Weapon
-	randExoticBucket := EquipmentBucket(rand.Intn(int(Power)))
-	if len(exoticsSortedAndGrouped[randExoticBucket]) > 0 {
-		weaponBucketItems := exoticsSortedAndGrouped[randExoticBucket]
-		randIndex := rand.Intn(len(weaponBucketItems))
-		loadout[randExoticBucket] = weaponBucketItems[randIndex]
+	// Need the +1 here because rand.Intn does not include the integer arg in the range
+	randExoticBucket := EquipmentBucket(rand.Intn(int(Power)) + 1)
+
+	filteredExoticWeapons := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
+		createItemTierTypeFilter(ExoticTier),
+		createItemClassTypeFilter(destinationClassType),
+		createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+	if len(filteredExoticWeapons) > 0 {
+		randIndex := rand.Intn(len(filteredExoticWeapons))
+		loadout[randExoticBucket] = filteredExoticWeapons[randIndex]
 	}
 
 	// Exotic Armor
 	if includeArmor {
 		randExoticBucket = EquipmentBucket(rand.Intn(int(Legs)-int(Helmet)) + int(Helmet))
-		if len(exoticsSortedAndGrouped[randExoticBucket]) > 0 {
-			armorBucketItems := exoticsSortedAndGrouped[randExoticBucket]
-			randIndex := rand.Intn(len(armorBucketItems))
-			loadout[randExoticBucket] = armorBucketItems[randIndex]
+		filteredExoticArmor := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
+			createItemTierTypeFilter(ExoticTier),
+			createItemClassTypeFilter(destinationClassType),
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+		if len(filteredExoticArmor) > 0 {
+			randIndex := 0
+			if len(filteredExoticArmor) > 1 {
+				randIndex = rand.Intn(len(filteredExoticArmor))
+			}
+			loadout[randExoticBucket] = filteredExoticArmor[randIndex]
 		}
 	}
+
+	glg.Debugf("Ending randomize with loadout charID(%s): %+v", destinationID, loadout)
 
 	return loadout
 }
