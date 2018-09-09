@@ -45,20 +45,18 @@ type PersistedItem struct {
 // for a particular loadout.
 type PersistedLoadout map[EquipmentBucket]*PersistedItem
 
+// In Forsaken, power level is just a simple average now instead of a
+// weighted average in previous versions
 func (l Loadout) calculateLightLevel() float64 {
 
-	light := 0.0
-
-	light += float64(l[Kinetic].Power()) * 0.143
-	light += float64(l[Energy].Power()) * 0.143
-	light += float64(l[Power].Power()) * 0.143
-	// Ghosts no longer have a light/power level
-
-	light += float64(l[Helmet].Power()) * 0.119
-	light += float64(l[Gauntlets].Power()) * 0.119
-	light += float64(l[Chest].Power()) * 0.119
-	light += float64(l[Legs].Power()) * 0.119
-	light += float64(l[ClassArmor].Power()) * 0.095
+	light := float64(l[Kinetic].Power()+
+		l[Energy].Power()+
+		l[Power].Power()+
+		l[Helmet].Power()+
+		l[Gauntlets].Power()+
+		l[Chest].Power()+
+		l[Legs].Power()+
+		l[ClassArmor].Power()) / 8.0
 
 	return light
 }
