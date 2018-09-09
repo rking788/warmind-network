@@ -513,7 +513,7 @@ func (c *Client) Execute(request *APIRequest, response StatusResponse) error {
 			retry = true
 		}
 
-		glg.Infof("Response for request: %+v", response)
+		glg.Successf("Response for request: %+v", response)
 		attempts++
 		if retry == false || attempts >= 5 {
 			break

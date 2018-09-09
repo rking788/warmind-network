@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -130,7 +129,7 @@ func writeHeapProfile() {
 			if *memprofile != "" {
 				f, err := os.Create(*memprofile)
 				if err != nil {
-					log.Fatal(err)
+					glg.Fatal(err)
 				}
 				pprof.WriteHeapProfile(f)
 				f.Close()
@@ -172,7 +171,7 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 	// Time the intent handler to determine if it is taking longer than normal
 	startTime := time.Now()
 	defer func(start time.Time) {
-		glg.Infof("IntentHandler execution time: %v", time.Since(start))
+		glg.Successf("IntentHandler execution time: %v", time.Since(start))
 	}(startTime)
 
 	var response *skillserver.EchoResponse

@@ -122,6 +122,7 @@ func fromPersistedLoadout(persisted PersistedLoadout, profile *Profile) Loadout 
 }
 
 func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
+
 	// Start by filtering all items that are NOT exotics
 	destinationCharacter := profile.Characters.findCharacterFromID(destinationID)
 	destinationClassType := destinationCharacter.ClassType
@@ -267,6 +268,8 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membershipType int, client *Client) error {
 
 	characters := profile.Characters
+	itemsToVault := make([]*Item, 0, 10)
+
 	// Swap any items that are currently equipped on other characters to
 	// prepare them to be transferred
 	for bucket, item := range loadout {
@@ -274,10 +277,33 @@ func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membe
 			glg.Warnf("Found nil item for bucket: %v", bucket)
 			continue
 		}
+
+		// Free any space in a bucket that needs to receive a new item but is currently full
+		if len(profile.Equipments[destinationID][bucket]) == MaxItemsPerBucket &&
+			(item.Character == nil || item.CharacterID != destinationID) {
+			for i := MaxItemsPerBucket - 1; i >= 1; i-- {
+				// Start from the back of the bucket and move to the front, this way it will not transfer an item
+				// to the vault if it is trying to equip it in the provided loadout
+				if profile.Equipments[destinationID][bucket][i] == loadout[bucket] {
+					glg.Debugf("Not transferring item:%d to vault because it is going to be equipped later", loadout[bucket].ItemHash)
+					continue
+				}
+
+				itemsToVault = append(itemsToVault, profile.Equipments[destinationID][bucket][i])
+				break
+			}
+		}
+
 		if item.TransferStatus == ItemIsEquipped && item.Character != nil &&
 			item.Character.CharacterID != destinationID {
+			glg.Debugf("Swapping item for characterID:%d, and destinationID:%d", item.Character.CharacterID, destinationID)
 			swapEquippedItem(item, profile, bucket, membershipType, client)
 		}
+	}
+
+	if len(itemsToVault) != 0 {
+		glg.Debugf("Tranferring items to vault to make space for loadout equip: %+v", itemsToVault)
+		transferItems(itemsToVault, nil, membershipType, -1, client)
 	}
 
 	// Move all items to the destination character
@@ -343,9 +369,12 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 	}
 
 	for _, item := range inventory {
-		bkt := EquipmentBucketLookup[item.BucketHash]
-		if bkt != 0 {
-			result[bkt] = append(result[bkt], item)
+		meta, _ := itemMetadata[item.ItemHash]
+		if meta != nil {
+			bkt := EquipmentBucketLookup[meta.BucketHash]
+			if bkt != 0 {
+				result[bkt] = append(result[bkt], item)
+			}
 		}
 	}
 

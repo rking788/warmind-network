@@ -10,8 +10,10 @@ import (
 const (
 	all uint = iota
 	debug
+	log
 	info
 	warning
+	success
 	err
 )
 
@@ -36,12 +38,14 @@ func ConfigureLogging(level string, logPath string) {
 	desiredLevel := map[string]uint{
 		"all":     all,
 		"debug":   debug,
+		"log":     log,
 		"info":    info,
 		"warning": warning,
+		"success": success,
 		"error":   err,
 	}[level]
 
-	for _, glgLevel := range []string{glg.DEBG, glg.INFO, glg.WARN, glg.ERR} {
+	for _, glgLevel := range []string{glg.DEBG, glg.INFO, glg.WARN, glg.OK, glg.ERR, glg.LOG} {
 		glg.Get().SetLevelMode(glgLevel, glgDestination(glgLevel, desiredLevel))
 	}
 
@@ -75,10 +79,14 @@ func glgDestination(glgLevel string, desiredLevel uint) int {
 	switch glgLevel {
 	case glg.DEBG:
 		enabled = desiredLevel <= debug
+	case glg.LOG:
+		enabled = desiredLevel <= log
 	case glg.INFO:
 		enabled = desiredLevel <= info
 	case glg.WARN:
 		enabled = desiredLevel <= warning
+	case glg.OK:
+		enabled = desiredLevel <= success
 	case glg.ERR:
 		enabled = desiredLevel <= err
 	}

@@ -14,6 +14,11 @@ const (
 	EquipMultiItemsEndpointURL           = "https://www.bungie.net/Platform/Destiny2/Actions/Items/EquipItems/"
 )
 
+// Random constant game data
+const (
+	MaxItemsPerBucket = 10
+)
+
 // Component constant values that are needed for certain Bungie API requests that specify which
 // collections of values should be returned in the response.
 const (

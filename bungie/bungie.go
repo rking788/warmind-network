@@ -731,7 +731,7 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 // transferItems is a generic transfer method that will handle a full transfer of a specific item to
 // the specified character. This requires a full trip from the source, to the vault, and then to the
 // destination character. By providing a nil destCharacter, the items will be transferred to the
-// vault and left there.
+// vault and left there. Using a count of -1 will cause all of the items to be transferred.
 func transferItems(itemSet []*Item, destCharacter *Character,
 	membershipType int, count int, client *Client) int {
 
@@ -855,6 +855,11 @@ func equipItems(itemSet []*Item, characterID string,
 	}
 
 	glg.Debugf("Equipping items: %+v", ids)
+
+	if len(ids) == 0 {
+		glg.Debugf("No items to be equipped, all done.")
+		return
+	}
 
 	equipRequestBody := map[string]interface{}{
 		"itemIds":        ids,
