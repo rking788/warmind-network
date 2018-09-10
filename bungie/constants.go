@@ -149,6 +149,30 @@ const (
 	DEMON    = uint(10)
 )
 
+// DamageType will represent the specific damage type tied to a weapon or NoDamage if an item does
+// not deal any damage.
+type DamageType uint
+
+const (
+	// NoDamage is the default and indicates an item is not a weapon
+	NoDamage DamageType = 0
+	// KineticDamage is tied to kinetic weapons
+	KineticDamage DamageType = 3373582085
+	// ArcDamage indicates a weapon does Arc damage
+	ArcDamage DamageType = 2303181850
+	// VoidDamage indicates a weapon deals Void damage
+	VoidDamage DamageType = 3454344768
+	// SolarDamage indicates a weapon does Solar Damage
+	SolarDamage DamageType = 1847026933
+)
+
+// Progression type hashes
+const (
+	valorHash  = "3882308435"
+	gloryHash  = "2679551909"
+	infamyHash = "2772425241"
+)
+
 var (
 	pvpRankSteps = [6]string{
 		"Guardian",
@@ -156,6 +180,24 @@ var (
 		"Heroic",
 		"Fabled",
 		"Mythic",
+		"Legend",
+	}
+	gambitRankSteps = [16]string{
+		"Guardian 1",
+		"Guardian 2",
+		"Guardian 3",
+		"Brave 1",
+		"Brave 2",
+		"Brave 3",
+		"Heroic 1",
+		"Heroic 2",
+		"Heroic 3",
+		"Fabled 1",
+		"Fabled 2",
+		"Fabled 3",
+		"Mythic 1",
+		"Mythic 2",
+		"Mythic 3",
 		"Legend",
 	}
 )

@@ -368,17 +368,43 @@ func ListLoadouts(request *skillserver.EchoRequest) (response *skillserver.EchoR
 	return
 }
 
-// GetCurrentCrucibleRank will summarize the player's current ranking in the Crucible.
-// This is broken down into Glory and Valor.
-func GetCurrentCrucibleRank(request *skillserver.EchoRequest) *skillserver.EchoResponse {
+// GetCurrentRank will summarize the player's current ranking in various activities. The activity
+// will be determined by a slot in the echo request. This could be either crucible for their
+// glory and valor rankings or gambit for their infamy.
+func GetCurrentRank(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 
 	accessToken := request.Session.User.AccessToken
-	response, err := bungie.GetCurrentCrucibleRanking(accessToken)
-	if err != nil {
+	progression, _ := request.GetSlotValue("Progression")
+
+	var response *skillserver.EchoResponse
+	var err error
+	switch strings.ToLower(progression) {
+	case "":
+		fallthrough
+	case "valor":
+		fallthrough
+	case "glory":
+		fallthrough
+	case "quickplay":
+		fallthrough
+	case "competitive":
+		fallthrough
+	case "crucible":
+		response, err = bungie.GetCurrentCrucibleRanking(accessToken)
+	case "infamy":
+		fallthrough
+	case "gambit":
+		response, err = bungie.GetCurrentGambitRanking(accessToken)
+	default:
+		response = skillserver.NewEchoResponse()
+		response.OutputSpeech("Sorry Guardian, I'm not sure how to get information about a " + progression + " rank")
+	}
+
+	if response == nil || err != nil {
 		raven.CaptureError(err, nil)
 		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, there was an error getting your current " +
-			"Crucible ranking, please try again later.")
+			progression + " ranking, please try again later.")
 		return response
 	}
 

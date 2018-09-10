@@ -715,6 +715,67 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 	return response, nil
 }
 
+// GetCurrentGambitRanking will look up the current Infamy (Gambit game mode) ranking for the current character
+// including the name and points required to get to the next level.
+func GetCurrentGambitRanking(token string) (*skillserver.EchoResponse, error) {
+	response := skillserver.NewEchoResponse()
+
+	client := Clients.Get()
+	client.AddAuthValues(token, warmindAPIKey)
+
+	// TODO: check error
+	currentAccount, _ := client.GetCurrentAccount()
+
+	if currentAccount == nil {
+		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
+		glg.Error("Failed to load current account with the specified access token!")
+		return nil, errors.New("Couldn't load the current account")
+	}
+
+	membership := currentAccount.DestinyMembership
+
+	progressionResponse := CharacterProgressionResponse{}
+	err := client.Execute(NewGetProgressionsRequest(membership.MembershipType,
+		membership.MembershipID), &progressionResponse)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
+		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+	}
+
+	infamy := progressionResponse.infamyProgression()
+
+	buf := bytes.NewBuffer([]byte{})
+	if infamy == nil {
+		buf.WriteString("There was an error trying to find your current Gambit rankings, " +
+			" please try again later.")
+	} else {
+		if infamy != nil {
+			var infamyRank string
+			if infamy.Level < len(pvpRankSteps) {
+				infamyRank = gambitRankSteps[infamy.Level]
+			} else {
+				infamyRank = gambitRankSteps[len(pvpRankSteps)-1]
+			}
+			buf.WriteString(fmt.Sprintf("You've achieved %s infamy rank, ", infamyRank))
+			if infamy.Level == infamy.LevelCap {
+				buf.WriteString("you have reached max infamy, time to reset it and do it again!")
+			} else if infamy.Level == (infamy.LevelCap - 1) {
+				buf.WriteString("congratulations on becoming Legend! ")
+			} else {
+				buf.WriteString(fmt.Sprintf("only %d infamy points to the next rank. ",
+					infamy.NextLevelAt))
+			}
+		}
+
+		buf.WriteString("Goodluck!")
+	}
+
+	response.OutputSpeech(buf.String())
+
+	return response, nil
+}
+
 // GetOutboundIP gets preferred outbound ip of this machine
 // func GetOutboundIP() net.IP {
 // 	conn, err := net.Dial("udp", "8.8.8.8:80")

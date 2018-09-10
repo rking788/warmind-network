@@ -37,7 +37,8 @@ var (
 		"ListLoadouts":             alexa.AuthWrapper(alexa.ListLoadouts),
 		"TopActivities":            alexa.TopActivities,
 		"CurrentMeta":              alexa.CurrentMeta,
-		"CrucibleRank":             alexa.AuthWrapper(alexa.GetCurrentCrucibleRank),
+		"CrucibleRank":             alexa.AuthWrapper(alexa.GetCurrentRank),
+		"CurrentRank":              alexa.AuthWrapper(alexa.GetCurrentRank),
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
 	}
 )

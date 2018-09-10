@@ -89,11 +89,6 @@ type CharacterProgressionResponse struct {
 	} `json:"Response"`
 }
 
-const (
-	valorHash = "3882308435"
-	gloryHash = "2679551909"
-)
-
 func (r *CharacterProgressionResponse) valorProgressionForChar(charID string) *DestinyProgression {
 
 	charProgress := r.Response.CharacterProgressions.Data[charID]
@@ -105,17 +100,7 @@ func (r *CharacterProgressionResponse) valorProgressionForChar(charID string) *D
 }
 
 func (r *CharacterProgressionResponse) valorProgression() *DestinyProgression {
-
-	charProgress := r.Response.CharacterProgressions.Data
-	if charProgress == nil {
-		return nil
-	}
-
-	for _, progress := range charProgress {
-		return progress.Progressions[valorHash]
-	}
-
-	return nil
+	return r.progression(valorHash)
 }
 
 func (r *CharacterProgressionResponse) gloryProgressionForChar(charID string) *DestinyProgression {
@@ -129,6 +114,14 @@ func (r *CharacterProgressionResponse) gloryProgressionForChar(charID string) *D
 }
 
 func (r *CharacterProgressionResponse) gloryProgression() *DestinyProgression {
+	return r.progression(gloryHash)
+}
+
+func (r *CharacterProgressionResponse) infamyProgression() *DestinyProgression {
+	return r.progression(infamyHash)
+}
+
+func (r *CharacterProgressionResponse) progression(hash string) *DestinyProgression {
 
 	charProgress := r.Response.CharacterProgressions.Data
 	if charProgress == nil {
@@ -136,7 +129,7 @@ func (r *CharacterProgressionResponse) gloryProgression() *DestinyProgression {
 	}
 
 	for _, progress := range charProgress {
-		return progress.Progressions[gloryHash]
+		return progress.Progressions[infamyHash]
 	}
 
 	return nil
