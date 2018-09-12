@@ -1,8 +1,4 @@
-Version 1.8.1
+Version 1.10.0
 ===============
-- Added intents for requesting top activities and meta stats from Charlemagne.
-- Performance improvements around filtering items from a list.
-- Added the Sentry.io library for reporting unexpected errors so alerts can be provided.
-- Improved documentation to silence Go linter warnings
-- Fixed a bug causing users to not be able to equip a named loadout.
+- Add the Infamy ranking in addition to the crucible valor/glory ranks.
 
