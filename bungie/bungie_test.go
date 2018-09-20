@@ -411,7 +411,7 @@ func TestParseCurrentMembershipsResponse(t *testing.T) {
 		t.FailNow()
 	}
 
-	if response.Response.BungieNetUser == nil {
+	if response.Response.UserBungieNet == nil {
 		t.FailNow()
 	}
 

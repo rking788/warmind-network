@@ -481,7 +481,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 
 	// Check to see if a loadout with this name already exists and prompt for
 	// confirmation to overwrite
-	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
+	bnetMembershipID := currentAccount.UserBungieNet.MembershipID
 	if !shouldOverwrite {
 		existing, _ := storage.SelectLoadout(bnetMembershipID, name)
 		if existing != "" {
@@ -565,7 +565,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	}
 
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
-	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
+	profile.BungieNetMembershipID = currentAccount.UserBungieNet.MembershipID
 
 	loadoutJSON, err := storage.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
@@ -615,7 +615,7 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 	}
 
 	// Retrieve the existing loadouts from the database
-	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
+	bnetMembershipID := currentAccount.UserBungieNet.MembershipID
 	existing, _ := storage.SelectLoadouts(bnetMembershipID)
 
 	if len(existing) == 0 {

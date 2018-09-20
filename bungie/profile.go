@@ -73,7 +73,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 	}
 
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
-	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
+	profile.BungieNetMembershipID = currentAccount.UserBungieNet.MembershipID
 
 	for _, char := range profile.Characters {
 		glg.Debugf("Character(%s) last played date: %+v", classHashToName[char.ClassHash], char.DateLastPlayed)

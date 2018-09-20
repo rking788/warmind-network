@@ -55,19 +55,19 @@ type CurrentUserMembershipsResponse struct {
 	*BaseResponse
 	Response *struct {
 		DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
-		BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
+		*UserBungieNet     `json:"bungieNetUser"`
 	} `json:"Response"`
 }
 
 // CurrentUserMemberships will hold the current user's Bungie.net membership data
 // as well as the Destiny membership data for their most recently played character.
 type CurrentUserMemberships struct {
-	BungieNetUser     *BungieNetUser
+	*UserBungieNet
 	DestinyMembership *DestinyMembership
 }
 
-// BungieNetUser holds fields relating to a specific Bungie membership
-type BungieNetUser struct {
+// UserBungieNet holds fields relating to a specific Bungie membership
+type UserBungieNet struct {
 	MembershipID string `json:"membershipId"`
 }
 
@@ -411,7 +411,7 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 	// If the user only has a single destiny membership, just use that then
 	if len(accountResponse.Response.DestinyMemberships) == 1 {
 		return &CurrentUserMemberships{
-			BungieNetUser:     accountResponse.Response.BungieNetUser,
+			UserBungieNet:     accountResponse.Response.UserBungieNet,
 			DestinyMembership: accountResponse.Response.DestinyMemberships[0],
 		}, nil
 	}
@@ -433,7 +433,7 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 	}
 
 	return &CurrentUserMemberships{
-		BungieNetUser:     accountResponse.Response.BungieNetUser,
+		UserBungieNet:     accountResponse.Response.UserBungieNet,
 		DestinyMembership: latestDestinyMembership,
 	}, nil
 }
