@@ -2781,48 +2781,7 @@
                         "transferStatus": 0,
                         "lockable": true,
                         "state": 0,
-<<<<<<< HEAD
                         "dismantlePermission": 2
-=======
-                        "dismantlePermission": 0
-                    }
-                ]
-            },
-            "privacy": 2
-        },
-        "profile": {
-            "data": {
-                "userInfo": {
-                    "membershipType": 1,
-                    "membershipId": "4444444444444444444",
-                    "displayName": "rpk788"
-                },
-                "dateLastPlayed": "2018-04-21T13:41:56Z",
-                "versionsOwned": 3,
-                "characterIds": [
-                    "1000000000000000000",
-                    "1000000000000000001",
-                    "1000000000000000002"
-                ]
-            },
-            "privacy": 1
-        },
-        "characters": {
-            "data": {
-                "1000000000000000000": {
-                    "membershipId": "4444444444444444444",
-                    "membershipType": 1,
-                    "characterId": "1000000000000000000",
-                    "dateLastPlayed": "2018-04-21T13:41:56Z",
-                    "minutesPlayedThisSession": "62",
-                    "minutesPlayedTotal": "5347",
-                    "light": 329,
-                    "stats": {
-                        "392767087": 7,
-                        "1935470627": 329,
-                        "1943323491": 5,
-                        "2996146975": 3
->>>>>>> Add characterActivities to the Profile type
                     },
                     {
                         "itemHash": 2191401041,
@@ -2848,7 +2807,6 @@
                         "state": 0,
                         "dismantlePermission": 2
                     },
-<<<<<<< HEAD
                     {
                         "itemHash": 160388292,
                         "itemInstanceId": "6917529059836834364",
@@ -2860,24 +2818,6 @@
                         "lockable": true,
                         "state": 0,
                         "dismantlePermission": 2
-=======
-                    "baseCharacterLevel": 25,
-                    "percentToNextLevel": 0
-                },
-                "1000000000000000001": {
-                    "membershipId": "4444444444444444444",
-                    "membershipType": 1,
-                    "characterId": "1000000000000000001",
-                    "dateLastPlayed": "2018-02-17T04:48:59Z",
-                    "minutesPlayedThisSession": "68",
-                    "minutesPlayedTotal": "761",
-                    "light": 300,
-                    "stats": {
-                        "392767087": 6,
-                        "1935470627": 300,
-                        "1943323491": 4,
-                        "2996146975": 3
->>>>>>> Add characterActivities to the Profile type
                     },
                     {
                         "itemHash": 3549153978,
@@ -2903,7 +2843,6 @@
                         "state": 0,
                         "dismantlePermission": 2
                     },
-<<<<<<< HEAD
                     {
                         "itemHash": 731147177,
                         "itemInstanceId": "6917529036397406297",
@@ -2915,24 +2854,6 @@
                         "lockable": true,
                         "state": 1,
                         "dismantlePermission": 2
-=======
-                    "baseCharacterLevel": 23,
-                    "percentToNextLevel": 22.34
-                },
-                "1000000000000000002": {
-                    "membershipId": "4444444444444444444",
-                    "membershipType": 1,
-                    "characterId": "1000000000000000002",
-                    "dateLastPlayed": "2017-12-14T01:35:11Z",
-                    "minutesPlayedThisSession": "2",
-                    "minutesPlayedTotal": "657",
-                    "light": 274,
-                    "stats": {
-                        "392767087": 5,
-                        "1935470627": 274,
-                        "1943323491": 1,
-                        "2996146975": 7
->>>>>>> Add characterActivities to the Profile type
                     },
                     {
                         "itemHash": 2290863050,

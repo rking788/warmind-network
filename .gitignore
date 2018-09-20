@@ -1,5 +1,6 @@
 .vscode
 local_tools/*
+benchmarks/*
 config/utterances.txt
 warmind-network
 *.mprof

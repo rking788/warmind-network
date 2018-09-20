@@ -9,8 +9,7 @@ import (
 	"testing"
 
 	"github.com/kpango/glg"
-
-	"github.com/rking788/warmind-network/db"
+	"github.com/rking788/warmind-network/storage"
 )
 
 func setup() {
@@ -18,7 +17,7 @@ func setup() {
 	glg.Get().SetLevelMode(glg.INFO, glg.NONE)
 	glg.Get().SetLevelMode(glg.WARN, glg.NONE)
 
-	db.InitEnv(os.Getenv("DATABASE_URL"))
+	storage.InitEnv(os.Getenv("DATABASE_URL"))
 	InitEnv("", "")
 }
 
@@ -440,37 +439,31 @@ func TestParseGetProfileResponse(t *testing.T) {
 	if response.Response.Profile == nil || response.Response.ProfileCurrencies == nil ||
 		response.Response.ProfileInventory == nil || response.Response.CharacterEquipment == nil ||
 		response.Response.CharacterInventories == nil || response.Response.Characters == nil {
-		fmt.Println("One of the expected entries is nil!")
-		t.FailNow()
+		t.Fatalf("One of the expected entries is nil!")
 	}
 
 	if len(response.Response.Characters.Data) != 3 {
-		fmt.Println("Character count incorrect")
-		t.FailNow()
+		t.Fatalf("Character count incorrect")
 	}
 
-	if len(response.Response.ProfileCurrencies.Data.Items) != 3 {
-		fmt.Println("Currency count incorrect")
-		t.FailNow()
+	if len(response.Response.ProfileCurrencies.Data.Items) != 4 {
+		t.Fatalf("Currency count incorrect")
 	}
 
 	if len(response.Response.CharacterEquipment.Data) == 0 || len(response.Response.CharacterInventories.Data) == 0 {
-		fmt.Println("Incorrect number of character equipment and character inventory items.")
-		t.FailNow()
+		t.Fatalf("Incorrect number of character equipment and character inventory items.")
 	}
 
 	for _, char := range response.Response.CharacterEquipment.Data {
 		for _, item := range char.Items {
 			if item.InstanceID == "" {
-				fmt.Println("Found a character equiment item without an instance ID")
-				t.FailNow()
+				t.Fatalf("Found a character equiment item without an instance ID")
 			}
 		}
 	}
 
 	if response.Response.ProfileCurrencies.Data.Items[0].InstanceID != "" {
-		fmt.Println("Found a profile currency entry with an instance ID")
-		t.FailNow()
+		t.Fatalf("Found a profile currency entry with an instance ID")
 	}
 }
 
@@ -618,7 +611,8 @@ func TestGroupAndSort(t *testing.T) {
 		lastPower := math.MaxInt64
 
 		for _, item := range items {
-			if item.BucketHash != targetHash {
+			// 138197802 is the bucket hash for generic items in the vault, this is also an acceptable answer
+			if item.BucketHash != targetHash || item.BucketHash == 138197802 {
 				t.Fatalf("Item did not have the correct bucket hash: Required=%d, Found=%d", targetHash, item.BucketHash)
 			}
 
