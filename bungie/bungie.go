@@ -180,32 +180,32 @@ func PopulateBucketHashLookup() error {
 	//static definition
 	BucketHashLookup = make(map[EquipmentBucket]uint)
 
-	BucketHashLookup[Kinetic] = 1498876634
-	BucketHashLookup[Energy] = 2465295065
-	BucketHashLookup[Power] = 953998645
-	BucketHashLookup[Ghost] = 4023194814
+	BucketHashLookup[Kinetic] = kineticBucket
+	BucketHashLookup[Energy] = energyBucket
+	BucketHashLookup[Power] = powerBucket
+	BucketHashLookup[Ghost] = ghostBucket
 
-	BucketHashLookup[Helmet] = 3448274439
-	BucketHashLookup[Gauntlets] = 3551918588
-	BucketHashLookup[Chest] = 14239492
-	BucketHashLookup[Legs] = 20886954
-	BucketHashLookup[Artifact] = 434908299
-	BucketHashLookup[ClassArmor] = 1585787867
-	BucketHashLookup[Subclass] = 3284755031
+	BucketHashLookup[Helmet] = helmetBucket
+	BucketHashLookup[Gauntlets] = gauntletsBucket
+	BucketHashLookup[Chest] = chestBucket
+	BucketHashLookup[Legs] = legsBucket
+	BucketHashLookup[Artifact] = artifactBucket
+	BucketHashLookup[ClassArmor] = classArmorBucket
+	BucketHashLookup[Subclass] = subclassBucket
 
 	EquipmentBucketLookup = make(map[uint]EquipmentBucket)
-	EquipmentBucketLookup[1498876634] = Kinetic
-	EquipmentBucketLookup[2465295065] = Energy
-	EquipmentBucketLookup[953998645] = Power
-	EquipmentBucketLookup[4023194814] = Ghost
+	EquipmentBucketLookup[kineticBucket] = Kinetic
+	EquipmentBucketLookup[energyBucket] = Energy
+	EquipmentBucketLookup[powerBucket] = Power
+	EquipmentBucketLookup[ghostBucket] = Ghost
 
-	EquipmentBucketLookup[3448274439] = Helmet
-	EquipmentBucketLookup[3551918588] = Gauntlets
-	EquipmentBucketLookup[14239492] = Chest
-	EquipmentBucketLookup[20886954] = Legs
-	EquipmentBucketLookup[434908299] = Artifact
-	EquipmentBucketLookup[1585787867] = ClassArmor
-	EquipmentBucketLookup[3284755031] = Subclass
+	EquipmentBucketLookup[helmetBucket] = Helmet
+	EquipmentBucketLookup[gauntletsBucket] = Gauntlets
+	EquipmentBucketLookup[chestBucket] = Chest
+	EquipmentBucketLookup[legsBucket] = Legs
+	EquipmentBucketLookup[artifactBucket] = Artifact
+	EquipmentBucketLookup[classArmorBucket] = ClassArmor
+	EquipmentBucketLookup[subclassBucket] = Subclass
 
 	return nil
 }

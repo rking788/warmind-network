@@ -53,7 +53,7 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items._FilterItems(itemTierTypeFilter, ExoticTier)
+		_ = items._FilterItems(itemTierTypeFilter, exoticTier)
 	}
 }
 func BenchmarkFilteringMultipleFilters(b *testing.B) {
@@ -71,8 +71,8 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = items.
-			_FilterItems(itemClassTypeFilter, WARLOCK).
-			_FilterItems(itemNotTierTypeFilter, ExoticTier).
+			_FilterItems(itemClassTypeFilter, warlock).
+			_FilterItems(itemNotTierTypeFilter, exoticTier).
 			_FilterItems(itemRequiredLevelFilter, 25)
 	}
 }
@@ -92,8 +92,8 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = items.
-			_FilterItemsMultiple(createItemClassTypeFilter(WARLOCK),
-				createItemNotTierTypeFilter(ExoticTier),
+			_FilterItemsMultiple(createItemClassTypeFilter(warlock),
+				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
 	}
 }
@@ -113,8 +113,8 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = items.
-			FilterItemsMultipleBubble(createItemClassTypeFilter(WARLOCK),
-				createItemNotTierTypeFilter(ExoticTier),
+			FilterItemsMultipleBubble(createItemClassTypeFilter(warlock),
+				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
 	}
 }
@@ -134,8 +134,8 @@ func BenchmarkFilteringPassthrough(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = items.
-			FilterBaseline(createItemClassTypeFilter(WARLOCK),
-				createItemNotTierTypeFilter(ExoticTier),
+			FilterBaseline(createItemClassTypeFilter(warlock),
+				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
 	}
 }
@@ -167,8 +167,8 @@ func TestFilteringSingleFilterBubble(t *testing.T) {
 
 	items := profile.AllItems
 
-	resultNormal := items._FilterItems(itemTierTypeFilter, ExoticTier)
-	resultBubble := items.FilterItemsBubble(itemTierTypeFilter, ExoticTier)
+	resultNormal := items._FilterItems(itemTierTypeFilter, exoticTier)
+	resultBubble := items.FilterItemsBubble(itemTierTypeFilter, exoticTier)
 
 	fmt.Printf("Found normal(%d), bubble(%d)", len(resultNormal), len(resultBubble))
 
@@ -191,16 +191,16 @@ func TestFilteringMultipleFilter(t *testing.T) {
 	items := profile.AllItems
 
 	resultNormal := items.
-		_FilterItems(itemClassTypeFilter, WARLOCK).
-		_FilterItems(itemNotTierTypeFilter, ExoticTier).
+		_FilterItems(itemClassTypeFilter, warlock).
+		_FilterItems(itemNotTierTypeFilter, exoticTier).
 		_FilterItems(itemRequiredLevelFilter, 25)
 	resultBubble := items.
-		FilterItemsBubble(itemClassTypeFilter, WARLOCK).
-		FilterItemsBubble(itemNotTierTypeFilter, ExoticTier).
+		FilterItemsBubble(itemClassTypeFilter, warlock).
+		FilterItemsBubble(itemNotTierTypeFilter, exoticTier).
 		FilterItemsBubble(itemRequiredLevelFilter, 25)
 	resultSingleFilter := items.
-		FilterItemsMultipleBubble(createItemClassTypeFilter(WARLOCK),
-			createItemNotTierTypeFilter(ExoticTier),
+		FilterItemsMultipleBubble(createItemClassTypeFilter(warlock),
+			createItemNotTierTypeFilter(exoticTier),
 			createItemRequiredLevelFilter(25))
 
 	fmt.Printf("Found normal(%d), bubble(%d), single(%d)\n", len(resultNormal), len(resultBubble), len(resultSingleFilter))
@@ -254,7 +254,7 @@ func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.FilterItemsBubble(itemTierTypeFilter, ExoticTier)
+		_ = items.FilterItemsBubble(itemTierTypeFilter, exoticTier)
 	}
 }
 func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
@@ -272,8 +272,8 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = items.
-			FilterItemsBubble(itemClassTypeFilter, WARLOCK).
-			FilterItemsBubble(itemNotTierTypeFilter, ExoticTier).
+			FilterItemsBubble(itemClassTypeFilter, warlock).
+			FilterItemsBubble(itemNotTierTypeFilter, exoticTier).
 			FilterItemsBubble(itemRequiredLevelFilter, 25)
 	}
 }
@@ -680,7 +680,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 		if !ok {
 			t.Fatalf("Could not find metadata for item hash: %d", item.ItemHash)
 		}
-		if meta.TierType == ExoticTier {
+		if meta.TierType == exoticTier {
 			exoticWeaponCount++
 			exoticBuckets = append(exoticBuckets, i)
 		}
@@ -698,7 +698,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 		if !ok {
 			t.Fatalf("Could not find metadata for item hash: %d", item.ItemHash)
 		}
-		if meta.TierType == ExoticTier {
+		if meta.TierType == exoticTier {
 			exoticArmorCount++
 			exoticBuckets = append(exoticBuckets, i)
 		}

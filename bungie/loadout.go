@@ -128,7 +128,7 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	destinationClassType := destinationCharacter.ClassType
 	filteredItems := profile.AllItems.
 		FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
-			createItemNotTierTypeFilter(ExoticTier),
+			createItemNotTierTypeFilter(exoticTier),
 			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	gearSortedByLight := groupAndSortGear(filteredItems)
 
@@ -143,7 +143,7 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 
 	// Determine the best exotics to use for both weapons and armor
 	exotics := profile.AllItems.
-		FilterItemsMultipleBubble(createItemTierTypeFilter(ExoticTier),
+		FilterItemsMultipleBubble(createItemTierTypeFilter(exoticTier),
 			createItemClassTypeFilter(destinationClassType),
 			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	exoticsSortedAndGrouped := groupAndSortGear(exotics)
@@ -214,7 +214,7 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 
 		unequippedItems := equipment[i][1:]
 		filteredBucket := unequippedItems.FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
-			createItemNotTierTypeFilter(ExoticTier),
+			createItemNotTierTypeFilter(exoticTier),
 			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 
 		bucketCount := len(filteredBucket)
@@ -236,7 +236,7 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 	randExoticBucket := EquipmentBucket(rand.Intn(int(Power)) + 1)
 
 	filteredExoticWeapons := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
-		createItemTierTypeFilter(ExoticTier),
+		createItemTierTypeFilter(exoticTier),
 		createItemClassTypeFilter(destinationClassType),
 		createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 	if len(filteredExoticWeapons) > 0 {
@@ -248,7 +248,7 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 	if includeArmor {
 		randExoticBucket = EquipmentBucket(rand.Intn(int(Legs)-int(Helmet)) + int(Helmet))
 		filteredExoticArmor := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
-			createItemTierTypeFilter(ExoticTier),
+			createItemTierTypeFilter(exoticTier),
 			createItemClassTypeFilter(destinationClassType),
 			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
 		if len(filteredExoticArmor) > 0 {
@@ -331,7 +331,7 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 	reverseLightSortedItems := profile.AllItems.
 		FilterItemsMultipleBubble(createCharacterIDFilter(item.CharacterID),
 			createItemBucketHashFilter(item.BucketHash),
-			createItemNotTierTypeFilter(ExoticTier))
+			createItemNotTierTypeFilter(exoticTier))
 
 	if len(reverseLightSortedItems) <= 1 {
 		// TODO: If there are no other items from the specified character, then we need to

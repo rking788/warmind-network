@@ -47,17 +47,6 @@ const (
 	KiosksComponent                = "500"
 )
 
-// Destiny.TierType
-const (
-	UnknownTier  = 0
-	CurrencyTier = 1
-	BasicTier    = 2
-	CommonTier   = 3
-	RareTier     = 4
-	SuperiorTier = 5
-	ExoticTier   = 6
-)
-
 // Destiny.TansferStatuses
 const (
 	CanTransfer         = 0
@@ -75,43 +64,17 @@ const (
 	PostmasterLoc = 4
 )
 
-// Hash values for different class types 'classHash' JSON key
-const (
-	WARLOCK = 2271682572
-	TITAN   = 3655393761
-	HUNTER  = 671679327
-)
-
 var classHashToName = map[uint]string{
-	WARLOCK: "warlock",
-	TITAN:   "titan",
-	HUNTER:  "hunter",
+	warlock: "warlock",
+	titan:   "titan",
+	hunter:  "hunter",
 }
 
 var classNameToHash = map[string]uint{
-	"warlock": WARLOCK,
-	"titan":   TITAN,
-	"hunter":  HUNTER,
+	"warlock": warlock,
+	"titan":   titan,
+	"hunter":  hunter,
 }
-
-// SubclassHash holds the hash representing the exact subclass "item". These are represented with
-// items and a subclass bucket definition.
-type SubclassHash uint
-
-// Subclass hashes (from the subclass inventory bucket)
-const (
-	Striker    SubclassHash = 2958378809
-	Sunbreaker SubclassHash = 3105935002
-	Sentinel   SubclassHash = 3382391785
-
-	Arcstrider   SubclassHash = 1334959255
-	Gunslinger   SubclassHash = 3635991036
-	Nightstalker SubclassHash = 3225959819
-
-	Stormcaller SubclassHash = 1751782730
-	Dawnblade   SubclassHash = 3481861797
-	Voidwalker  SubclassHash = 3887892656
-)
 
 // Class Enum value passed in some of the Destiny API responses
 const (
@@ -119,19 +82,6 @@ const (
 	HunterClassType  = 1
 	WarlockEnum      = 2
 	UnknownClassType = 3
-)
-
-// Hash values for Race types 'raceHash' JSON key
-const (
-	AWOKEN = 2803282938
-	HUMAN  = 3887404748
-	EXO    = 898834093
-)
-
-// Hash values for Gender 'genderHash' JSON key
-const (
-	MALE   = 3111576190
-	FEMALE = 2204441813
 )
 
 // Gender Enum values used in some of the Bungie API responses
@@ -147,30 +97,6 @@ const (
 	PSN      = uint(2)
 	BLIZZARD = uint(4)
 	DEMON    = uint(10)
-)
-
-// DamageType will represent the specific damage type tied to a weapon or NoDamage if an item does
-// not deal any damage.
-type DamageType uint
-
-const (
-	// NoDamage is the default and indicates an item is not a weapon
-	NoDamage DamageType = 0
-	// KineticDamage is tied to kinetic weapons
-	KineticDamage DamageType = 3373582085
-	// ArcDamage indicates a weapon does Arc damage
-	ArcDamage DamageType = 2303181850
-	// VoidDamage indicates a weapon deals Void damage
-	VoidDamage DamageType = 3454344768
-	// SolarDamage indicates a weapon does Solar Damage
-	SolarDamage DamageType = 1847026933
-)
-
-// Progression type hashes
-const (
-	valorHash  = "3882308435"
-	gloryHash  = "2679551909"
-	infamyHash = "2772425241"
 )
 
 var (

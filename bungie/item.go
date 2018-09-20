@@ -81,7 +81,7 @@ func (i *Item) IsInVault() bool {
 // not make sense to have a damage type.
 func (i *Item) Damage() DamageType {
 	if i == nil || i.ItemInstance == nil {
-		return KineticDamage
+		return kineticDamage
 	}
 
 	return i.DamageType

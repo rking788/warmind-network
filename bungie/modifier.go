@@ -31,20 +31,20 @@ type Modifier struct {
 
 var (
 	modifierLookup = map[uint]Modifier{
-		2558957669: Modifier{
-			Hash:        2558957669,
+		solarSingeHash: Modifier{
+			Hash:        solarSingeHash,
 			Name:        "Solar Singe",
 			Description: "",
 			BuffStatus:  SolarSinge,
 		},
-		3215384520: Modifier{
-			Hash:        3215384520,
+		arcSingeHash: Modifier{
+			Hash:        arcSingeHash,
 			Name:        "Arc Singe",
 			Description: "",
 			BuffStatus:  ArcSinge,
 		},
-		3362074814: Modifier{
-			Hash:        3362074814,
+		voidSingeHash: Modifier{
+			Hash:        voidSingeHash,
 			Name:        "Void Singe",
 			Description: "",
 			BuffStatus:  VoidSinge,
@@ -55,7 +55,7 @@ var (
 // SolarSinge will provide a buff to items that have a solar damage type
 // and no buff to any other items.
 func SolarSinge(i *Item) BuffStatus {
-	if i.Damage() == SolarDamage {
+	if i.Damage() == solarDamage {
 		return Buff
 	}
 
@@ -64,7 +64,7 @@ func SolarSinge(i *Item) BuffStatus {
 
 // ArcSinge will provide a buff to items that have a damage type of Arc and no buff to others
 func ArcSinge(i *Item) BuffStatus {
-	if i.Damage() == ArcDamage {
+	if i.Damage() == arcDamage {
 		return Buff
 	}
 
@@ -73,7 +73,7 @@ func ArcSinge(i *Item) BuffStatus {
 
 // VoidSinge will provide a buff to items with a void damage type and no buff to others
 func VoidSinge(i *Item) BuffStatus {
-	if i.Damage() == VoidDamage {
+	if i.Damage() == voidDamage {
 		return Buff
 	}
 
