@@ -20,16 +20,17 @@ const (
 // LookupDB is a wrapper around the database connection pool that stores the commonly used queries
 // as prepared statements.
 type LookupDB struct {
-	Database                *sql.DB
-	HashFromNameStmt        *sql.Stmt
-	NameFromHashStmt        *sql.Stmt
-	EngramHashStmt          *sql.Stmt
-	ItemMetadataStmt        *sql.Stmt
-	RandomJokeStmt          *sql.Stmt
-	InsertLoadoutStmt       *sql.Stmt
-	UpdateLoadoutStmt       *sql.Stmt
-	SelectLoadoutStmt       *sql.Stmt
-	SelectLoadoutByNameStmt *sql.Stmt
+	Database                 *sql.DB
+	HashFromNameStmt         *sql.Stmt
+	NameFromHashStmt         *sql.Stmt
+	EngramHashStmt           *sql.Stmt
+	ItemMetadataStmt         *sql.Stmt
+	RandomJokeStmt           *sql.Stmt
+	InsertLoadoutStmt        *sql.Stmt
+	UpdateLoadoutStmt        *sql.Stmt
+	SelectLoadoutStmt        *sql.Stmt
+	SelectLoadoutByNameStmt  *sql.Stmt
+	SelectActivityByHashStmt *sql.Stmt
 }
 
 var db1 *LookupDB
@@ -109,17 +110,25 @@ func InitDatabase() error {
 		return err
 	}
 
+	selectActivityByHashStmt, err := db.Prepare("select activities.*, destinations.*, places.*, activity_types.*, activity_modes.* from activities, destinations, places, activity_types, activity_modes where activities.hash = 2151274060 and destinations.hash = activities.destination_hash and places.hash = activities.place_hash and activities.activity_type_hash = activity_types.hash AND activities.direct_activity_mode_hash = activity_modes.hash;")
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Error prepraing the select activity by hash statement: %s", err.Error())
+		return err
+	}
+
 	db1 = &LookupDB{
-		Database:                db,
-		HashFromNameStmt:        stmt,
-		NameFromHashStmt:        nameFromHashStmt,
-		EngramHashStmt:          engramHashStmt,
-		ItemMetadataStmt:        itemMetadataStmt,
-		RandomJokeStmt:          randomJokeStmt,
-		InsertLoadoutStmt:       insertLoadoutStmt,
-		UpdateLoadoutStmt:       updateLoadoutStmt,
-		SelectLoadoutStmt:       selectLoadoutStmt,
-		SelectLoadoutByNameStmt: selectLoadoutByNameStmt,
+		Database:                 db,
+		HashFromNameStmt:         stmt,
+		NameFromHashStmt:         nameFromHashStmt,
+		EngramHashStmt:           engramHashStmt,
+		ItemMetadataStmt:         itemMetadataStmt,
+		RandomJokeStmt:           randomJokeStmt,
+		InsertLoadoutStmt:        insertLoadoutStmt,
+		UpdateLoadoutStmt:        updateLoadoutStmt,
+		SelectLoadoutStmt:        selectLoadoutStmt,
+		SelectLoadoutByNameStmt:  selectLoadoutByNameStmt,
+		SelectActivityByHashStmt: selectActivityByHashStmt,
 	}
 
 	return nil
@@ -318,4 +327,15 @@ func GetRandomJoke() (string, string, error) {
 	err = row.Scan(&setup, &punchline)
 
 	return setup, punchline, nil
+}
+
+// GetActivity will load an activity and all required associated properties from other tables such as
+// the places, destinations, and modifiers tables.
+func GetActivity(hash uint) (*sql.Row, error) {
+	db, err := GetDBConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	return db.SelectActivityByHashStmt.QueryRow(hash), nil
 }

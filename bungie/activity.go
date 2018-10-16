@@ -108,15 +108,15 @@ type Activity struct {
 	IsPVP                  bool
 	DirectActivityModeHash uint
 	DirectActivityModeType int
-	ActivityModeHashes     []*ActivityMode
+	ActivityModeHashes     []uint // I think the hashes here work well, ActivityMode is probably unnecessary
 	ActivityModeTypes      []int
 
 	Rewards       []*ActivityReward
-	Modifiers     []*ActivityModifier
+	Modifiers     []uint // I think the hashes are good for this, ActivityModifier is probably unnecessary
 	Challenges    []*ActivityChallenge
 	PlaylistItems []*ActivityPlaylistItem
 
-	Matchmaking []*ActivityMatchmaking
+	Matchmaking *ActivityMatchmaking
 }
 
 // ActivityStartSort is used to sort a slice of CharacterActivities by their activity start date.
