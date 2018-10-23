@@ -3,53 +3,24 @@ package bungie
 import (
 	"errors"
 	"sort"
-	"time"
 
 	"github.com/getsentry/raven-go"
+	"github.com/rking788/warmind-network/models"
 
 	"github.com/kpango/glg"
 )
-
-// Profile contains all information about a specific Destiny membership, including character and
-// inventory information.
-type Profile struct {
-	MembershipType        int
-	MembershipID          string
-	BungieNetMembershipID string
-	DateLastPlayed        time.Time
-	DisplayName           string
-	Characters            CharacterList
-
-	AllItems ItemList
-
-	// A map between the character ID and the Loadout currently equipped on that character
-	Loadouts map[string]Loadout
-
-	Equipments map[string]Equipment
-	// A list of the current and available character activities sorted by most
-	// recent activity start date
-	Activities []*CharacterActivities
-
-	// NOTE: Still not sure this is the best approach to flatten items into a single list,
-	// it works well for now so we will go with it. There are too many potential spots to
-	// look for an item.
-	//Equipments       map[string]ItemList
-	//Inventories      map[string]ItemList
-	//ProfileInventory ItemList
-	//Currencies       ItemList
-}
 
 // ProfileMsg is a wrapper around a Profile struct that should be used exclusively for sending a
 // Profile over a channel, or at least in cases where an error also needs to be sent to indicate
 // failures.
 type ProfileMsg struct {
-	*Profile
+	*models.Profile
 	error
 }
 
 // GetProfileForCurrentUser will retrieve the Profile data for the currently logged in user
 // (determined by the access_token)
-func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profile, error) {
+func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*models.Profile, error) {
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()
@@ -82,8 +53,8 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 	return profile, nil
 }
 
-func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData bool) *Profile {
-	profile := &Profile{}
+func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData bool) *models.Profile {
+	profile := &models.Profile{}
 
 	// Profile Component
 	profile.MembershipID = response.membershipID()
@@ -92,12 +63,12 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	// Transform character map into an ordered list based on played time.
 	// Characters Component
 	if response.Response.Characters != nil {
-		profile.Characters = make([]*Character, 0, len(response.Response.Characters.Data))
+		profile.Characters = make([]*models.Character, 0, len(response.Response.Characters.Data))
 		for _, char := range response.Response.Characters.Data {
 			profile.Characters = append(profile.Characters, char)
 		}
 
-		sort.Sort(sort.Reverse(LastPlayedSort(profile.Characters)))
+		sort.Sort(sort.Reverse(models.LastPlayedSort(profile.Characters)))
 	}
 
 	// Flatten out the items from different buckets including currencies, inventories, eequipments,
@@ -132,13 +103,13 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	if response.Response.CharacterEquipment != nil {
 
 		// If the character equipment fields were provided, populate the profile's loadouts map
-		profile.Loadouts = make(map[string]Loadout)
-		profile.Equipments = make(map[string]Equipment)
+		profile.Loadouts = make(map[string]models.Loadout)
+		profile.Equipments = make(map[string]models.Equipment)
 
 		for charID, list := range response.Response.CharacterEquipment.Data {
 
-			currentLoadout := newLoadout()
-			currentEquipment := newEquipment()
+			currentLoadout := models.NewLoadout()
+			currentEquipment := models.NewEquipment()
 
 			for _, item := range list.Items {
 
@@ -169,14 +140,14 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	if response.Response.CharacterInventories != nil {
 
 		if profile.Equipments == nil {
-			profile.Equipments = make(map[string]Equipment)
+			profile.Equipments = make(map[string]models.Equipment)
 		}
 
 		for charID, list := range response.Response.CharacterInventories.Data {
 
 			currentEquipment := profile.Equipments[charID]
 			if currentEquipment == nil {
-				currentEquipment = newEquipment()
+				currentEquipment = models.NewEquipment()
 				profile.Equipments[charID] = currentEquipment
 			}
 
@@ -202,7 +173,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	// CharacterActivities component
 	if response.Response.CharacterActivities != nil {
 
-		profile.Activities = make([]*CharacterActivities, 0, len(response.Response.CharacterActivities.Data))
+		profile.Activities = make([]*models.CharacterActivities, 0, len(response.Response.CharacterActivities.Data))
 		for charID, activities := range response.Response.CharacterActivities.Data {
 			a := activities
 			a.Character = response.character(charID)

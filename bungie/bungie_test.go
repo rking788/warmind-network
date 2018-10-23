@@ -8,6 +8,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/rking788/warmind-network/models"
+
 	"github.com/kpango/glg"
 	"github.com/rking788/warmind-network/storage"
 )
@@ -53,7 +55,7 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items._FilterItems(itemTierTypeFilter, exoticTier)
+		_ = ItemList(items)._FilterItems(itemTierTypeFilter, exoticTier)
 	}
 }
 func BenchmarkFilteringMultipleFilters(b *testing.B) {
@@ -70,7 +72,7 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		_ = ItemList(items).
 			_FilterItems(itemClassTypeFilter, warlock).
 			_FilterItems(itemNotTierTypeFilter, exoticTier).
 			_FilterItems(itemRequiredLevelFilter, 25)
@@ -91,7 +93,7 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		_ = ItemList(items).
 			_FilterItemsMultiple(createItemClassTypeFilter(warlock),
 				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
@@ -112,7 +114,7 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		_ = ItemList(items).
 			FilterItemsMultipleBubble(createItemClassTypeFilter(warlock),
 				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
@@ -133,7 +135,7 @@ func BenchmarkFilteringPassthrough(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		_ = ItemList(items).
 			FilterBaseline(createItemClassTypeFilter(warlock),
 				createItemNotTierTypeFilter(exoticTier),
 				createItemRequiredLevelFilter(25))
@@ -167,8 +169,8 @@ func TestFilteringSingleFilterBubble(t *testing.T) {
 
 	items := profile.AllItems
 
-	resultNormal := items._FilterItems(itemTierTypeFilter, exoticTier)
-	resultBubble := items.FilterItemsBubble(itemTierTypeFilter, exoticTier)
+	resultNormal := ItemList(items)._FilterItems(itemTierTypeFilter, exoticTier)
+	resultBubble := ItemList(items).FilterItemsBubble(itemTierTypeFilter, exoticTier)
 
 	fmt.Printf("Found normal(%d), bubble(%d)", len(resultNormal), len(resultBubble))
 
@@ -190,15 +192,15 @@ func TestFilteringMultipleFilter(t *testing.T) {
 
 	items := profile.AllItems
 
-	resultNormal := items.
+	resultNormal := ItemList(items).
 		_FilterItems(itemClassTypeFilter, warlock).
 		_FilterItems(itemNotTierTypeFilter, exoticTier).
 		_FilterItems(itemRequiredLevelFilter, 25)
-	resultBubble := items.
+	resultBubble := ItemList(items).
 		FilterItemsBubble(itemClassTypeFilter, warlock).
 		FilterItemsBubble(itemNotTierTypeFilter, exoticTier).
 		FilterItemsBubble(itemRequiredLevelFilter, 25)
-	resultSingleFilter := items.
+	resultSingleFilter := ItemList(items).
 		FilterItemsMultipleBubble(createItemClassTypeFilter(warlock),
 			createItemNotTierTypeFilter(exoticTier),
 			createItemRequiredLevelFilter(25))
@@ -254,7 +256,7 @@ func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.FilterItemsBubble(itemTierTypeFilter, exoticTier)
+		_ = ItemList(items).FilterItemsBubble(itemTierTypeFilter, exoticTier)
 	}
 }
 func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
@@ -271,7 +273,7 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		_ = ItemList(items).
 			FilterItemsBubble(itemClassTypeFilter, warlock).
 			FilterItemsBubble(itemNotTierTypeFilter, exoticTier).
 			FilterItemsBubble(itemRequiredLevelFilter, 25)
@@ -359,8 +361,8 @@ func BenchmarkBestItemForBucket(b *testing.B) {
 	}
 	profile := fixupProfileFromProfileResponse(response, false)
 	grouped := groupAndSortGear(profile.AllItems)
-	largestBucket := Kinetic
-	largestBucketSize := len(grouped[Kinetic])
+	largestBucket := models.Kinetic
+	largestBucketSize := len(grouped[models.Kinetic])
 	for bkt, list := range grouped {
 		if len(list) > largestBucketSize {
 			largestBucket = bkt
@@ -640,7 +642,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 
 	startingLoadout := profile.Loadouts[profile.Characters[0].CharacterID]
 	startingInstanceIDs := make([]string, 0, len(startingLoadout))
-	for i := Kinetic; i < Artifact; i++ {
+	for i := models.Kinetic; i < models.Artifact; i++ {
 		startingInstanceIDs = append(startingInstanceIDs, startingLoadout[i].InstanceID)
 	}
 
@@ -657,7 +659,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 	}
 
 	endingInstanceIDs := make([]string, 0, len(loadout))
-	for i := Kinetic; i < Artifact; i++ {
+	for i := models.Kinetic; i < models.Artifact; i++ {
 		endingInstanceIDs = append(endingInstanceIDs, loadout[i].InstanceID)
 	}
 
@@ -673,8 +675,8 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 
 	// Make sure we don't end up with multiple exotic weapons or multiple exotic armor pieces
 	exoticWeaponCount := 0
-	exoticBuckets := make([]EquipmentBucket, 0, 10)
-	for i := Kinetic; i < Ghost; i++ {
+	exoticBuckets := make([]models.EquipmentBucket, 0, 10)
+	for i := models.Kinetic; i < models.Ghost; i++ {
 		item := loadout[i]
 		meta, ok := itemMetadata[item.ItemHash]
 		if !ok {
@@ -691,8 +693,8 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 	}
 
 	exoticArmorCount := 0
-	exoticBuckets = make([]EquipmentBucket, 0, 10)
-	for i := Helmet; i < ClassArmor; i++ {
+	exoticBuckets = make([]models.EquipmentBucket, 0, 10)
+	for i := models.Helmet; i < models.ClassArmor; i++ {
 		item := loadout[i]
 		meta, ok := itemMetadata[item.ItemHash]
 		if !ok {

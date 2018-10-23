@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/getsentry/raven-go"
+	"github.com/rking788/warmind-network/models"
 
 	"github.com/kpango/glg"
 )
@@ -207,7 +208,7 @@ type GetProfileResponse struct {
 		ProfileCurrencies    *ItemListData                `json:"profileCurrencies"`
 		ItemComponents       *struct {
 			Instances *struct {
-				Data map[string]*ItemInstance `json:"data"`
+				Data map[string]*models.ItemInstance `json:"data"`
 			} `json:"instances"`
 		} `json:"itemComponents"`
 		Profile *struct {
@@ -221,10 +222,10 @@ type GetProfileResponse struct {
 			} `json:"data"`
 		} `json:"profile"`
 		Characters *struct {
-			Data CharacterMap `json:"data"`
+			Data models.CharacterMap `json:"data"`
 		} `json:"Characters"`
 		CharacterActivities *struct {
-			Data map[string]*CharacterActivities `json:"data"`
+			Data map[string]*models.CharacterActivities `json:"data"`
 		} `json:"characterActivities"`
 	} `json:"Response"`
 }
@@ -245,7 +246,7 @@ func (r *GetProfileResponse) membershipType() int {
 	return r.Response.Profile.Data.UserInfo.MembershipType
 }
 
-func (r *GetProfileResponse) character(charID string) *Character {
+func (r *GetProfileResponse) character(charID string) *models.Character {
 	if r.Response.Characters == nil {
 		return nil
 	}
@@ -253,7 +254,7 @@ func (r *GetProfileResponse) character(charID string) *Character {
 	return r.Response.Characters.Data[charID]
 }
 
-func (r *GetProfileResponse) instanceData(ID string) *ItemInstance {
+func (r *GetProfileResponse) instanceData(ID string) *models.ItemInstance {
 	if ID == "" || r.Response.ItemComponents == nil ||
 		r.Response.ItemComponents.Instances == nil {
 		return nil
@@ -416,7 +417,7 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 		}, nil
 	}
 
-	allChars := make(CharacterList, 0, 9)
+	allChars := make(models.CharacterList, 0, 9)
 	destinyMembershipLookup := make(map[string]*DestinyMembership)
 	for _, destinyMembership := range accountResponse.Response.DestinyMemberships {
 		destinyMembershipLookup[destinyMembership.MembershipID] = destinyMembership
@@ -426,7 +427,7 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 	}
 
 	latestDestinyMembership := accountResponse.Response.DestinyMemberships[0]
-	sort.Sort(sort.Reverse(LastPlayedSort(allChars)))
+	sort.Sort(sort.Reverse(models.LastPlayedSort(allChars)))
 	glg.Debugf("Found all membership characters: %+v", allChars)
 	if len(allChars) > 0 {
 		latestDestinyMembership = destinyMembershipLookup[allChars[0].MembershipID]
@@ -438,12 +439,12 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 	}, nil
 }
 
-func (c *Client) getCharacters(request *APIRequest) CharacterList {
+func (c *Client) getCharacters(request *APIRequest) models.CharacterList {
 
 	profile := &GetProfileResponse{}
 	c.Execute(request, profile)
 
-	chars := make(CharacterList, 0, 3)
+	chars := make(models.CharacterList, 0, 3)
 	if profile.Response == nil || profile.Response.Characters == nil {
 		return chars
 	}

@@ -14,28 +14,13 @@ import (
 
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
+	"github.com/rking788/warmind-network/models"
 	"github.com/rking788/warmind-network/storage"
 )
 
 const (
 	// TransferDelay will be the artificial between transfer requests to try and avoid throttling
 	TransferDelay = 750 * time.Millisecond
-)
-
-// Equipment bucket type definitions
-const (
-	_ EquipmentBucket = iota
-	Kinetic
-	Energy
-	Power
-	Ghost
-	Helmet
-	Gauntlets
-	Chest
-	Legs
-	ClassArmor
-	Artifact
-	Subclass
 )
 
 // Clients stores a list of bungie.Client instances that can be used to make HTTP requests to the Bungie API
@@ -47,17 +32,17 @@ var Clients *ClientPool
 var itemHashLookup map[string]uint
 
 var engramHashes map[uint]bool
-var itemMetadata map[uint]*ItemMetadata
+var itemMetadata map[uint]*models.ItemMetadata
 var bungieAPIKey string
 var warmindAPIKey string
 
 // BucketHashLookup maps all of the equipment bucket constants to their corresponding bucket
 // hashes as defined in the Bungie API.
-var BucketHashLookup map[EquipmentBucket]uint
+var BucketHashLookup map[models.EquipmentBucket]uint
 
 // EquipmentBucketLookup maps the bucket hash values defined in the Bungie API to the bucket
 // equipment constants.
-var EquipmentBucketLookup map[uint]EquipmentBucket
+var EquipmentBucketLookup map[uint]models.EquipmentBucket
 
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey string) {
@@ -84,38 +69,6 @@ func InitEnv(apiKey, warmindKey string) {
 		glg.Errorf("Error populating item metadata lookup table: %s\nExiting...", err.Error())
 		return
 	}
-}
-
-// EquipmentBucket is the type of the key for the bucket type hash lookup
-type EquipmentBucket uint
-
-func (bucket EquipmentBucket) String() string {
-	switch bucket {
-	case Kinetic:
-		return "Kinetic"
-	case Energy:
-		return "Energy"
-	case Power:
-		return "Power"
-	case Ghost:
-		return "Ghost"
-	case Helmet:
-		return "Helmet"
-	case Gauntlets:
-		return "Gauntlets"
-	case Chest:
-		return "Chest"
-	case Legs:
-		return "Legs"
-	case ClassArmor:
-		return "ClassArmor"
-	case Artifact:
-		return "Artifact"
-	case Subclass:
-		return "Subclass"
-	}
-
-	return ""
 }
 
 // PopulateEngramHashes will intialize the map holding all item_hash values that
@@ -148,12 +101,12 @@ func PopulateItemMetadata() error {
 	}
 	defer rows.Close()
 
-	itemMetadata = make(map[uint]*ItemMetadata)
+	itemMetadata = make(map[uint]*models.ItemMetadata)
 	itemHashLookup = make(map[string]uint)
 	for rows.Next() {
 		var hash uint
 		var itemName string
-		itemMeta := ItemMetadata{}
+		itemMeta := models.ItemMetadata{}
 		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash)
 
 		itemMetadata[hash] = &itemMeta
@@ -178,34 +131,34 @@ func PopulateBucketHashLookup() error {
 
 	// TODO: This absolutely needs to be done dynamically from the manifest. Not from a
 	//static definition
-	BucketHashLookup = make(map[EquipmentBucket]uint)
+	BucketHashLookup = make(map[models.EquipmentBucket]uint)
 
-	BucketHashLookup[Kinetic] = kineticBucket
-	BucketHashLookup[Energy] = energyBucket
-	BucketHashLookup[Power] = powerBucket
-	BucketHashLookup[Ghost] = ghostBucket
+	BucketHashLookup[models.Kinetic] = kineticBucket
+	BucketHashLookup[models.Energy] = energyBucket
+	BucketHashLookup[models.Power] = powerBucket
+	BucketHashLookup[models.Ghost] = ghostBucket
 
-	BucketHashLookup[Helmet] = helmetBucket
-	BucketHashLookup[Gauntlets] = gauntletsBucket
-	BucketHashLookup[Chest] = chestBucket
-	BucketHashLookup[Legs] = legsBucket
-	BucketHashLookup[Artifact] = artifactBucket
-	BucketHashLookup[ClassArmor] = classArmorBucket
-	BucketHashLookup[Subclass] = subclassBucket
+	BucketHashLookup[models.Helmet] = helmetBucket
+	BucketHashLookup[models.Gauntlets] = gauntletsBucket
+	BucketHashLookup[models.Chest] = chestBucket
+	BucketHashLookup[models.Legs] = legsBucket
+	BucketHashLookup[models.Artifact] = artifactBucket
+	BucketHashLookup[models.ClassArmor] = classArmorBucket
+	BucketHashLookup[models.Subclass] = subclassBucket
 
-	EquipmentBucketLookup = make(map[uint]EquipmentBucket)
-	EquipmentBucketLookup[kineticBucket] = Kinetic
-	EquipmentBucketLookup[energyBucket] = Energy
-	EquipmentBucketLookup[powerBucket] = Power
-	EquipmentBucketLookup[ghostBucket] = Ghost
+	EquipmentBucketLookup = make(map[uint]models.EquipmentBucket)
+	EquipmentBucketLookup[kineticBucket] = models.Kinetic
+	EquipmentBucketLookup[energyBucket] = models.Energy
+	EquipmentBucketLookup[powerBucket] = models.Power
+	EquipmentBucketLookup[ghostBucket] = models.Ghost
 
-	EquipmentBucketLookup[helmetBucket] = Helmet
-	EquipmentBucketLookup[gauntletsBucket] = Gauntlets
-	EquipmentBucketLookup[chestBucket] = Chest
-	EquipmentBucketLookup[legsBucket] = Legs
-	EquipmentBucketLookup[artifactBucket] = Artifact
-	EquipmentBucketLookup[classArmorBucket] = ClassArmor
-	EquipmentBucketLookup[subclassBucket] = Subclass
+	EquipmentBucketLookup[helmetBucket] = models.Helmet
+	EquipmentBucketLookup[gauntletsBucket] = models.Gauntlets
+	EquipmentBucketLookup[chestBucket] = models.Chest
+	EquipmentBucketLookup[legsBucket] = models.Legs
+	EquipmentBucketLookup[artifactBucket] = models.Artifact
+	EquipmentBucketLookup[classArmorBucket] = models.ClassArmor
+	EquipmentBucketLookup[subclassBucket] = models.Subclass
 
 	return nil
 }
@@ -241,7 +194,7 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 		return response, nil
 	}
 
-	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
+	matchingItems := ItemList(profile.AllItems).FilterItemsBubble(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -300,7 +253,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		return nil, err
 	}
 
-	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
+	matchingItems := ItemList(profile.AllItems).FilterItemsBubble(itemHashFilter, hash)
 	glg.Infof("Found %d items entries in characters inventory.", len(matchingItems))
 
 	if len(matchingItems) == 0 {
@@ -309,7 +262,8 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		return response, nil
 	}
 
-	destCharacter, err := profile.Characters.findDestinationCharacter(destinationClass)
+	destinationClassHash := classNameToHash[destinationClass]
+	destCharacter, err := profile.Characters.FindDestinationCharacter(destinationClassHash)
 	if err != nil {
 		output := fmt.Sprintf("Sorry Guardian, I could not transfer your %s because you do not have any %s characters in Destiny.", itemName, destinationClass)
 		raven.CaptureError(err, nil)
@@ -359,7 +313,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	loadout := findMaxLightLoadout(profile, destinationID)
 
 	glg.Debugf("Found loadout to equip: %v", loadout)
-	glg.Infof("Calculated power for loadout: %f", loadout.calculateLightLevel())
+	glg.Infof("Calculated power for loadout: %f", loadout.CalculateLightLevel())
 
 	err = equipLoadout(loadout, destinationID, profile, membershipType, client)
 	if err != nil {
@@ -399,7 +353,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 	randomLoadout := findRandomLoadout(profile, destinationID, false)
 
 	glg.Debugf("Found random loadout to equip: %v", randomLoadout)
-	glg.Infof("Calculated power for loadout: %f", randomLoadout.calculateLightLevel())
+	glg.Infof("Calculated power for loadout: %f", randomLoadout.CalculateLightLevel())
 
 	err = equipLoadout(randomLoadout, destinationID, profile, membershipType, client)
 	if err != nil {
@@ -428,7 +382,7 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 		return nil, err
 	}
 
-	matchingItems := profile.AllItems.FilterItemsBubble(itemIsEngramFilter, true)
+	matchingItems := ItemList(profile.AllItems).FilterItemsBubble(itemIsEngramFilter, true)
 	if len(matchingItems) == 0 {
 		outputStr := fmt.Sprintf("You don't have any engrams on your current character. " +
 			"Happy farming Guardian!")
@@ -513,7 +467,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 
 	glg.Debugf("Created Loadout: %+v", loadout)
 
-	persistedLoadout := loadout.toPersistedLoadout()
+	persistedLoadout := loadout.ToPersistedLoadout()
 	persistedBytes, err := json.Marshal(persistedLoadout)
 	if err != nil {
 		raven.CaptureError(err, nil)
@@ -579,7 +533,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 		return nil, err
 	}
 
-	var peristedLoadout PersistedLoadout
+	var peristedLoadout models.PersistedLoadout
 	err = json.NewDecoder(bytes.NewReader([]byte(loadoutJSON))).Decode(&peristedLoadout)
 	if err != nil {
 		raven.CaptureError(err, nil)
@@ -794,7 +748,7 @@ func GetCurrentGambitRanking(token string) (*skillserver.EchoResponse, error) {
 // the specified character. This requires a full trip from the source, to the vault, and then to the
 // destination character. By providing a nil destCharacter, the items will be transferred to the
 // vault and left there. Using a count of -1 will cause all of the items to be transferred.
-func transferItems(itemSet []*Item, destCharacter *Character,
+func transferItems(itemSet []*models.Item, destCharacter *models.Character,
 	membershipType int, count int, client *Client) int {
 
 	// TODO: This should probably take the transferStatus field into account,
@@ -823,7 +777,7 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 		// TODO: There is an issue were we are getting throttling responses from the Bungie
 		// servers. There will be an extra delay added here to try and avoid the throttling.
-		go func(item *Item, wait *sync.WaitGroup) {
+		go func(item *models.Item, wait *sync.WaitGroup) {
 
 			defer wg.Done()
 
@@ -886,7 +840,7 @@ func transferItems(itemSet []*Item, destCharacter *Character,
 
 // equipItems is a generic equip method that will handle a equipping a specific
 // item on a specific character.
-func equipItems(itemSet []*Item, characterID string,
+func equipItems(itemSet []*models.Item, characterID string,
 	membershipType int, client *Client) {
 
 	ids := make([]int64, 0, len(itemSet))
@@ -938,7 +892,7 @@ func equipItems(itemSet []*Item, characterID string,
 // parameters required to perform the action, as well as probably a *Client reference.
 
 // equipItem will take the specified item and equip it on the provided character
-func equipItem(item *Item, character *Character, membershipType int, client *Client) {
+func equipItem(item *models.Item, character *models.Character, membershipType int, client *Client) {
 	if item == nil {
 		glg.Debug("Trying to equip a nil item, ignoring.")
 		return

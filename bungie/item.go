@@ -1,101 +1,18 @@
 package bungie
 
 import (
-	"fmt"
-
 	"github.com/kpango/glg"
+	"github.com/rking788/warmind-network/models"
 )
 
-//Item represents a single inventory item returned usually by the GetProfile endpoint
-type Item struct {
-	// DestinyItemComponent https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemComponent.html#schema_Destiny-Entities-Items-DestinyItemComponent
-	ItemHash       uint   `json:"itemHash"`
-	InstanceID     string `json:"itemInstanceId"`
-	BucketHash     uint   `json:"bucketHash"`
-	Lockable       bool   `json:"lockable"`
-	BindStatus     int    `json:"bindStatus"`
-	State          int    `json:"state"`
-	Location       int    `json:"location"`
-	TransferStatus int    `json:"transferStatus"`
-	Quantity       int    `json:"quantity"`
-	*ItemInstance
-	*Character
-}
-
-// ItemInstance will hold information about a specific instance of an instanced item, this can include item stats,
-// perks, etc. as well as equipped status and things like that.
-type ItemInstance struct {
-	//https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemInstanceComponent.html#schema_Destiny-Entities-Items-DestinyItemInstanceComponent
-	IsEquipped         bool `json:"isEquipped"`
-	CanEquip           bool `json:"canEquip"`
-	Quality            int  `json:"quality"`
-	CannotEquipReason  int  `json:"cannotEquipReason"`
-	DamageType         `json:"damageTypeHash"`
-	EquipRequiredLevel int `json:"equipRequiredLevel"`
-	PrimaryStat        *struct {
-		//https://bungie-net.github.io/multi/schema_Destiny-DestinyStat.html#schema_Destiny-DestinyStat
-		StatHash     uint `json:"statHash"`
-		Value        int  `json:"value"`
-		MaximumValue int  `json:"maximumValue"`
-		ItemLevel    int  `json:"itemLevel"`
-	} `json:"primaryStat"`
-}
-
-// ItemMetadata is responsible for holding data from the manifest in-memory that is used often
-// when interacting wth different character's inventories. These values are used so much
-// that it would be a big waste of time to query the manifest data from the DB for every use.
-type ItemMetadata struct {
-	TierType   int
-	ClassType  int
-	BucketHash uint
-}
-
-func (i *Item) String() string {
-	if i.ItemInstance != nil {
-		if i.ItemInstance.PrimaryStat != nil {
-			return fmt.Sprintf("Item{itemHash: %d, itemID: %s, light:%d, isEquipped: %v, quantity: %d}", i.ItemHash, i.InstanceID, i.PrimaryStat.Value, i.IsEquipped, i.Quantity)
-		}
-
-		return fmt.Sprintf("Item{itemHash: %d, itemID: %s, quantity: %d}", i.ItemHash, i.InstanceID, i.Quantity)
-	}
-
-	return fmt.Sprintf("Item{itemHash: %d, quantity: %d}", i.ItemHash, i.Quantity)
-}
-
-// Power is a convenience accessor to return the power level for a specific item or zero if it does not apply.
-func (i *Item) Power() int {
-	if i == nil || i.ItemInstance == nil || i.PrimaryStat == nil {
-		return 0
-	}
-
-	return i.PrimaryStat.Value
-}
-
-// IsInVault will determine if the item is in the vault or not. True if it is; False if it is not.
-func (i *Item) IsInVault() bool {
-	return i.Character == nil
-}
-
-// Damage is a helper function to return the damage type of a specific item.
-// NoDamage will be returned if the item does not represent a weapon which would
-// not make sense to have a damage type.
-func (i *Item) Damage() DamageType {
-	if i == nil || i.ItemInstance == nil {
-		return kineticDamage
-	}
-
-	return i.DamageType
-}
+// ItemList is a collection of Item instances.
+type ItemList []*models.Item
 
 // ItemFilter is a type that will be used as a paramter to a filter function.
 // The parameter will be a function pointer. The function pointed to will need to return
 // true if the element meets some criteria and false otherwise. If the result of
 // this filter is false, then the item will be removed.
-type ItemFilter func(*Item, interface{}) bool
-
-// ItemList is just a wrapper around a slice of Item pointers. This will make it possible to write a filter
-// method that is called on a slice of Items.
-type ItemList []*Item
+type ItemFilter func(*models.Item, interface{}) bool
 
 /*
  * Sort Conformance Methods
@@ -200,13 +117,13 @@ func (items ItemList) FilterItemsMultipleBubble(filters ...ItemFilter) ItemList 
 
 // itemHashFilter will return true if the itemHash provided matches the hash of the item;
 // otherwise false.
-func itemHashFilter(item *Item, itemHash interface{}) bool {
+func itemHashFilter(item *models.Item, itemHash interface{}) bool {
 	return item != nil && (item.ItemHash == itemHash.(uint))
 }
 
 // itemHashesFilter will return true if the item's hash value is present in the provided
 // slice of hashes; otherwise false.
-func itemHashesFilter(item *Item, hashList interface{}) bool {
+func itemHashesFilter(item *models.Item, hashList interface{}) bool {
 	for _, hash := range hashList.([]uint) {
 		return itemHashFilter(item, hash)
 	}
@@ -214,16 +131,16 @@ func itemHashesFilter(item *Item, hashList interface{}) bool {
 	return false
 }
 
-func createItemBucketHashFilter(bucketTypeHash interface{}) func(*Item, interface{}) bool {
+func createItemBucketHashFilter(bucketTypeHash interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, unused interface{}) bool {
+	return func(item *models.Item, unused interface{}) bool {
 		return itemBucketHashFilter(item, bucketTypeHash)
 	}
 }
 
 // itemBucketHashIncludingVaultFilter will filter the list of items by the specified
 // bucket hash or the Vault location
-func itemBucketHashFilter(item *Item, bucketTypeHash interface{}) bool {
+func itemBucketHashFilter(item *models.Item, bucketTypeHash interface{}) bool {
 
 	if metadata, ok := itemMetadata[item.ItemHash]; ok {
 		return metadata.BucketHash == bucketTypeHash.(uint)
@@ -233,26 +150,26 @@ func itemBucketHashFilter(item *Item, bucketTypeHash interface{}) bool {
 	return false
 }
 
-func createCharacterIDFilter(characterID interface{}) func(*Item, interface{}) bool {
+func createCharacterIDFilter(characterID interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, unused interface{}) bool {
+	return func(item *models.Item, unused interface{}) bool {
 		return itemCharacterIDFilter(item, characterID)
 	}
 }
 
 // itemCharacterIDFilter will filter the list of items by the specified character identifier
-func itemCharacterIDFilter(item *Item, characterID interface{}) bool {
+func itemCharacterIDFilter(item *models.Item, characterID interface{}) bool {
 	return item.Character != nil && (item.Character.CharacterID == characterID.(string))
 }
 
 // itemIsEngramFilter will return true if the item represents an engram; otherwise false.
-func itemIsEngramFilter(item *Item, wantEngram interface{}) bool {
+func itemIsEngramFilter(item *models.Item, wantEngram interface{}) bool {
 	_, isEngram := engramHashes[item.ItemHash]
 	return isEngram == wantEngram.(bool)
 }
 
 // itemTierTypeFilter is a filter that will filter out items that are not of the specified tier.
-func itemTierTypeFilter(item *Item, tierType interface{}) bool {
+func itemTierTypeFilter(item *models.Item, tierType interface{}) bool {
 	metadata, ok := itemMetadata[item.ItemHash]
 	if !ok {
 		glg.Warnf("No metadata found for item: %d", item.ItemHash)
@@ -261,21 +178,21 @@ func itemTierTypeFilter(item *Item, tierType interface{}) bool {
 	return metadata.TierType == tierType.(int)
 }
 
-func createItemTierTypeFilter(tierType interface{}) func(*Item, interface{}) bool {
+func createItemTierTypeFilter(tierType interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, tier interface{}) bool {
+	return func(item *models.Item, tier interface{}) bool {
 		return itemTierTypeFilter(item, tierType)
 	}
 }
 
-func createItemNotTierTypeFilter(tierType interface{}) func(*Item, interface{}) bool {
+func createItemNotTierTypeFilter(tierType interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, tier interface{}) bool {
+	return func(item *models.Item, tier interface{}) bool {
 		return itemNotTierTypeFilter(item, tierType)
 	}
 }
 
-func itemNotTierTypeFilter(item *Item, tierType interface{}) bool {
+func itemNotTierTypeFilter(item *models.Item, tierType interface{}) bool {
 
 	if metadata, ok := itemMetadata[item.ItemHash]; ok {
 		return metadata.TierType != tierType.(int)
@@ -288,19 +205,19 @@ func itemNotTierTypeFilter(item *Item, tierType interface{}) bool {
 // itemInstanceIDFilter is an item filter that will return true for all items with an
 // instanceID property equal to the one provided. This is useful for filtering a list
 // down to a specific instance of an item.
-func itemInstanceIDFilter(item *Item, instanceID interface{}) bool {
+func itemInstanceIDFilter(item *models.Item, instanceID interface{}) bool {
 	return item.InstanceID == instanceID.(string)
 }
 
-func createItemClassTypeFilter(classType interface{}) func(*Item, interface{}) bool {
+func createItemClassTypeFilter(classType interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, class interface{}) bool {
+	return func(item *models.Item, class interface{}) bool {
 		return itemClassTypeFilter(item, classType)
 	}
 }
 
 // itemClassTypeFilter will filter out all items that are not equippable by the specified class
-func itemClassTypeFilter(item *Item, classType interface{}) bool {
+func itemClassTypeFilter(item *models.Item, classType interface{}) bool {
 
 	if metadata, ok := itemMetadata[item.ItemHash]; ok {
 		return (metadata.ClassType == UnknownClassType) ||
@@ -311,15 +228,15 @@ func itemClassTypeFilter(item *Item, classType interface{}) bool {
 	return false
 }
 
-func createItemRequiredLevelFilter(maxLevel interface{}) func(*Item, interface{}) bool {
+func createItemRequiredLevelFilter(maxLevel interface{}) func(*models.Item, interface{}) bool {
 
-	return func(item *Item, level interface{}) bool {
+	return func(item *models.Item, level interface{}) bool {
 		return itemRequiredLevelFilter(item, maxLevel)
 	}
 }
 
 // itemRequiredLevelFilter will filter items that have a required level that is greater than
 // the level provided in `maxLevel`. True if the required level is <= the max level; False otherwise
-func itemRequiredLevelFilter(item *Item, maxLevel interface{}) bool {
+func itemRequiredLevelFilter(item *models.Item, maxLevel interface{}) bool {
 	return item.ItemInstance != nil && item.ItemInstance.EquipRequiredLevel <= maxLevel.(int)
 }

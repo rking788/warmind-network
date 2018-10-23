@@ -1,5 +1,7 @@
 package bungie
 
+import "github.com/rking788/warmind-network/models"
+
 const (
 	solarSingeHash uint = 2558957669
 	arcSingeHash   uint = 3215384520
@@ -56,21 +58,17 @@ const (
 	female = 2204441813
 )
 
-// DamageType will represent the specific damage type tied to a weapon or NoDamage if an item does
-// not deal any damage.
-type DamageType uint
-
 const (
 	// NoDamage is the default and indicates an item is not a weapon
-	noDamage DamageType = 0
+	noDamage models.DamageType = 0
 	// KineticDamage is tied to kinetic weapons
-	kineticDamage DamageType = 3373582085
+	kineticDamage models.DamageType = 3373582085
 	// ArcDamage indicates a weapon does Arc damage
-	arcDamage DamageType = 2303181850
+	arcDamage models.DamageType = 2303181850
 	// VoidDamage indicates a weapon deals Void damage
-	voidDamage DamageType = 3454344768
+	voidDamage models.DamageType = 3454344768
 	// SolarDamage indicates a weapon does Solar Damage
-	solarDamage DamageType = 1847026933
+	solarDamage models.DamageType = 1847026933
 )
 
 // Progression type hashes

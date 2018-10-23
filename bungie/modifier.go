@@ -1,5 +1,7 @@
 package bungie
 
+import "github.com/rking788/warmind-network/models"
+
 // BuffStatus indicates the postiive or negative effect an item/modifier/activity has on a
 // player's character overall.
 type BuffStatus int
@@ -16,7 +18,7 @@ const (
 // ItemBuffProvider is an interface that a modifier should implement to return the BuffStatus that
 // a modifier has on an item. Buff for matching elements for example.
 type ItemBuffProvider interface {
-	GetBuffStatus(item *Item) BuffStatus
+	GetBuffStatus(item *models.Item) BuffStatus
 }
 
 // Modifier represents a specific modifier that can be applied to an activity. Example: Void Singe
@@ -26,7 +28,7 @@ type Modifier struct {
 	Hash        uint
 	Name        string
 	Description string
-	BuffStatus  func(*Item) BuffStatus
+	BuffStatus  func(*models.Item) BuffStatus
 }
 
 var (
@@ -54,7 +56,7 @@ var (
 
 // SolarSinge will provide a buff to items that have a solar damage type
 // and no buff to any other items.
-func SolarSinge(i *Item) BuffStatus {
+func SolarSinge(i *models.Item) BuffStatus {
 	if i.Damage() == solarDamage {
 		return Buff
 	}
@@ -63,7 +65,7 @@ func SolarSinge(i *Item) BuffStatus {
 }
 
 // ArcSinge will provide a buff to items that have a damage type of Arc and no buff to others
-func ArcSinge(i *Item) BuffStatus {
+func ArcSinge(i *models.Item) BuffStatus {
 	if i.Damage() == arcDamage {
 		return Buff
 	}
@@ -72,7 +74,7 @@ func ArcSinge(i *Item) BuffStatus {
 }
 
 // VoidSinge will provide a buff to items with a void damage type and no buff to others
-func VoidSinge(i *Item) BuffStatus {
+func VoidSinge(i *models.Item) BuffStatus {
 	if i.Damage() == voidDamage {
 		return Buff
 	}

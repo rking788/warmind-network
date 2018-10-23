@@ -14,6 +14,7 @@ import (
 	"github.com/kpango/glg"
 	"github.com/rking788/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/bungie"
+	"github.com/rking788/warmind-network/models"
 )
 
 const (
@@ -58,7 +59,7 @@ func startCachePopulation() {
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
 		for {
-            currentMapResponse, _ = requestCurrentMap()
+			currentMapResponse, _ = requestCurrentMap()
 			<-ticker.C
 		}
 	}()
@@ -128,8 +129,8 @@ func GetPopularWeaponTypes() (*skillserver.EchoResponse, error) {
 		return nil, errors.New("Failed to load current map details from Trials Report")
 	}
 
-	kineticID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Kinetic])
-	energyID := fmt.Sprintf("%d", bungie.BucketHashLookup[bungie.Energy])
+	kineticID := fmt.Sprintf("%d", bungie.BucketHashLookup[models.Kinetic])
+	energyID := fmt.Sprintf("%d", bungie.BucketHashLookup[models.Energy])
 	kinetic := currentMapResponse.Response.Weapons[kineticID]
 	energy := currentMapResponse.Response.Weapons[energyID]
 
