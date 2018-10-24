@@ -1,13 +1,16 @@
 package storage
 
 import (
-	"errors"
-
+	"bytes"
 	"database/sql"
+	"encoding/json"
+	"errors"
+	"fmt"
 
 	raven "github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
 	_ "github.com/lib/pq" // Only want to import the interface here
+	"github.com/rking788/warmind-network/models"
 )
 
 const (
@@ -110,7 +113,7 @@ func InitDatabase() error {
 		return err
 	}
 
-	selectActivityByHashStmt, err := db.Prepare("select activities.*, destinations.*, places.*, activity_types.*, activity_modes.* from activities, destinations, places, activity_types, activity_modes where activities.hash = 2151274060 and destinations.hash = activities.destination_hash and places.hash = activities.place_hash and activities.activity_type_hash = activity_types.hash AND activities.direct_activity_mode_hash = activity_modes.hash;")
+	selectActivityByHashStmt, err := db.Prepare("SELECT a.hash, a.name, a.description, a.light_level, a.is_playlist, a.is_pvp, d.hash, d.name, d.description, p.hash, p.name, p.description, at.hash, at.name, at.description, am.hash, am.name, am.mode_type, am.category, am.tier, am.is_team_based, a.rewards, a.challenges, a.modifiers FROM activities a, destinations d, places p, activity_types at, activity_modes am WHERE a.hash = $1 AND d.hash = a.destination_hash AND p.hash = a.place_hash AND a.activity_type_hash = at.hash AND a.direct_activity_mode_hash = am.hash")
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Error prepraing the select activity by hash statement: %s", err.Error())
@@ -178,7 +181,7 @@ func FindEngramHashes() (map[uint]bool, error) {
 
 // LoadItemMetadata will load all rows from the database for all items loaded out of the manifest.
 // Only the required columns will be loaded into memory that need to be used later for common operations.
-func LoadItemMetadata() (*sql.Rows, error) {
+func LoadItemMetadata() (map[uint]*models.ItemMetadata, error) {
 
 	db, err := GetDBConnection()
 	if err != nil {
@@ -189,8 +192,21 @@ func LoadItemMetadata() (*sql.Rows, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	return rows, nil
+	itemMetadata := make(map[uint]*models.ItemMetadata)
+	for rows.Next() {
+		var hash uint
+		itemMeta := models.ItemMetadata{}
+		rows.Scan(&hash, &itemMeta.Name, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash)
+
+		itemMetadata[hash] = &itemMeta
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+	return itemMetadata, nil
 }
 
 // GetItemNameFromHash is in charge of querying the database and reading
@@ -218,14 +234,22 @@ func GetItemNameFromHash(itemHash string) (string, error) {
 }
 
 // SaveLoadout is responsible for persisting the provided serialized loadout to the database.
-func SaveLoadout(loadoutJSON []byte, membershipID, name string) error {
+func SaveLoadout(loadout models.Loadout, membershipID, name string) error {
 
 	db, err := GetDBConnection()
 	if err != nil {
 		return err
 	}
 
-	_, err = db.InsertLoadoutStmt.Exec(membershipID, name, string(loadoutJSON))
+	persistedLoadout := loadout.ToPersistedLoadout()
+	persistedBytes, err := json.Marshal(persistedLoadout)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to marshal the loadout to JSON: %s", err.Error())
+		return err
+	}
+
+	_, err = db.InsertLoadoutStmt.Exec(membershipID, name, string(persistedBytes))
 
 	return err
 }
@@ -233,14 +257,22 @@ func SaveLoadout(loadoutJSON []byte, membershipID, name string) error {
 // UpdateLoadout can be used to update an existing loadout by membership ID and loadout name
 // this should be used after confirming with the user that they want to update a loadout
 // with a spepcific name.
-func UpdateLoadout(loadoutJSON []byte, membershipID, name string) error {
+func UpdateLoadout(loadout models.Loadout, membershipID, name string) error {
 
 	db, err := GetDBConnection()
 	if err != nil {
 		return err
 	}
 
-	_, err = db.UpdateLoadoutStmt.Exec(string(loadoutJSON), membershipID, name)
+	persistedLoadout := loadout.ToPersistedLoadout()
+	persistedBytes, err := json.Marshal(persistedLoadout)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to marshal the loadout to JSON: %s", err.Error())
+		return err
+	}
+
+	_, err = db.UpdateLoadoutStmt.Exec(string(persistedBytes), membershipID, name)
 
 	return err
 }
@@ -248,29 +280,37 @@ func UpdateLoadout(loadoutJSON []byte, membershipID, name string) error {
 // SelectLoadout is responsible for querying the database for a loadout with the
 // provided membership ID and loadout name. The return value is the JSON string for
 // the loadout requested.
-func SelectLoadout(membershipID, name string) (string, error) {
+func SelectLoadout(membershipID, name string) (models.PersistedLoadout, error) {
 
 	db, err := GetDBConnection()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	row := db.SelectLoadoutByNameStmt.QueryRow(membershipID, name)
 
-	var loadout string
-	err = row.Scan(&loadout)
+	var loadoutJSON string
+	err = row.Scan(&loadoutJSON)
 	if err == sql.ErrNoRows {
-		return "", nil
+		return nil, nil
 	} else if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return loadout, nil
+	var persistedLoadout models.PersistedLoadout
+	err = json.NewDecoder(bytes.NewReader([]byte(loadoutJSON))).Decode(&persistedLoadout)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Failed to decode JSON: %s", err.Error())
+		return nil, err
+	}
+
+	return persistedLoadout, nil
 }
 
 // SelectLoadouts is responsible for querying the database for a loadout with the
-// provided membership ID and loadout name. The return value is the JSON string for
-// the loadout requested.
+// provided membership ID and loadout name. The return value is a slice of the names
+// of all loadouts saved for the provided user.
 func SelectLoadouts(membershipID string) ([]string, error) {
 
 	db, err := GetDBConnection()
@@ -329,13 +369,81 @@ func GetRandomJoke() (string, string, error) {
 	return setup, punchline, nil
 }
 
+type modifiersTemp struct {
+	Hash uint `json:"activityModifierHash"`
+}
+
 // GetActivity will load an activity and all required associated properties from other tables such as
 // the places, destinations, and modifiers tables.
-func GetActivity(hash uint) (*sql.Row, error) {
+func GetActivity(hash uint) (*models.Activity, error) {
 	db, err := GetDBConnection()
 	if err != nil {
 		return nil, err
 	}
+	hash = 2752743635
 
-	return db.SelectActivityByHashStmt.QueryRow(hash), nil
+	// SELECT a.hash, a.name, a.description, a.light_level, a.is_playlist, a.is_pvp, d.hash, d.name, d.description,
+	// 		p.hash, p.name, p.description, at.hash, at.name, at.description, am.hash, am.name, am.mode_type,
+	// 		am.category, am.tier, am.is_team_based, a.rewards, a.challenges, a.modifiers
+	// FROM activities a, destinations d, places p, activity_types at, activity_modes am
+	// WHERE a.hash = 2752743635
+	// 	AND d.hash = a.destination_hash
+	// 	AND p.hash = a.place_hash
+	// 	AND a.activity_type_hash = at.hash
+	// 	AND a.direct_activity_mode_hash = am.hash;
+
+	activity := models.Activity{}
+
+	activity.Destination = &models.Destination{}
+	activity.Place = &models.Place{}
+	activity.ActivityMode = &models.ActivityMode{}
+	activity.ActivityType = &models.ActivityType{}
+
+	row := db.SelectActivityByHashStmt.QueryRow(hash)
+
+	if row == nil {
+		fmt.Println("Found nil row from query")
+	}
+
+	var rewardsJSON string
+	var challengesJSON string
+	var modifiersJSON string
+
+	err = row.Scan(&activity.Hash, &activity.Name, &activity.Description,
+		&activity.LightLevel, &activity.IsPlaylist, &activity.IsPVP,
+		&activity.Destination.Hash, &activity.Destination.Name,
+		&activity.Destination.Description, &activity.Place.Hash, &activity.Place.Name,
+		&activity.Place.Description, &activity.ActivityType.Hash, &activity.ActivityType.Name,
+		&activity.ActivityType.Description, &activity.ActivityMode.Hash, &activity.ActivityMode.Name,
+		&activity.ActivityMode.ModeType, &activity.ActivityMode.Category,
+		&activity.ActivityMode.Tier, &activity.ActivityMode.IsTeamBased, &rewardsJSON, &challengesJSON, &modifiersJSON)
+	if err != nil {
+		fmt.Printf("Error scanning activity results: %v\n", err.Error())
+	}
+
+	fmt.Printf("Rewards: %v\nChallenges: %v\nModifiers: %v\n\n", rewardsJSON, challengesJSON, modifiersJSON)
+	err = json.Unmarshal([]byte(rewardsJSON), &activity.Rewards)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal([]byte(challengesJSON), &activity.Challenges)
+	if err != nil {
+		return nil, err
+	}
+
+	tempModifiers := make([]*modifiersTemp, 0, 10)
+	err = json.Unmarshal([]byte(modifiersJSON), &tempModifiers)
+	activity.Modifiers = make([]uint, 0, len(tempModifiers))
+	for _, modifier := range tempModifiers {
+		activity.Modifiers = append(activity.Modifiers, modifier.Hash)
+	}
+
+	if err == sql.ErrNoRows {
+		glg.Warnf("Didn't find any activities with that hash: %s", hash)
+		return nil, errors.New("No activities found")
+	} else if err != nil {
+		return nil, errors.New(err.Error())
+	}
+
+	return &activity, nil
 }

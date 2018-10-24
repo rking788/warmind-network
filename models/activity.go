@@ -19,7 +19,7 @@ type CharacterActivities struct {
 	*Character
 }
 
-type activityBase struct {
+type ActivityBase struct {
 	Hash        uint
 	Name        string
 	Description string
@@ -28,19 +28,19 @@ type activityBase struct {
 // ActivityModifier represents a single modifier attached to an activity.
 // (Example: Solar singe, Blackout, Glass, etc.)
 type ActivityModifier struct {
-	*activityBase
+	ActivityBase
 }
 
 // ActivityType represents the type of a particular activity mostly defined in the Bungie manifest.
 // This could be things like supremacy, mayhem, iron banner, story.
 type ActivityType struct {
-	*activityBase
+	ActivityBase
 }
 
 // ActivityMode is the mode of the activity it is attached to. Similar to the activity type but with more
 // data.
 type ActivityMode struct {
-	*activityBase
+	ActivityBase
 	ModeType    int
 	Category    int
 	Tier        int
@@ -51,14 +51,14 @@ type ActivityMode struct {
 // Place is a representation of a specific location for an activity.
 // Example: The Tangled Shore, Earth, The Crucible, "Titan, Moon of Saturn", etc.
 type Place struct {
-	*activityBase
+	ActivityBase
 }
 
 // Destination represents a more detailed version of a Place. Destinations also contain
 // information about bubbles.
 // Example: The Farm, Arcadian Valley, Hellas Basin, The Tangled Shore
 type Destination struct {
-	*activityBase
+	ActivityBase
 	PlaceHash uint
 }
 
@@ -97,11 +97,12 @@ type ActivityMatchmaking struct {
 // This type will contain information about modifiers, challenges, the mode or type of the activity,
 // places, and destinations.
 type Activity struct {
-	*activityBase
+	ActivityBase
 	LightLevel             uint
-	DestinationHash        *Destination
-	PlaceHash              *Place
-	ActivityTypeHash       *ActivityType
+	Destination            *Destination
+	Place                  *Place
+	ActivityType           *ActivityType
+	ActivityMode           *ActivityMode
 	IsPlaylist             bool
 	IsPVP                  bool
 	DirectActivityModeHash uint

@@ -50,6 +50,7 @@ type ItemMetadata struct {
 	TierType   int
 	ClassType  int
 	BucketHash uint
+	Name       string
 }
 
 func (i *Item) String() string {

@@ -2,7 +2,6 @@ package bungie
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -95,30 +94,22 @@ func PopulateEngramHashes() error {
 // to be loaded into memory for common inventory related operations.
 func PopulateItemMetadata() error {
 
-	rows, err := storage.LoadItemMetadata()
+	var err error
+	itemMetadata, err = storage.LoadItemMetadata()
+	//rows, err := storage.LoadItemMetadata()
 	if err != nil {
 		return err
 	}
-	defer rows.Close()
 
-	itemMetadata = make(map[uint]*models.ItemMetadata)
 	itemHashLookup = make(map[string]uint)
-	for rows.Next() {
-		var hash uint
-		var itemName string
-		itemMeta := models.ItemMetadata{}
-		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash)
-
-		itemMetadata[hash] = &itemMeta
-		if itemName != "" {
-			itemHashLookup[itemName] = hash
+	for hash, meta := range itemMetadata {
+		if meta.Name != "" {
+			itemHashLookup[meta.Name] = hash
 		} else {
 			glg.Warn("Found an empty item name, skipping...")
 		}
 	}
-	if rows.Err() != nil {
-		return rows.Err()
-	}
+
 	glg.Infof("Loaded %d item metadata entries", len(itemMetadata))
 
 	return nil
@@ -438,7 +429,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	bnetMembershipID := currentAccount.UserBungieNet.MembershipID
 	if !shouldOverwrite {
 		existing, _ := storage.SelectLoadout(bnetMembershipID, name)
-		if existing != "" {
+		if existing != nil {
 			// Prompt the user to see if they want to overwrite the existing loadout
 			response.ConfirmIntent("CreateLoadout", nil).
 				OutputSpeech(fmt.Sprintf("You already have a loadout named %s, would you like to overwrite it?", name))
@@ -467,20 +458,12 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 
 	glg.Debugf("Created Loadout: %+v", loadout)
 
-	persistedLoadout := loadout.ToPersistedLoadout()
-	persistedBytes, err := json.Marshal(persistedLoadout)
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Failed to marshal the loadout to JSON: %s", err.Error())
-		return nil, err
-	}
-
 	if shouldOverwrite {
 		// The user has confirmed they want to overwrite the existing loadout
-		storage.UpdateLoadout(persistedBytes, bnetMembershipID, name)
+		storage.UpdateLoadout(loadout, bnetMembershipID, name)
 	} else {
 		// The user does not have a loadout with this name so save a new one
-		storage.SaveLoadout(persistedBytes, bnetMembershipID, name)
+		storage.SaveLoadout(loadout, bnetMembershipID, name)
 	}
 
 	response.OutputSpeech("All set Guardian, your " + name + " loadout was saved for you.")
@@ -521,8 +504,8 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
 	profile.BungieNetMembershipID = currentAccount.UserBungieNet.MembershipID
 
-	loadoutJSON, err := storage.SelectLoadout(profile.BungieNetMembershipID, name)
-	if err == nil && loadoutJSON == "" {
+	persistedLoadout, err := storage.SelectLoadout(profile.BungieNetMembershipID, name)
+	if err == nil && persistedLoadout == nil {
 		raven.CaptureError(errors.New("No loadout matching name"), map[string]string{"name": name})
 		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s. "+
 			"You need to create a loadout with that name before it can be equipped.", name))
@@ -533,15 +516,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 		return nil, err
 	}
 
-	var peristedLoadout models.PersistedLoadout
-	err = json.NewDecoder(bytes.NewReader([]byte(loadoutJSON))).Decode(&peristedLoadout)
-	if err != nil {
-		raven.CaptureError(err, nil)
-		glg.Errorf("Failed to decode JSON: %s", err.Error())
-		return nil, err
-	}
-
-	loadout := fromPersistedLoadout(peristedLoadout, profile)
+	loadout := fromPersistedLoadout(persistedLoadout, profile)
 	equipLoadout(loadout, profile.Characters[0].CharacterID, profile,
 		profile.MembershipType, client)
 
