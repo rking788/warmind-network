@@ -5,7 +5,10 @@ APP_NAME := "warmind-network"
 
 
 all: build
-genversion:
+	cd ../../
+dir:
+	cd ./cmd/server/
+genversion: dir
 	rm -f $(VERSIONFILE)
 	@echo "package main" > $(VERSIONFILE)
 	@echo "const (" >> $(VERSIONFILE)

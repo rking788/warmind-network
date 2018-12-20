@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,15 +10,13 @@ import (
 	"time"
 
 	raven "github.com/getsentry/raven-go"
+	"github.com/kpango/glg"
+	"github.com/rking788/go-alexa/skillserver"
+	"github.com/rking788/warmind-network/alexa"
+	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/charlemagne"
 	"github.com/rking788/warmind-network/storage"
 	"github.com/rking788/warmind-network/trials"
-
-	"github.com/kpango/glg"
-	"github.com/rking788/warmind-network/alexa"
-	"github.com/rking788/warmind-network/bungie"
-
-	"github.com/rking788/go-alexa/skillserver"
 )
 
 // AlexaHandlers are the handler functions mapped by the intent name that they should handle.
@@ -102,18 +101,25 @@ func main() {
 
 	// writeHeapProfile()
 
-	if config.Environment == "production" {
-		port := ":" + config.Port
-		err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
-		if err != nil {
-			raven.CaptureError(err, nil)
-			glg.Errorf("Error starting the application! : %s", err.Error())
-		}
+	activity, err := storage.GetActivity(222)
+	if err != nil {
+		fmt.Printf("Error trying to get activity: %v\n", err.Error())
 	} else {
-		// Heroku makes us read a random port from the environment and our app is a
-		// subdomain of theirs so we get SSL for free
-		skillserver.Run(applications, config.Port)
+		fmt.Printf("Activity Loaded: %+v\n", activity)
 	}
+
+	// if config.Environment == "production" {
+	// 	port := ":" + config.Port
+	// 	err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
+	// 	if err != nil {
+	// 		raven.CaptureError(err, nil)
+	// 		glg.Errorf("Error starting the application! : %s", err.Error())
+	// 	}
+	// } else {
+	// 	// Heroku makes us read a random port from the environment and our app is a
+	// 	// subdomain of theirs so we get SSL for free
+	// 	skillserver.Run(applications, config.Port)
+	// }
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
