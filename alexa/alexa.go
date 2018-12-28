@@ -165,8 +165,8 @@ func CountItem(echoRequest *skillserver.EchoRequest) *skillserver.EchoResponse {
 	if err != nil || speech == "" {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Error counting the number of items: %s", err.Error())
-		response = skillserver.NewEchoResponse()
 		response.OutputSpeech("Sorry Guardian, an error occurred counting that item.")
+		return response
 	}
 
 	response.OutputSpeech(speech)
