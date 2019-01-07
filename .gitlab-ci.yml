@@ -1,0 +1,18 @@
+image: golang:1.11.1-stretch
+
+stages:
+  - build
+
+before_script:
+    # Create a symbolic link under $GOPATH, this is needed for local build
+    # i.e. /go/src/gitlab.com/ykyuen/gitlab-ci-go-build
+    - cd $GOPATH/src
+    - mkdir -p github.com/rking788
+    - cd github.com/rking788
+    - ln -s $CI_PROJECT_DIR
+    - cd $CI_PROJECT_NAME
+
+build:
+  stage: build
+  script:
+    - make build
