@@ -168,6 +168,16 @@ func PopulateItemMetadata() error {
 	return nil
 }
 
+func ItemNames() []string {
+	result := make([]string, 0, len(itemMetadata))
+
+	for name := range itemHashLookup {
+		result = append(result, name)
+	}
+
+	return result
+}
+
 // PopulateBucketHashLookup will fill the map that will be used to lookup bucket type hashes
 // which will be used to determine which type of equipment a specific Item represents.
 // From the DestinyInventoryBucketDefinition table in the manifest.

@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"flag"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"os/signal"
 	"runtime/pprof"
+	"strings"
 	"time"
 
 	raven "github.com/getsentry/raven-go"
@@ -223,6 +225,7 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 func dialogflowRequestHandler(next func(*df2.WebhookRequest) *dialogflow.DialogFlowResponse) func(http.ResponseWriter, *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		dumpRequest(r)
 
 		whr := &df2.WebhookRequest{}
 		unmarshaler := jsonpb.Unmarshaler{}
@@ -268,15 +271,15 @@ func dialogflowIntentHandler(r *df2.WebhookRequest) *dialogflow.DialogFlowRespon
 	return response
 }
 
-// func dumpRequest(r *http.Request) {
+func dumpRequest(r *http.Request) {
 
-// 	data, err := httputil.DumpRequest(r, true)
-// 	if err != nil {
-// 		glg.Errorf("Failed to dump the request: %s", err.Error())
-// 		return
-// 	}
-// 	strData := string(data)
-// 	strData = strings.Replace(strData, "\n", "", 0)
+	data, err := httputil.DumpRequest(r, true)
+	if err != nil {
+		glg.Errorf("Failed to dump the request: %s", err.Error())
+		return
+	}
+	strData := string(data)
+	strData = strings.Replace(strData, "\n", "", 0)
 
-// 	glg.Debug(strData)
-// }
+	glg.Debug(strData)
+}
