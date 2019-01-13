@@ -751,10 +751,10 @@ func GetCurrentGambitRanking(token string) (string, error) {
 	buf := bytes.NewBuffer([]byte{})
 	if infamy != nil {
 		var infamyRank string
-		if infamy.Level < len(pvpRankSteps) {
+		if infamy.Level < len(gambitRankSteps) {
 			infamyRank = gambitRankSteps[infamy.Level]
 		} else {
-			infamyRank = gambitRankSteps[len(pvpRankSteps)-1]
+			infamyRank = gambitRankSteps[len(gambitRankSteps)-1]
 		}
 		buf.WriteString(fmt.Sprintf("You've achieved %s infamy rank, ", infamyRank))
 		if infamy.Level == infamy.LevelCap {

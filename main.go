@@ -51,6 +51,7 @@ var (
 		"DestinyJoke":       dialogflow.DestinyJoke,
 		"EquipNamedLoadout": dialogflow.EquipNamedLoadout,
 		"ListLoadouts":      dialogflow.ListLoadouts,
+		"RandomizeLoadout":  dialogflow.RandomGear,
 		"CurrentRank":       dialogflow.GetCurrentRank,
 	}
 )

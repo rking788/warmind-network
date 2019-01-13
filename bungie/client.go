@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/getsentry/raven-go"
-
 	"github.com/kpango/glg"
 )
 
@@ -129,7 +128,7 @@ func (r *CharacterProgressionResponse) progression(hash string) *DestinyProgress
 	}
 
 	for _, progress := range charProgress {
-		return progress.Progressions[infamyHash]
+		return progress.Progressions[hash]
 	}
 
 	return nil

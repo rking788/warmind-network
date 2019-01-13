@@ -93,6 +93,14 @@ func accessTokenFromRequest(r *df2.WebhookRequest) string {
 	return r.GetOriginalDetectIntentRequest().GetPayload().GetFields()["user"].GetStructValue().GetFields()["accessToken"].GetStringValue()
 }
 
+func parameter(r *df2.WebhookRequest, name string) string {
+	if val, ok := r.GetQueryResult().GetParameters().Fields[name]; ok {
+		return val.GetStringValue()
+	}
+
+	return ""
+}
+
 // CountItem calls the Bungie API to see count the number of Items on all characters and
 // in the vault.
 func CountItem(r *df2.WebhookRequest) *DialogFlowResponse {
@@ -100,9 +108,14 @@ func CountItem(r *df2.WebhookRequest) *DialogFlowResponse {
 	response := newGoogleDialogflowResponse()
 	accessToken := accessTokenFromRequest(r)
 
-	// TODO: Get the item name slot value from the google request
-	//item, _ := echoRequest.GetSlotValue("Item")
-	item := "legendary shards"
+	item := parameter(r, "item")
+	if item == "" {
+		// TODO: How can this delegate back to dialogflow or google assistant to get a name from the user
+		glg.Warnf("Found empty item name in CountItem handler")
+		response.setGoogleTextToSpeech("Sorry Guardian, you must specify an item name to be counted")
+		return response
+	}
+
 	lowerItem := strings.ToLower(item)
 	speech, err := bungie.CountItem(lowerItem, accessToken)
 	if err != nil || speech == "" {
@@ -141,9 +154,7 @@ func MaxPower(r *df2.WebhookRequest) *DialogFlowResponse {
 func GetCurrentRank(r *df2.WebhookRequest) *DialogFlowResponse {
 
 	accessToken := accessTokenFromRequest(r)
-	// TODO: Get slot value for progression name
-	progression := "valor"
-	//progression, _ := request.GetSlotValue("Progression")
+	progression := parameter(r, "rank")
 
 	var speech string
 	var err error
@@ -181,6 +192,23 @@ func GetCurrentRank(r *df2.WebhookRequest) *DialogFlowResponse {
 	return response
 }
 
+// ListLoadouts provides a speech response back to the user that lists the names
+// of the currently saved loadouts that are found in the DB.
+func ListLoadouts(r *df2.WebhookRequest) *DialogFlowResponse {
+
+	response := newGoogleDialogflowResponse()
+	accessToken := accessTokenFromRequest(r)
+	speech, err := bungie.GetLoadoutNames(accessToken)
+	if err != nil {
+		raven.CaptureError(err, nil)
+		response.setGoogleTextToSpeech("Sorry Guardian, there was an error getting your loadout names, please try again later")
+		return response
+	}
+
+	response.setGoogleTextToSpeech(speech)
+	return response
+}
+
 // EquipNamedLoadout will take the name of a loadout and try to retrieve it from the database
 // and equip it on the user's currently active character.
 func EquipNamedLoadout(r *df2.WebhookRequest) *DialogFlowResponse {
@@ -209,17 +237,18 @@ func EquipNamedLoadout(r *df2.WebhookRequest) *DialogFlowResponse {
 	return response
 }
 
-// ListLoadouts provides a speech response back to the user that lists the names
-// of the currently saved loadouts that are found in the DB.
-func ListLoadouts(r *df2.WebhookRequest) *DialogFlowResponse {
+// RandomGear will equip random gear for each of the current characters gear slots (excluding
+// things like ghost and class items). It is possible to randomize only weapons or weapons
+// and armor.
+func RandomGear(r *df2.WebhookRequest) *DialogFlowResponse {
 
 	response := newGoogleDialogflowResponse()
 	accessToken := accessTokenFromRequest(r)
-	speech, err := bungie.GetLoadoutNames(accessToken)
+	speech, err := bungie.RandomizeLoadout(accessToken)
 	if err != nil {
 		raven.CaptureError(err, nil)
-		response.setGoogleTextToSpeech("Sorry Guardian, there was an error getting your loadout names, please try again later")
-		return response
+		glg.Errorf("Error occurred equipping random gear: %s", err.Error())
+		response.setGoogleTextToSpeech("Sorry Guardian, an error occurred equipping random gear.")
 	}
 
 	response.setGoogleTextToSpeech(speech)
