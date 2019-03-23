@@ -45,14 +45,14 @@ var (
 		"CurrentRank":              alexa.AuthWrapper(alexa.GetCurrentRank),
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
 	}
-	dialogFlowHandlers = map[string]func(*df2.WebhookRequest) *dialogflow.DialogFlowResponse{
-		"CountItem":         dialogflow.CountItem,
-		"EquipMaxLight":     dialogflow.MaxPower,
+	dialogFlowHandlers = map[string]dialogflow.DialogflowHandler{
+		"CountItem":         dialogflow.AuthWrapper(dialogflow.CountItem),
+		"EquipMaxLight":     dialogflow.AuthWrapper(dialogflow.MaxPower),
 		"DestinyJoke":       dialogflow.DestinyJoke,
-		"EquipNamedLoadout": dialogflow.EquipNamedLoadout,
-		"ListLoadouts":      dialogflow.ListLoadouts,
-		"RandomizeLoadout":  dialogflow.RandomGear,
-		"CurrentRank":       dialogflow.GetCurrentRank,
+		"EquipNamedLoadout": dialogflow.AuthWrapper(dialogflow.EquipNamedLoadout),
+		"ListLoadouts":      dialogflow.AuthWrapper(dialogflow.ListLoadouts),
+		"RandomizeLoadout":  dialogflow.AuthWrapper(dialogflow.RandomGear),
+		"CurrentRank":       dialogflow.AuthWrapper(dialogflow.GetCurrentRank),
 	}
 )
 
@@ -223,7 +223,9 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 	*echoResponse = *response
 }
 
-func dialogflowRequestHandler(next func(*df2.WebhookRequest) *dialogflow.DialogFlowResponse) func(http.ResponseWriter, *http.Request) {
+// This function is a helper function to wrap a given DialogflowHandler and present it as a
+// standard http.HanlderFunc. This way the server can handle requests as a standard HTTP server.
+func dialogflowRequestHandler(next dialogflow.DialogflowHandler) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		dumpRequest(r)

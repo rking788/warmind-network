@@ -7,3 +7,4 @@ warmind-network
 *.test
 coverage.out
 skill-config/
+benchmarks

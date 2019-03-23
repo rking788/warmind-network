@@ -27,6 +27,8 @@ coverage:
 	go test -cover ./...
 #	go test --coverprofile=coverage.out
 #	go tool cover -html=coverage.out
+minimal: genversion
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o warmind-network .
 deploy: genversion
 	GOOS=linux GOARCH=amd64 go build
 	scp ./$(APP_NAME) do:

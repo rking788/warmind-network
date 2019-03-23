@@ -11,6 +11,11 @@ import (
 	df2 "google.golang.org/genproto/googleapis/cloud/dialogflow/v2"
 )
 
+// DialogflowHandler is a type that is used to handle an incoming request from dialogflow. The original HTTP request
+// should be transformed from an HTTP Post request, into the dialogflow.WebhookRequest type and the response should be
+// written as a DialogFlowResponse
+type DialogflowHandler func(*df2.WebhookRequest) *DialogFlowResponse
+
 type DialogFlowResponse struct {
 	Payload *GooglePayload `json:"payload"`
 }
@@ -22,7 +27,13 @@ type GooglePayload struct {
 type AssistantResponse struct {
 	ExpectUserResponse bool `json:"expectUserResponse"`
 	//Final              *FinalResponse `json:"finalResponse"`
-	Rich *RichResponse `json:"richResponse"`
+	Rich         *RichResponse `json:"richResponse"`
+	SystemIntent *SystemIntent `json:"systemIntent"`
+}
+
+type SystemIntent struct {
+	Name string            `json:"intent"`
+	Data map[string]string `json:"data"`
 }
 
 type AssistantResponseItem struct {
@@ -54,6 +65,20 @@ func newGoogleDialogflowResponse() *DialogFlowResponse {
 	}
 
 	response.Payload.Google.Rich.Items = make([]*AssistantResponseItem, 0, 3)
+
+	return response
+}
+
+func newSignInResponse() *DialogFlowResponse {
+
+	response := newGoogleDialogflowResponse()
+	response.Payload.Google.SystemIntent = &SystemIntent{
+		Name: "actions.intent.SIGN_IN",
+		Data: map[string]string{
+			"@type":      "type.googleapis.com/google.actions.v2.SignInValueSpec",
+			"optContext": "To get your account details",
+		},
+	}
 
 	return response
 }
@@ -99,6 +124,27 @@ func parameter(r *df2.WebhookRequest, name string) string {
 	}
 
 	return ""
+}
+
+// AuthWrapper is a handler function wrapper that will fail the chain of handlers if an access token was not provided
+// as part of the Dialogflow request
+func AuthWrapper(handler DialogflowHandler) DialogflowHandler {
+
+	return func(req *df2.WebhookRequest) *DialogFlowResponse {
+		accessToken := accessTokenFromRequest(req)
+
+		if accessToken == "" {
+			// Send a SIGN_IN system intent back to the user
+			glg.Info("Sending sign in response!")
+			response := newSignInResponse()
+			response.
+				setGoogleTextToSpeech("Sorry Guardian, it looks like your Bungie.net account needs to be linked in the Google Assistant app.")
+			return response
+		}
+
+		glg.Info("Dispatching to handler...")
+		return handler(req)
+	}
 }
 
 // CountItem calls the Bungie API to see count the number of Items on all characters and
@@ -216,9 +262,7 @@ func EquipNamedLoadout(r *df2.WebhookRequest) *DialogFlowResponse {
 	response := newGoogleDialogflowResponse()
 	accessToken := accessTokenFromRequest(r)
 
-	// TODO: Get loadout name from slot values
-	//loadoutName, _ := request.GetSlotValue("Name")
-	loadoutName := "crucible"
+	loadoutName := parameter(r, "name")
 	if loadoutName == "" {
 		response.setGoogleTextToSpeech("Sorry Guardian, you must specify a name for the loadout being equipped.")
 		return response

@@ -1,18 +1,38 @@
-image: golang:1.11.1-stretch
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
 
 stages:
-  - build
+  - dockerize
+  - staging
+  - master
 
 before_script:
-    # Create a symbolic link under $GOPATH, this is needed for local build
-    # i.e. /go/src/gitlab.com/ykyuen/gitlab-ci-go-build
-    - cd $GOPATH/src
-    - mkdir -p github.com/rking788
-    - cd github.com/rking788
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
 
-build:
-  stage: build
+dockerize:
+  stage: dockerize
   script:
-    - make build
+    - ./scripts/build.sh
+  only:
+    - develop
+
+staging:
+  stage: staging
+  only:
+    - staging
+  script:
+    - ./scripts/build.sh
+    - ./scripts/push.sh
+
+master:
+  stage: master
+  only:
+    - master
+  script:
+    - ./scripts/build.sh --latest
+    - ./scripts/push.sh --latest
