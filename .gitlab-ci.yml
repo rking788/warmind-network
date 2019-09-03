@@ -19,7 +19,7 @@ dockerize:
   script:
     - ./scripts/build.sh
   only:
-    - develop
+    - devel
 
 staging:
   stage: staging
