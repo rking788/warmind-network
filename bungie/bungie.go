@@ -148,10 +148,14 @@ func PopulateItemMetadata() error {
 	itemMetadata = make(map[uint]*ItemMetadata)
 	itemHashLookup = make(map[string]uint)
 	for rows.Next() {
-		var hash uint
+
+		var hash, itemType uint
 		var itemName string
 		itemMeta := ItemMetadata{}
-		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash)
+		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash, &itemType)
+		if itemType == Dummy || itemType == None {
+			continue
+		}
 
 		itemMetadata[hash] = &itemMeta
 		if itemName != "" {
@@ -228,10 +232,12 @@ func CountItem(itemName, accessToken string) (string, error) {
 
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
+		glg.Warnf("Hash lookup failed for item with name=%s", itemName)
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
 		return outputStr, nil
 	}
 
+	glg.Infof("ItemHash: %d", hash)
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 

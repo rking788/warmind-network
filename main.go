@@ -252,6 +252,7 @@ func dialogflowRequestHandler(next dialogflow.DialogflowHandler) http.HandlerFun
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		glg.Infof("Sending dialogflow response: %+v", string(b))
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")

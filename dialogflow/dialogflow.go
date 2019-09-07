@@ -28,7 +28,7 @@ type AssistantResponse struct {
 	ExpectUserResponse bool `json:"expectUserResponse"`
 	//Final              *FinalResponse `json:"finalResponse"`
 	Rich         *RichResponse `json:"richResponse"`
-	SystemIntent *SystemIntent `json:"systemIntent"`
+	SystemIntent *SystemIntent `json:"systemIntent,omitempty"`
 }
 
 type SystemIntent struct {
@@ -132,6 +132,7 @@ func AuthWrapper(handler DialogflowHandler) DialogflowHandler {
 
 	return func(req *df2.WebhookRequest) *DialogFlowResponse {
 		accessToken := accessTokenFromRequest(req)
+		glg.Infof("Making request with access token: %s", accessToken)
 
 		if accessToken == "" {
 			// Send a SIGN_IN system intent back to the user
