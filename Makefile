@@ -31,7 +31,7 @@ minimal: genversion
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o warmind-network .
 deploy: genversion
 	GOOS=linux GOARCH=amd64 go build
-	scp ./$(APP_NAME) do:
+	scp ./$(APP_NAME) li:
 	rm $(APP_NAME)
 clean:
 	rm $(APP_NAME)
