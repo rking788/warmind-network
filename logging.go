@@ -45,7 +45,7 @@ func ConfigureLogging(level string, logPath string) {
 		"error":   err,
 	}[level]
 
-	for _, glgLevel := range []string{glg.DEBG, glg.INFO, glg.WARN, glg.OK, glg.ERR, glg.LOG} {
+	for _, glgLevel := range []glg.LEVEL{glg.DEBG, glg.INFO, glg.WARN, glg.OK, glg.ERR, glg.LOG} {
 		glg.Get().SetLevelMode(glgLevel, glgDestination(glgLevel, desiredLevel))
 	}
 
@@ -68,7 +68,7 @@ func ConfigureLogging(level string, logPath string) {
 	// glg.Printf("%s : %s", "printf", "formatted")
 }
 
-func glgDestination(glgLevel string, desiredLevel uint) int {
+func glgDestination(glgLevel glg.LEVEL, desiredLevel uint) glg.MODE {
 
 	// Special case where we want ALL logging.
 	if desiredLevel == all {

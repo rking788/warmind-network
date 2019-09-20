@@ -10,11 +10,36 @@ import (
 	"github.com/garyburd/redigo/redis"
 	"github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
-	"github.com/rking788/go-alexa/skillserver"
+	"github.com/mikeflynn/go-alexa/skillserver"
+	"github.com/mikeflynn/go-alexa/skillserver/dialog"
 	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/charlemagne"
 	"github.com/rking788/warmind-network/db"
 	"github.com/rking788/warmind-network/trials"
+)
+
+type DialogType string
+
+const (
+	DialogDelegate      DialogType = "Dialog.Delegate"
+	DialogElicitSlot    DialogType = "Dialog.ElicitSlot"
+	DialogConfirmSlot   DialogType = "Dialog.ConfirmSlot"
+	DialogConfirmIntent DialogType = "Dialog.ConfirmIntent"
+)
+
+type DialogState string
+
+const (
+	DialogStarted    DialogState = "STARTED"
+	DialogInProgress DialogState = "IN_PROGRESS"
+	DialogCompleted  DialogState = "COMPLETED"
+)
+
+type ConfirmationStatus string
+
+const (
+	ConfirmationConfirmed ConfirmationStatus = "CONFIRMED"
+	ConfirmationDenied    ConfirmationStatus = "DENIED"
 )
 
 // Session is responsible for storing information related to a specific skill invocation.
@@ -287,7 +312,7 @@ func DestinyJoke(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 
 	builder := skillserver.NewSSMLTextBuilder()
 	builder.AppendPlainSpeech(setup).
-		AppendBreak("2s", "medium", "").
+		AppendBreak("medium", "2s").
 		AppendPlainSpeech(punchline)
 	response.OutputSpeechSSML(builder.Build())
 
@@ -301,16 +326,16 @@ func CreateLoadout(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 
 	response := skillserver.NewEchoResponse()
 
-	glg.Debugf("Found dialog state = %s", request.GetDialogState())
-	if request.GetDialogState() != skillserver.DialogCompleted {
+	glg.Debugf("Found dialog state = %s", request.Request.DialogState)
+	if DialogState(request.Request.DialogState) != DialogCompleted {
 		// The user still needs to provide a name for the new loadout to be created
-		response.DialogDelegate(nil)
+		response = response.RespondToIntent(dialog.Delegate, nil, nil)
 		return response
 	}
 
-	glg.Debugf("Found intent confirmation status = %s", request.GetIntentConfirmationStatus())
-	intentConfirmation := request.GetIntentConfirmationStatus()
-	if intentConfirmation == skillserver.ConfirmationDenied {
+	glg.Debugf("Found intent confirmation status = %s", request.Request.Intent.ConfirmationStatus)
+	intentConfirmation := request.Request.Intent.ConfirmationStatus
+	if ConfirmationStatus(intentConfirmation) == ConfirmationDenied {
 		// The user does NOT want to overwrite the existing loadout with the same name
 		return response
 	}
@@ -324,13 +349,13 @@ func CreateLoadout(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 	exists, _ := bungie.DoesLoadoutExist(accessToken, loadoutName)
 	if exists && intentConfirmation == "" {
 		// Ask the user if they wish to overwrite this loadout
-		response.ConfirmIntent("CreateLoadout", nil).
+		response = response.RespondToIntent(dialog.ConfirmIntent, &request.Request.Intent, nil).
 			OutputSpeech(fmt.Sprintf("You already have a loadout named %s, would you like to overwrite it?", loadoutName))
 		return response
 	}
 
 	var err error
-	shouldOverwrite := intentConfirmation == skillserver.ConfirmationConfirmed
+	shouldOverwrite := ConfirmationStatus(intentConfirmation) == ConfirmationConfirmed
 	speech, err := bungie.CreateLoadoutForCurrentCharacter(accessToken, loadoutName, shouldOverwrite)
 
 	if err != nil {

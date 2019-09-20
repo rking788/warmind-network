@@ -5,7 +5,7 @@ import (
 
 	raven "github.com/getsentry/raven-go"
 	"github.com/kpango/glg"
-	"github.com/rking788/go-alexa/skillserver"
+	"github.com/mikeflynn/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/db"
 	df2 "google.golang.org/genproto/googleapis/cloud/dialogflow/v2"
@@ -314,7 +314,7 @@ func DestinyJoke(r *df2.WebhookRequest) *DialogFlowResponse {
 
 	builder := skillserver.NewSSMLTextBuilder()
 	builder.AppendPlainSpeech(setup).
-		AppendBreak("2s", "medium", "").
+		AppendBreak("medium", "2s").
 		AppendPlainSpeech(punchline)
 
 	// TODO: Is the syntax for the Google and Alexa SSML the same?

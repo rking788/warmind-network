@@ -14,7 +14,7 @@ import (
 	raven "github.com/getsentry/raven-go"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/kpango/glg"
-	"github.com/rking788/go-alexa/skillserver"
+	"github.com/mikeflynn/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/alexa"
 	"github.com/rking788/warmind-network/bungie"
 	"github.com/rking788/warmind-network/charlemagne"
@@ -115,17 +115,17 @@ func main() {
 
 	defer CloseLogger()
 
-	glg.Printf("Version=%s, BuildDate=%v", Version, BuildDate)
+	glg.Printf("Version=%s, BuildDate=%v", version, buildDate)
 
 	// writeHeapProfile()
 
 	if config.Environment == "production" {
 		port := ":" + config.Port
-		err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
-		if err != nil {
-			raven.CaptureError(err, nil)
-			glg.Errorf("Error starting the application! : %s", err.Error())
-		}
+		skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
+		// if err != nil {
+		// 	raven.CaptureError(err, nil)
+		// 	glg.Errorf("Error starting the application! : %s", err.Error())
+		// }
 	} else {
 		// Heroku makes us read a random port from the environment and our app is a
 		// subdomain of theirs so we get SSL for free

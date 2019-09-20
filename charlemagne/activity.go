@@ -7,7 +7,7 @@ import (
 
 	"github.com/getsentry/raven-go"
 
-	"github.com/rking788/go-alexa/skillserver"
+	"github.com/mikeflynn/go-alexa/skillserver"
 )
 
 var (
