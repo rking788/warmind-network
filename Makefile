@@ -9,8 +9,8 @@ genversion:
 	rm -f $(VERSIONFILE)
 	@echo "package main" > $(VERSIONFILE)
 	@echo "const (" >> $(VERSIONFILE)
-	@echo "  Version = \"$(APP_VERSION)\"" >> $(VERSIONFILE)
-	@echo "  BuildDate = \"$(BUILD_DATE)\"" >> $(VERSIONFILE)
+	@echo "  version = \"$(APP_VERSION)\"" >> $(VERSIONFILE)
+	@echo "  buildDate = \"$(BUILD_DATE)\"" >> $(VERSIONFILE)
 	@echo ")" >> $(VERSIONFILE)
 build: genversion
 	go build
