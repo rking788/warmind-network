@@ -166,6 +166,35 @@ const (
 	SolarDamage DamageType = 1847026933
 )
 
+// ItemType is similar to item_type_name but with some extra fields
+const (
+	None              = 0
+	Currency          = 1
+	Armor             = 2
+	Weapon            = 3
+	Message           = 7
+	Engram            = 8
+	Consumable        = 9
+	ExchangeMaterial  = 10
+	MissionReward     = 11
+	QuestStep         = 12
+	QuestStepComplete = 13
+	Emblem            = 14
+	Quest             = 15
+	SubclassItemType  = 16
+	ClanBanner        = 17
+	Aura              = 18
+	Mod               = 19
+	Dummy             = 20
+	Ship              = 21
+	Vehicle           = 22
+	Emote             = 23
+	GhostItemType     = 24
+	Package           = 25
+	Bounty            = 26
+	Wrapper           = 27
+)
+
 // Progression type hashes
 const (
 	valorHash  = "3882308435"

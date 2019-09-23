@@ -11,9 +11,7 @@ import (
 	"time"
 
 	"github.com/getsentry/raven-go"
-
 	"github.com/kpango/glg"
-	"github.com/rking788/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/db"
 )
 
@@ -150,10 +148,14 @@ func PopulateItemMetadata() error {
 	itemMetadata = make(map[uint]*ItemMetadata)
 	itemHashLookup = make(map[string]uint)
 	for rows.Next() {
-		var hash uint
+
+		var hash, itemType uint
 		var itemName string
 		itemMeta := ItemMetadata{}
-		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash)
+		rows.Scan(&hash, &itemName, &itemMeta.TierType, &itemMeta.ClassType, &itemMeta.BucketHash, &itemType)
+		if itemType == Dummy || itemType == None {
+			continue
+		}
 
 		itemMetadata[hash] = &itemMeta
 		if itemName != "" {
@@ -168,6 +170,16 @@ func PopulateItemMetadata() error {
 	glg.Infof("Loaded %d item metadata entries", len(itemMetadata))
 
 	return nil
+}
+
+func ItemNames() []string {
+	result := make([]string, 0, len(itemMetadata))
+
+	for name := range itemHashLookup {
+		result = append(result, name)
+	}
+
+	return result
 }
 
 // PopulateBucketHashLookup will fill the map that will be used to lookup bucket type hashes
@@ -209,12 +221,9 @@ func PopulateBucketHashLookup() error {
 	return nil
 }
 
-// CountItem will count the number of the specified item and return an EchoResponse
-// that can be serialized and sent back to the Alexa skill.
-func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) {
+// CountItem will count the number of the specified item
+func CountItem(itemName, accessToken string) (string, error) {
 	glg.Infof("ItemName: %s", itemName)
-
-	response := skillserver.NewEchoResponse()
 
 	// Check common misinterpretations from Alexa
 	if translation, ok := commonAlexaItemTranslations[itemName]; ok {
@@ -223,21 +232,20 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
+		glg.Warnf("Hash lookup failed for item with name=%s", itemName)
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
-		response.OutputSpeech(outputStr)
-		return response, nil
+		return outputStr, nil
 	}
 
+	glg.Infof("ItemHash: %d", hash)
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// Load all items on all characters
 	profile, err := GetProfileForCurrentUser(client, false)
 	if err != nil {
-		response.
-			OutputSpeech("Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app.").
-			LinkAccountCard()
-		return response, nil
+		outputStr := "Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app."
+		return outputStr, nil
 	}
 
 	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
@@ -245,8 +253,7 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 
 	if len(matchingItems) == 0 {
 		outputStr := fmt.Sprintf("You don't have any %s on any of your characters.", itemName)
-		response.OutputSpeech(outputStr)
-		return response, nil
+		return outputStr, nil
 	}
 
 	outputString := ""
@@ -257,19 +264,16 @@ func CountItem(itemName, accessToken string) (*skillserver.EchoResponse, error) 
 			outputString += fmt.Sprintf("Your %s has %d %s. ", classHashToName[item.Character.ClassHash], item.Quantity, itemName)
 		}
 	}
-	response = response.OutputSpeech(outputString)
 
-	return response, nil
+	return outputString, nil
 }
 
 // TransferItem is responsible for calling the necessary Bungie.net APIs to
 // transfer the specified item to the specified character. The quantity is optional
 // as well as the source class. If no quantity is specified, all of the specific
 // items will be transfered to the particular character.
-func TransferItem(itemName, accessToken, sourceClass, destinationClass string, count int) (*skillserver.EchoResponse, error) {
+func TransferItem(itemName, accessToken, sourceClass, destinationClass string, count int) (string, error) {
 	glg.Infof("ItemName: %s, Source: %s, Destination: %s, Count: %d", itemName, sourceClass, destinationClass, count)
-
-	response := skillserver.NewEchoResponse()
 
 	// Check common misinterpretations from Alexa
 	if translation, ok := commonAlexaItemTranslations[itemName]; ok {
@@ -285,8 +289,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	hash, ok := itemHashLookup[itemName]
 	if !ok {
 		outputStr := fmt.Sprintf("Sorry Guardian, I could not find any items named %s in your inventory.", itemName)
-		response.OutputSpeech(outputStr)
-		return response, nil
+		return outputStr, nil
 	}
 
 	client := Clients.Get()
@@ -296,7 +299,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	matchingItems := profile.AllItems.FilterItemsBubble(itemHashFilter, hash)
@@ -304,8 +307,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 
 	if len(matchingItems) == 0 {
 		outputStr := fmt.Sprintf("You don't have any %s on any of your characters.", itemName)
-		response.OutputSpeech(outputStr)
-		return response, nil
+		return outputStr, nil
 	}
 
 	destCharacter, err := profile.Characters.findDestinationCharacter(destinationClass)
@@ -313,10 +315,9 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		output := fmt.Sprintf("Sorry Guardian, I could not transfer your %s because you do not have any %s characters in Destiny.", itemName, destinationClass)
 		raven.CaptureError(err, nil)
 		glg.Error(output)
-		response.OutputSpeech(output)
 
 		db.InsertUnknownValueIntoTable(destinationClass, db.UnknownClassTable)
-		return response, nil
+		return output, nil
 	}
 
 	actualQuantity := transferItems(matchingItems, destCharacter, profile.MembershipType,
@@ -329,14 +330,11 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 		output = fmt.Sprintf("All set Guardian, %d %s have been transferred to your %s", actualQuantity, itemName, destinationClass)
 	}
 
-	response.OutputSpeech(output)
-
-	return response, nil
+	return output, nil
 }
 
 // EquipMaxLightGear will equip all items that are required to have the maximum light on a character
-func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
-	response := skillserver.NewEchoResponse()
+func EquipMaxLightGear(accessToken string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
@@ -345,7 +343,7 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	// Transfer to the most recent character on the most recent platform
@@ -364,19 +362,18 @@ func EquipMaxLightGear(accessToken string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	characterClass := classHashToName[profile.Characters[0].ClassHash]
-	response.OutputSpeech(fmt.Sprintf("Max power equipped to your %s Guardian. You are a force "+
-		"to be wreckoned with.", characterClass))
-	return response, nil
+	outputStr := fmt.Sprintf("Max power equipped to your %s Guardian. You are a force "+
+		"to be wreckoned with.", characterClass)
+	return outputStr, nil
 }
 
 // RandomizeLoadout will determine random items to be equipped on the current character.
 // It is possible to ask for only weapons to be random or for weapons & armor to be random.
-func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
-	response := skillserver.NewEchoResponse()
+func RandomizeLoadout(accessToken string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
@@ -385,7 +382,7 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	// Transfer to the most recent character on the most recent platform
@@ -404,18 +401,17 @@ func RandomizeLoadout(accessToken string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	characterClass := classHashToName[profile.Characters[0].ClassHash]
-	response.OutputSpeech(fmt.Sprintf("Random gear equipped to your %s Guardian. Goodluck "+
-		"with that.", characterClass))
-	return response, nil
+	outputStr := fmt.Sprintf("Random gear equipped to your %s Guardian. Goodluck "+
+		"with that.", characterClass)
+	return outputStr, nil
 }
 
 // UnloadEngrams is responsible for transferring all engrams off of a character and
-func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
-	response := skillserver.NewEchoResponse()
+func UnloadEngrams(accessToken string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
@@ -424,15 +420,14 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	matchingItems := profile.AllItems.FilterItemsBubble(itemIsEngramFilter, true)
 	if len(matchingItems) == 0 {
 		outputStr := fmt.Sprintf("You don't have any engrams on your current character. " +
 			"Happy farming Guardian!")
-		response.OutputSpeech(outputStr)
-		return response, nil
+		return outputStr, nil
 	}
 
 	foundCount := 0
@@ -448,22 +443,43 @@ func UnloadEngrams(accessToken string) (*skillserver.EchoResponse, error) {
 	output = fmt.Sprintf("All set Guardian, your engrams have been transferred to your vault. " +
 		"Happy farming Guardian")
 
-	response.OutputSpeech(output)
+	return output, nil
+}
 
-	return response, nil
+// DoesLoadoutExist will check to see if a loadout exists for the current user with the given name.
+// This should be done before creating a loadout to verify with the user whether the would
+// like to overwrite the existing one or not.
+func DoesLoadoutExist(accessToken, name string) (bool, error) {
+
+	client := Clients.Get()
+	client.AddAuthValues(accessToken, warmindAPIKey)
+
+	// TODO: check error
+	currentAccount, _ := client.GetCurrentAccount()
+
+	if currentAccount == nil {
+		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
+		glg.Error("Failed to load current account with the specified access token!")
+		return false, errors.New("Couldn't load the current account")
+	}
+
+	// Check to see if a loadout with this name already exists and prompt for
+	// confirmation to overwrite
+	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
+
+	existing, _ := db.SelectLoadout(bnetMembershipID, name)
+	return existing != "", nil
 }
 
 // CreateLoadoutForCurrentCharacter will create a new PersistedLoadout based on the items equipped
 // to the user's current character and save them to the persistent storage.
-func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite bool) (*skillserver.EchoResponse, error) {
-
-	response := skillserver.NewEchoResponse()
+func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite bool) (string, error) {
 
 	glg.Infof("Creating new loadout named: %s", name)
 	if name == "" {
-		response.OutputSpeech("Sorry Guardian, you need to provide a loadout name based on an " +
-			"activtiy like crucible, strikes, or patrols.")
-		return response, nil
+		outputStr := "Sorry Guardian, you need to provide a loadout name based on an " +
+			"activtiy like crucible, strikes, or patrols."
+		return outputStr, nil
 	}
 
 	client := Clients.Get()
@@ -475,32 +491,30 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return nil, errors.New("Couldn't load the current account")
+		return "", errors.New("Couldn't load the current account")
 	}
 
 	// Check to see if a loadout with this name already exists and prompt for
 	// confirmation to overwrite
 	bnetMembershipID := currentAccount.BungieNetUser.MembershipID
-	if !shouldOverwrite {
-		existing, _ := db.SelectLoadout(bnetMembershipID, name)
-		if existing != "" {
-			// Prompt the user to see if they want to overwrite the existing loadout
-			response.ConfirmIntent("CreateLoadout", nil).
-				OutputSpeech(fmt.Sprintf("You already have a loadout named %s, would you like to overwrite it?", name))
-			return response, nil
-		}
+	exists, err := DoesLoadoutExist(accessToken, name)
+	if !shouldOverwrite && (err != nil || exists) {
+		// Prompt the user to see if they want to overwrite the existing loadout
+		outputStr := fmt.Sprintf("You already have a loadout named %s, it has not been overwritten.",
+			name)
+		return outputStr, nil
 	}
 
 	// This will be the membership that has the most recently played character
 	membership := currentAccount.DestinyMembership
 
 	profileResponse := GetProfileResponse{}
-	err := client.Execute(NewGetCurrentEquipmentRequest(membership.MembershipType,
+	err = client.Execute(NewGetCurrentEquipmentRequest(membership.MembershipType,
 		membership.MembershipID), &profileResponse)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
-		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+		return "", errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
 	// At some point it could be useful to save emotes, ships, subclasses, etc. That is why
@@ -517,7 +531,7 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to marshal the loadout to JSON: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	if shouldOverwrite {
@@ -528,16 +542,13 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 		db.SaveLoadout(persistedBytes, bnetMembershipID, name)
 	}
 
-	response.OutputSpeech("All set Guardian, your " + name + " loadout was saved for you.")
-
-	return response, nil
+	outputStr := "All set Guardian, your " + name + " loadout was saved for you."
+	return outputStr, nil
 }
 
 // EquipNamedLoadout will read the loadout with the specified name from the persistent
 // store and then equip it on the user's current character.
-func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, error) {
-
-	response := skillserver.NewEchoResponse()
+func EquipNamedLoadout(accessToken, name string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
@@ -548,7 +559,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return nil, errors.New("CLouldn't load the current account")
+		return "", errors.New("CLouldn't load the current account")
 	}
 
 	// This will always be the Destiny membership with the most recently played character
@@ -560,7 +571,7 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
-		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+		return "", errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
 	profile := fixupProfileFromProfileResponse(&profileResponse, false)
@@ -569,13 +580,13 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)
 	if err == nil && loadoutJSON == "" {
 		raven.CaptureError(errors.New("No loadout matching name"), map[string]string{"name": name})
-		response.OutputSpeech(fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s. "+
-			"You need to create a loadout with that name before it can be equipped.", name))
-		return response, nil
+		outputStr := fmt.Sprintf("Sorry Guardian, you do not have a loadout named %s. "+
+			"You need to create a loadout with that name before it can be equipped.", name)
+		return outputStr, nil
 	} else if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read loadout from the database")
-		return nil, err
+		return "", err
 	}
 
 	var peristedLoadout PersistedLoadout
@@ -583,23 +594,21 @@ func EquipNamedLoadout(accessToken, name string) (*skillserver.EchoResponse, err
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to decode JSON: %s", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	loadout := fromPersistedLoadout(peristedLoadout, profile)
 	equipLoadout(loadout, profile.Characters[0].CharacterID, profile,
 		profile.MembershipType, client)
 
-	response.OutputSpeech("All set Guardian, your " + name + " loadout has been restored!")
+	outputStr := "All set Guardian, your " + name + " loadout has been restored!"
 
-	return response, nil
+	return outputStr, nil
 }
 
 // GetLoadoutNames will request all of the loadout names from the database and
 // return the list of names to the user.
-func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
-
-	response := skillserver.NewEchoResponse()
+func GetLoadoutNames(accessToken string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
@@ -610,7 +619,7 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return nil, errors.New("Couldn't load the current account")
+		return "", errors.New("Couldn't load the current account")
 	}
 
 	// Retrieve the existing loadouts from the database
@@ -619,9 +628,9 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 
 	if len(existing) == 0 {
 		glg.Debug("No loadouts found for user")
-		response.OutputSpeech("It looks like you don't currently have any saved loadouts." +
-			"You can save your current loadout by saying 'Save this loadout for later'")
-		return response, nil
+		outputStr := "It looks like you don't currently have any saved loadouts." +
+			"You can save your current loadout by saying 'Save this loadout for later'"
+		return outputStr, nil
 	}
 
 	speech := bytes.NewBufferString("Guardian, it looks like you have loadouts saved with these names: ")
@@ -629,17 +638,13 @@ func GetLoadoutNames(accessToken string) (*skillserver.EchoResponse, error) {
 	names := strings.Join(existing, ", ")
 	speech.WriteString(names)
 
-	response.OutputSpeech(speech.String())
-
-	return response, nil
+	return speech.String(), nil
 }
 
 // GetCurrentCrucibleRanking will look up the current Glory and Valor rankings for the
 // current user and summarize it including the name of the rank and the points
 // required to hit the next rank (if they aren't at the top most rank).
-func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) {
-
-	response := skillserver.NewEchoResponse()
+func GetCurrentCrucibleRanking(token string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(token, warmindAPIKey)
@@ -650,7 +655,7 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return nil, errors.New("Couldn't load the current account")
+		return "", errors.New("Couldn't load the current account")
 	}
 
 	membership := currentAccount.DestinyMembership
@@ -661,64 +666,62 @@ func GetCurrentCrucibleRanking(token string) (*skillserver.EchoResponse, error) 
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
-		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+		return "", errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
 	glory := progressionResponse.gloryProgression()
 	valor := progressionResponse.valorProgression()
 
-	buf := bytes.NewBuffer([]byte{})
 	if glory == nil && valor == nil {
-		buf.WriteString("There was an error trying to find your current Crucible rankings, " +
-			" please try again later.")
-	} else {
-		if glory != nil {
-			var gloryRank string
-			if glory.Level < len(pvpRankSteps) {
-				gloryRank = pvpRankSteps[glory.Level]
-			} else {
-				gloryRank = pvpRankSteps[len(pvpRankSteps)-1]
-			}
-			buf.WriteString(fmt.Sprintf("You've achieved %s glory rank, ", gloryRank))
-			if glory.Level == glory.LevelCap {
-				buf.WriteString("you have reached max glory, time to reset it and do it again!")
-			} else if glory.Level == (glory.LevelCap - 1) {
-				buf.WriteString("congratulations on becoming Legend! ")
-			} else {
-				buf.WriteString(fmt.Sprintf("only %d glory points to the next rank. ",
-					glory.NextLevelAt))
-			}
-		}
-		if valor != nil {
-			var valorRank string
-			if valor.Level < len(pvpRankSteps) {
-				valorRank = pvpRankSteps[valor.Level]
-			} else {
-				valorRank = pvpRankSteps[len(pvpRankSteps)-1]
-			}
-			buf.WriteString(fmt.Sprintf("Your current valor rank is %s, ", valorRank))
-			if valor.Level == valor.LevelCap {
-				buf.WriteString("you have reached max valor, time to reset it and do it again!")
-			} else if valor.Level == (valor.LevelCap - 1) {
-				buf.WriteString("congratulations on becoming Legend! ")
-			} else {
-				buf.WriteString(fmt.Sprintf("only %d valor points to the next rank. ",
-					valor.NextLevelAt))
-			}
-		}
-
-		buf.WriteString("Goodluck!")
+		outputStr := "There was an error trying to find your current Crucible rankings, " +
+			" please try again later."
+		return outputStr, nil
 	}
 
-	response.OutputSpeech(buf.String())
+	buf := bytes.NewBuffer([]byte{})
+	if glory != nil {
+		var gloryRank string
+		if glory.Level < len(pvpRankSteps) {
+			gloryRank = pvpRankSteps[glory.Level]
+		} else {
+			gloryRank = pvpRankSteps[len(pvpRankSteps)-1]
+		}
+		buf.WriteString(fmt.Sprintf("You've achieved %s glory rank, ", gloryRank))
+		if glory.Level == glory.LevelCap {
+			buf.WriteString("you have reached max glory, time to reset it and do it again!")
+		} else if glory.Level == (glory.LevelCap - 1) {
+			buf.WriteString("congratulations on becoming Legend! ")
+		} else {
+			buf.WriteString(fmt.Sprintf("only %d glory points to the next rank. ",
+				glory.NextLevelAt))
+		}
+	}
+	if valor != nil {
+		var valorRank string
+		if valor.Level < len(pvpRankSteps) {
+			valorRank = pvpRankSteps[valor.Level]
+		} else {
+			valorRank = pvpRankSteps[len(pvpRankSteps)-1]
+		}
+		buf.WriteString(fmt.Sprintf("Your current valor rank is %s, ", valorRank))
+		if valor.Level == valor.LevelCap {
+			buf.WriteString("you have reached max valor, time to reset it and do it again!")
+		} else if valor.Level == (valor.LevelCap - 1) {
+			buf.WriteString("congratulations on becoming Legend! ")
+		} else {
+			buf.WriteString(fmt.Sprintf("only %d valor points to the next rank. ",
+				valor.NextLevelAt))
+		}
+	}
 
-	return response, nil
+	buf.WriteString("Goodluck!")
+
+	return buf.String(), nil
 }
 
-// GetCurrentGambitRanking will look up the current Infamy (Gambit game mode) ranking for the current character
-// including the name and points required to get to the next level.
-func GetCurrentGambitRanking(token string) (*skillserver.EchoResponse, error) {
-	response := skillserver.NewEchoResponse()
+// GetCurrentGambitRanking will look up the current Infamy (Gambit game mode) ranking for the
+// current character including the name and points required to get to the next level.
+func GetCurrentGambitRanking(token string) (string, error) {
 
 	client := Clients.Get()
 	client.AddAuthValues(token, warmindAPIKey)
@@ -729,7 +732,7 @@ func GetCurrentGambitRanking(token string) (*skillserver.EchoResponse, error) {
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Couldn't load account with the access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return nil, errors.New("Couldn't load the current account")
+		return "", errors.New("Couldn't load the current account")
 	}
 
 	membership := currentAccount.DestinyMembership
@@ -740,40 +743,39 @@ func GetCurrentGambitRanking(token string) (*skillserver.EchoResponse, error) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Profile response from Bungie!: %s", err.Error())
-		return nil, errors.New("Failed to read current user's profile: " + err.Error())
+		return "", errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
 	infamy := progressionResponse.infamyProgression()
 
-	buf := bytes.NewBuffer([]byte{})
 	if infamy == nil {
-		buf.WriteString("There was an error trying to find your current Gambit rankings, " +
-			" please try again later.")
-	} else {
-		if infamy != nil {
-			var infamyRank string
-			if infamy.Level < len(pvpRankSteps) {
-				infamyRank = gambitRankSteps[infamy.Level]
-			} else {
-				infamyRank = gambitRankSteps[len(pvpRankSteps)-1]
-			}
-			buf.WriteString(fmt.Sprintf("You've achieved %s infamy rank, ", infamyRank))
-			if infamy.Level == infamy.LevelCap {
-				buf.WriteString("you have reached max infamy, time to reset it and do it again!")
-			} else if infamy.Level == (infamy.LevelCap - 1) {
-				buf.WriteString("congratulations on becoming Legend! ")
-			} else {
-				buf.WriteString(fmt.Sprintf("only %d infamy points to the next rank. ",
-					infamy.NextLevelAt))
-			}
+		outputStr := "There was an error trying to find your current Gambit rankings, " +
+			" please try again later."
+		return outputStr, nil
+	}
+
+	buf := bytes.NewBuffer([]byte{})
+	if infamy != nil {
+		var infamyRank string
+		if infamy.Level < len(gambitRankSteps) {
+			infamyRank = gambitRankSteps[infamy.Level]
+		} else {
+			infamyRank = gambitRankSteps[len(gambitRankSteps)-1]
+		}
+		buf.WriteString(fmt.Sprintf("You've achieved %s infamy rank, ", infamyRank))
+		if infamy.Level == infamy.LevelCap {
+			buf.WriteString("you have reached max infamy, time to reset it and do it again!")
+		} else if infamy.Level == (infamy.LevelCap - 1) {
+			buf.WriteString("congratulations on becoming Legend! ")
+		} else {
+			buf.WriteString(fmt.Sprintf("only %d infamy points to the next rank. ",
+				infamy.NextLevelAt))
 		}
 
 		buf.WriteString("Goodluck!")
 	}
 
-	response.OutputSpeech(buf.String())
-
-	return response, nil
+	return buf.String(), nil
 }
 
 // GetOutboundIP gets preferred outbound ip of this machine

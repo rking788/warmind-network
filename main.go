@@ -1,23 +1,27 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"os/signal"
 	"runtime/pprof"
+	"strings"
 	"time"
 
 	raven "github.com/getsentry/raven-go"
-	"github.com/rking788/warmind-network/charlemagne"
-	"github.com/rking788/warmind-network/db"
-	"github.com/rking788/warmind-network/trials"
-
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/kpango/glg"
+	"github.com/mikeflynn/go-alexa/skillserver"
 	"github.com/rking788/warmind-network/alexa"
 	"github.com/rking788/warmind-network/bungie"
-
-	"github.com/rking788/go-alexa/skillserver"
+	"github.com/rking788/warmind-network/charlemagne"
+	"github.com/rking788/warmind-network/db"
+	"github.com/rking788/warmind-network/dialogflow"
+	"github.com/rking788/warmind-network/trials"
+	df2 "google.golang.org/genproto/googleapis/cloud/dialogflow/v2"
 )
 
 // AlexaHandlers are the handler functions mapped by the intent name that they should handle.
@@ -40,6 +44,15 @@ var (
 		"CrucibleRank":             alexa.AuthWrapper(alexa.GetCurrentRank),
 		"CurrentRank":              alexa.AuthWrapper(alexa.GetCurrentRank),
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
+	}
+	dialogFlowHandlers = map[string]dialogflow.DialogflowHandler{
+		"CountItem":         dialogflow.AuthWrapper(dialogflow.CountItem),
+		"EquipMaxLight":     dialogflow.AuthWrapper(dialogflow.MaxPower),
+		"DestinyJoke":       dialogflow.DestinyJoke,
+		"EquipNamedLoadout": dialogflow.AuthWrapper(dialogflow.EquipNamedLoadout),
+		"ListLoadouts":      dialogflow.AuthWrapper(dialogflow.ListLoadouts),
+		"RandomizeLoadout":  dialogflow.AuthWrapper(dialogflow.RandomGear),
+		"CurrentRank":       dialogflow.AuthWrapper(dialogflow.GetCurrentRank),
 	}
 )
 
@@ -72,6 +85,10 @@ func InitEnv(c *EnvConfig) {
 			Methods: "GET",
 			Handler: healthHandler,
 		},
+		"/dialogflow": skillserver.StdApplication{
+			Methods: "POST",
+			Handler: dialogflowRequestHandler(dialogflowIntentHandler),
+		},
 	}
 
 	ConfigureLogging(c.LogLevel, c.LogFilePath)
@@ -98,17 +115,17 @@ func main() {
 
 	defer CloseLogger()
 
-	glg.Printf("Version=%s, BuildDate=%v", Version, BuildDate)
+	glg.Printf("Version=%s, BuildDate=%v", version, buildDate)
 
 	// writeHeapProfile()
 
 	if config.Environment == "production" {
 		port := ":" + config.Port
-		err := skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
-		if err != nil {
-			raven.CaptureError(err, nil)
-			glg.Errorf("Error starting the application! : %s", err.Error())
-		}
+		skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
+		// if err != nil {
+		// 	raven.CaptureError(err, nil)
+		// 	glg.Errorf("Error starting the application! : %s", err.Error())
+		// }
 	} else {
 		// Heroku makes us read a random port from the environment and our app is a
 		// subdomain of theirs so we get SSL for free
@@ -206,13 +223,67 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 	*echoResponse = *response
 }
 
-// func dumpRequest(ctx *gin.Context) {
+// This function is a helper function to wrap a given DialogflowHandler and present it as a
+// standard http.HanlderFunc. This way the server can handle requests as a standard HTTP server.
+func dialogflowRequestHandler(next dialogflow.DialogflowHandler) http.HandlerFunc {
 
-// 	data, err := httputil.DumpRequest(ctx.Request, true)
-// 	if err != nil {
-// 		glg.Errorf("Failed to dump the request: %s", err.Error())
-// 		return
-// 	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		dumpRequest(r)
 
-// 	glg.Debug(string(data))
-// }
+		whr := &df2.WebhookRequest{}
+		unmarshaler := jsonpb.Unmarshaler{}
+		unmarshaler.AllowUnknownFields = true
+		if err := unmarshaler.Unmarshal(r.Body, whr); err != nil {
+			glg.Errorf("Error unmarshaling Dialogflow WebhookRequest: %s", err.Error())
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		response := next(whr)
+		if response == nil {
+			glg.Errorf("Error occurred trying to handle the dialogflow intent")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		b, err := json.Marshal(response)
+		if err != nil {
+			glg.Errorf("Error marshaling response back to JSON: %s", err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		glg.Infof("Sending dialogflow response: %+v", string(b))
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write(b)
+	}
+}
+
+func dialogflowIntentHandler(r *df2.WebhookRequest) *dialogflow.DialogFlowResponse {
+
+	var response *dialogflow.DialogFlowResponse
+
+	actionName := r.GetQueryResult().GetIntent().GetDisplayName()
+
+	handler, ok := dialogFlowHandlers[actionName]
+
+	if ok {
+		response = handler(r)
+	}
+
+	return response
+}
+
+func dumpRequest(r *http.Request) {
+
+	data, err := httputil.DumpRequest(r, true)
+	if err != nil {
+		glg.Errorf("Failed to dump the request: %s", err.Error())
+		return
+	}
+	strData := string(data)
+	strData = strings.Replace(strData, "\n", "", 0)
+
+	glg.Debug(strData)
+}

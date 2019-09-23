@@ -9,8 +9,8 @@ genversion:
 	rm -f $(VERSIONFILE)
 	@echo "package main" > $(VERSIONFILE)
 	@echo "const (" >> $(VERSIONFILE)
-	@echo "  Version = \"$(APP_VERSION)\"" >> $(VERSIONFILE)
-	@echo "  BuildDate = \"$(BUILD_DATE)\"" >> $(VERSIONFILE)
+	@echo "  version = \"$(APP_VERSION)\"" >> $(VERSIONFILE)
+	@echo "  buildDate = \"$(BUILD_DATE)\"" >> $(VERSIONFILE)
 	@echo ")" >> $(VERSIONFILE)
 build: genversion
 	go build
@@ -27,9 +27,11 @@ coverage:
 	go test -cover ./...
 #	go test --coverprofile=coverage.out
 #	go tool cover -html=coverage.out
+minimal: genversion
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o warmind-network .
 deploy: genversion
 	GOOS=linux GOARCH=amd64 go build
-	scp ./$(APP_NAME) do:
+	scp ./$(APP_NAME) li:
 	rm $(APP_NAME)
 clean:
 	rm $(APP_NAME)

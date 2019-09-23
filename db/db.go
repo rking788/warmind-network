@@ -72,7 +72,7 @@ func InitDatabase() error {
 		return err
 	}
 
-	itemMetadataStmt, err := db.Prepare("SELECT item_hash, item_name, tier_type, class_type, bucket_type_hash FROM items")
+	itemMetadataStmt, err := db.Prepare("SELECT item_hash, item_name, tier_type, class_type, bucket_type_hash, item_type FROM items")
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("DB error: %s", err.Error())

@@ -1,0 +1,38 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+
+stages:
+  - dockerize
+  - staging
+  - master
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+
+dockerize:
+  stage: dockerize
+  script:
+    - ./scripts/build.sh
+  only:
+    - devel
+
+staging:
+  stage: staging
+  only:
+    - staging
+  script:
+    - ./scripts/build.sh
+    - ./scripts/push.sh
+
+master:
+  stage: master
+  only:
+    - master
+  script:
+    - ./scripts/build.sh --latest
+    - ./scripts/push.sh --latest
