@@ -26,6 +26,8 @@ type EnvConfig struct {
 	SSLKeyPath               string `json:"ssl_key_path"`
 	Port                     string `json:"port"`
 	SentryDSN                string `json:"sentry_dsn"`
+	DebugAlexaRequests       bool   `json:"debug_alexa_requests"`
+	DebugGoogleRequests      bool   `json:"debug_google_requests"`
 }
 
 // NewEnvConfig will create a default instance of the EnvConfig struct
@@ -42,6 +44,8 @@ func NewEnvConfig() *EnvConfig {
 		LogLevel:                 os.Getenv("GUARDIAN_HELPER_LOG_LEVEL"),
 		Port:                     os.Getenv("PORT"),
 		SentryDSN:                os.Getenv("SENTRY_DSN"),
+		DebugAlexaRequests:       os.Getenv("DEBUG_ALEXA_REQUESTS") != "",
+		DebugGoogleRequests:      os.Getenv("DEBUG_GOOGLE_REQUESTS") != "",
 	}
 
 	return config

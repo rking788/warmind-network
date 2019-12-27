@@ -120,7 +120,7 @@ func main() {
 	// writeHeapProfile()
 
 	if config.Environment == "production" {
-		port := ":" + config.Port
+		port := config.Port
 		skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
 		// if err != nil {
 		// 	raven.CaptureError(err, nil)
@@ -202,6 +202,10 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 
 	glg.Infof("RequestType: %s, IntentName: %s", echoRequest.GetRequestType(), intentName)
 
+	if config.DebugAlexaRequests {
+		glg.Debugf("echoRequest received: %+v", echoRequest)
+	}
+
 	handler, ok := AlexaHandlers[intentName]
 	if echoRequest.GetRequestType() == "LaunchRequest" {
 		response = alexa.WelcomePrompt(echoRequest)
@@ -228,7 +232,9 @@ func EchoIntentHandler(echoRequest *skillserver.EchoRequest, echoResponse *skill
 func dialogflowRequestHandler(next dialogflow.DialogflowHandler) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		dumpRequest(r)
+		if config.DebugGoogleRequests {
+			dumpRequest(r)
+		}
 
 		whr := &df2.WebhookRequest{}
 		unmarshaler := jsonpb.Unmarshaler{}
@@ -262,6 +268,9 @@ func dialogflowRequestHandler(next dialogflow.DialogflowHandler) http.HandlerFun
 
 func dialogflowIntentHandler(r *df2.WebhookRequest) *dialogflow.DialogFlowResponse {
 
+	if config.DebugGoogleRequests {
+		glg.Debugf("dialogflow webhookRequest received: %+v", r)
+	}
 	var response *dialogflow.DialogFlowResponse
 
 	actionName := r.GetQueryResult().GetIntent().GetDisplayName()
