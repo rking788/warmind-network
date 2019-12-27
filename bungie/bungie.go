@@ -559,7 +559,7 @@ func EquipNamedLoadout(accessToken, name string) (string, error) {
 	if currentAccount == nil {
 		raven.CaptureError(errors.New("Could not load current profile with access token"), nil)
 		glg.Error("Failed to load current account with the specified access token!")
-		return "", errors.New("CLouldn't load the current account")
+		return "", errors.New("Couldn't load the current account")
 	}
 
 	// This will always be the Destiny membership with the most recently played character

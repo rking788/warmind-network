@@ -38,6 +38,7 @@ const (
 type ConfirmationStatus string
 
 const (
+	ConfirmationNone      ConfirmationStatus = "NONE"
 	ConfirmationConfirmed ConfirmationStatus = "CONFIRMED"
 	ConfirmationDenied    ConfirmationStatus = "DENIED"
 )
@@ -330,6 +331,7 @@ func CreateLoadout(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 	if DialogState(request.Request.DialogState) != DialogCompleted {
 		// The user still needs to provide a name for the new loadout to be created
 		response = response.RespondToIntent(dialog.Delegate, nil, nil)
+		response.EndSession(false)
 		return response
 	}
 
@@ -344,13 +346,15 @@ func CreateLoadout(request *skillserver.EchoRequest) *skillserver.EchoResponse {
 	loadoutName, _ := request.GetSlotValue("Name")
 	if loadoutName == "" {
 		response.OutputSpeech("Sorry Guardian, you must specify a name for the loadout being saved.")
+		return response
 	}
 
 	exists, _ := bungie.DoesLoadoutExist(accessToken, loadoutName)
-	if exists && intentConfirmation == "" {
+	if exists && ConfirmationStatus(intentConfirmation) == ConfirmationNone {
 		// Ask the user if they wish to overwrite this loadout
 		response = response.RespondToIntent(dialog.ConfirmIntent, &request.Request.Intent, nil).
 			OutputSpeech(fmt.Sprintf("You already have a loadout named %s, would you like to overwrite it?", loadoutName))
+		response.EndSession(false)
 		return response
 	}
 
