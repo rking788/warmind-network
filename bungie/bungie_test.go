@@ -440,37 +440,31 @@ func TestParseGetProfileResponse(t *testing.T) {
 	if response.Response.Profile == nil || response.Response.ProfileCurrencies == nil ||
 		response.Response.ProfileInventory == nil || response.Response.CharacterEquipment == nil ||
 		response.Response.CharacterInventories == nil || response.Response.Characters == nil {
-		fmt.Println("One of the expected entries is nil!")
-		t.FailNow()
+		t.Fatalf("One of the expected entries is nil!")
 	}
 
 	if len(response.Response.Characters.Data) != 3 {
-		fmt.Println("Character count incorrect")
-		t.FailNow()
+		t.Fatalf("Character count incorrect")
 	}
 
-	if len(response.Response.ProfileCurrencies.Data.Items) != 3 {
-		fmt.Println("Currency count incorrect")
-		t.FailNow()
+	if len(response.Response.ProfileCurrencies.Data.Items) != 4 {
+		t.Fatalf("Currency count incorrect")
 	}
 
 	if len(response.Response.CharacterEquipment.Data) == 0 || len(response.Response.CharacterInventories.Data) == 0 {
-		fmt.Println("Incorrect number of character equipment and character inventory items.")
-		t.FailNow()
+		t.Fatalf("Incorrect number of character equipment and character inventory items.")
 	}
 
 	for _, char := range response.Response.CharacterEquipment.Data {
 		for _, item := range char.Items {
 			if item.InstanceID == "" {
-				fmt.Println("Found a character equiment item without an instance ID")
-				t.FailNow()
+				t.Fatalf("Found a character equiment item without an instance ID")
 			}
 		}
 	}
 
 	if response.Response.ProfileCurrencies.Data.Items[0].InstanceID != "" {
-		fmt.Println("Found a profile currency entry with an instance ID")
-		t.FailNow()
+		t.Fatalf("Found a profile currency entry with an instance ID")
 	}
 }
 
@@ -618,8 +612,10 @@ func TestGroupAndSort(t *testing.T) {
 		lastPower := math.MaxInt64
 
 		for _, item := range items {
-			if item.BucketHash != targetHash {
-				t.Fatalf("Item did not have the correct bucket hash: Required=%d, Found=%d", targetHash, item.BucketHash)
+			// 138197802 is just general storage. it is either the vault or something general
+			// 215593132 is the bucket for lost items
+			if item.BucketHash != targetHash && item.BucketHash != 138197802 && item.BucketHash != 215593132 {
+				t.Fatalf("Item(%d) did not have the correct bucket hash: Required=%d, Found=%d", item.ItemHash, targetHash, item.BucketHash)
 			}
 
 			if lastPower < item.Power() {
