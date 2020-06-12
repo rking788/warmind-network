@@ -1,6 +1,7 @@
 package dialogflow
 
 import (
+	"fmt"
 	"strings"
 
 	raven "github.com/getsentry/raven-go"
@@ -27,13 +28,13 @@ type GooglePayload struct {
 type AssistantResponse struct {
 	ExpectUserResponse bool `json:"expectUserResponse"`
 	//Final              *FinalResponse `json:"finalResponse"`
-	Rich         *RichResponse `json:"richResponse"`
+	Rich         *RichResponse `json:"richResponse,omitempty"`
 	SystemIntent *SystemIntent `json:"systemIntent,omitempty"`
 }
 
 type SystemIntent struct {
-	Name string            `json:"intent"`
-	Data map[string]string `json:"data"`
+	Name string                 `json:"intent"`
+	Data map[string]interface{} `json:"data"`
 }
 
 type AssistantResponseItem struct {
@@ -74,11 +75,28 @@ func newSignInResponse() *DialogFlowResponse {
 	response := newGoogleDialogflowResponse()
 	response.Payload.Google.SystemIntent = &SystemIntent{
 		Name: "actions.intent.SIGN_IN",
-		Data: map[string]string{
+		Data: map[string]interface{}{
 			"@type":      "type.googleapis.com/google.actions.v2.SignInValueSpec",
 			"optContext": "To get your account details",
 		},
 	}
+
+	return response
+}
+
+func newConfirmationResponse(msg string) *DialogFlowResponse {
+
+	response := newGoogleDialogflowResponse()
+	response.Payload.Google.SystemIntent = &SystemIntent{
+		Name: "actions.intent.CONFIRMATION",
+		Data: map[string]interface{}{
+			"@type": "type.googleapis.com/google.actions.v2.ConfirmationValueSpec",
+			"dialogSpec": map[string]string{
+				"requestConfirmationText": msg,
+			},
+		},
+	}
+	response.Payload.Google.Rich = nil
 
 	return response
 }
@@ -121,6 +139,18 @@ func accessTokenFromRequest(r *df2.WebhookRequest) string {
 func parameter(r *df2.WebhookRequest, name string) string {
 	if val, ok := r.GetQueryResult().GetParameters().Fields[name]; ok {
 		return val.GetStringValue()
+	}
+
+	return ""
+}
+
+func outputContextParameter(r *df2.WebhookRequest, ctxSuffix, name string) string {
+	for _, ctx := range r.GetQueryResult().GetOutputContexts() {
+		if strings.HasSuffix(ctx.GetName(), ctxSuffix) {
+			if val, ok := ctx.Parameters.GetFields()[name]; ok {
+				return val.GetStringValue()
+			}
+		}
 	}
 
 	return ""
@@ -232,6 +262,58 @@ func GetCurrentRank(r *df2.WebhookRequest) *DialogFlowResponse {
 		outputStr := "Sorry Guardian, there was an error getting your current " +
 			progression + " ranking, please try again later."
 		response.setGoogleTextToSpeech(outputStr)
+		return response
+	}
+
+	response.setGoogleTextToSpeech(speech)
+	return response
+}
+
+func CreateLoadoutWithOverwrite(r *df2.WebhookRequest) *DialogFlowResponse {
+	glg.Infof("Creating a loadout _with_ overwrite")
+	r.GetQueryResult().GetOutputContexts()
+	name := outputContextParameter(r, "createloadout-followup", "name")
+	return createLoadout(r, name, true, false)
+}
+
+func CreateLoadoutWithoutOverwrite(r *df2.WebhookRequest) *DialogFlowResponse {
+	glg.Infof("Creating a loadout without overwrite")
+	name := outputContextParameter(r, "createloadout-followup", "name")
+	return createLoadout(r, name, false, false)
+}
+
+// CreateLoadout will save the currently equipped gear as a new loadout with the name provided as a parameter.
+func CreateLoadout(r *df2.WebhookRequest) *DialogFlowResponse {
+	return createLoadout(r, parameter(r, "name"), false, true)
+}
+
+func createLoadout(r *df2.WebhookRequest, name string, shouldOverwrite, shouldConfirmOverwrite bool) *DialogFlowResponse {
+
+	response := newGoogleDialogflowResponse()
+	accessToken := accessTokenFromRequest(r)
+
+	// The defined prompts in the console should make sure they fill in required parameters
+	// before calling our fulfillment endpoint
+	glg.Infof("Working with a loadout name of %s, shouldOverwrite=%v, shouldConfirmOverwrite=%v", name, shouldOverwrite, shouldConfirmOverwrite)
+
+	if name == "" {
+		response.setGoogleTextToSpeech("Sorry Guardian, you must specify a name for the loadout being created.")
+		return response
+	}
+
+	exists, _ := bungie.DoesLoadoutExist(accessToken, name)
+	if exists && shouldConfirmOverwrite {
+		response.setGoogleTextToSpeech(fmt.Sprintf("You already have a loadout named %s, would you like to overwrite it?", name))
+		response.setExpectUserResponse(true)
+		return response
+	}
+
+	speech, err := bungie.CreateLoadoutForCurrentCharacter(accessToken, name, shouldOverwrite)
+
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Error creating loadout named %s : %s", name, err.Error())
+		response.setGoogleTextToSpeech("Sorry Guardian, an error occurred creating your loadout. Please try again later.")
 		return response
 	}
 

@@ -46,13 +46,16 @@ var (
 		"AMAZON.HelpIntent":        alexa.HelpPrompt,
 	}
 	dialogFlowHandlers = map[string]dialogflow.DialogflowHandler{
-		"CountItem":         dialogflow.AuthWrapper(dialogflow.CountItem),
-		"EquipMaxLight":     dialogflow.AuthWrapper(dialogflow.MaxPower),
-		"DestinyJoke":       dialogflow.DestinyJoke,
-		"EquipNamedLoadout": dialogflow.AuthWrapper(dialogflow.EquipNamedLoadout),
-		"ListLoadouts":      dialogflow.AuthWrapper(dialogflow.ListLoadouts),
-		"RandomizeLoadout":  dialogflow.AuthWrapper(dialogflow.RandomGear),
-		"CurrentRank":       dialogflow.AuthWrapper(dialogflow.GetCurrentRank),
+		"CountItem":           dialogflow.AuthWrapper(dialogflow.CountItem),
+		"EquipMaxLight":       dialogflow.AuthWrapper(dialogflow.MaxPower),
+		"DestinyJoke":         dialogflow.DestinyJoke,
+		"EquipNamedLoadout":   dialogflow.AuthWrapper(dialogflow.EquipNamedLoadout),
+		"ListLoadouts":        dialogflow.AuthWrapper(dialogflow.ListLoadouts),
+		"RandomizeLoadout":    dialogflow.AuthWrapper(dialogflow.RandomGear),
+		"CurrentRank":         dialogflow.AuthWrapper(dialogflow.GetCurrentRank),
+		"CreateLoadout":       dialogflow.AuthWrapper(dialogflow.CreateLoadout),
+		"CreateLoadout - yes": dialogflow.AuthWrapper(dialogflow.CreateLoadoutWithOverwrite),
+		"CreateLoadout - no":  dialogflow.AuthWrapper(dialogflow.CreateLoadoutWithoutOverwrite),
 	}
 )
 
@@ -274,6 +277,8 @@ func dialogflowIntentHandler(r *df2.WebhookRequest) *dialogflow.DialogFlowRespon
 	var response *dialogflow.DialogFlowResponse
 
 	actionName := r.GetQueryResult().GetIntent().GetDisplayName()
+	// NOTE: Action name kinda sucks, it needs to be set manually in the Intent definition which sometimes isn't done. display name is possibly more reliable
+	//actionName := r.GetQueryResult().GetAction()
 
 	handler, ok := dialogFlowHandlers[actionName]
 
