@@ -129,7 +129,8 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	filteredItems := profile.AllItems.
 		FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
 			createItemNotTierTypeFilter(ExoticTier),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level),
+			createEquippableFilter(true))
 	gearSortedByLight := groupAndSortGear(filteredItems)
 
 	// Find the best loadout given just legendary weapons
@@ -145,7 +146,8 @@ func findMaxLightLoadout(profile *Profile, destinationID string) Loadout {
 	exotics := profile.AllItems.
 		FilterItemsMultipleBubble(createItemTierTypeFilter(ExoticTier),
 			createItemClassTypeFilter(destinationClassType),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level),
+			createEquippableFilter(true))
 	exoticsSortedAndGrouped := groupAndSortGear(exotics)
 
 	// Override inventory items with exotics as needed
@@ -215,7 +217,8 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 		unequippedItems := equipment[i][1:]
 		filteredBucket := unequippedItems.FilterItemsMultipleBubble(createItemClassTypeFilter(destinationClassType),
 			createItemNotTierTypeFilter(ExoticTier),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level),
+			createEquippableFilter(true))
 
 		bucketCount := len(filteredBucket)
 		if bucketCount <= 0 {
@@ -238,7 +241,8 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 	filteredExoticWeapons := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
 		createItemTierTypeFilter(ExoticTier),
 		createItemClassTypeFilter(destinationClassType),
-		createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+		createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level),
+		createEquippableFilter(true))
 	if len(filteredExoticWeapons) > 0 {
 		randIndex := rand.Intn(len(filteredExoticWeapons))
 		loadout[randExoticBucket] = filteredExoticWeapons[randIndex]
@@ -250,7 +254,8 @@ func findRandomLoadout(profile *Profile, destinationID string, includeArmor bool
 		filteredExoticArmor := equipment[randExoticBucket][1:].FilterItemsMultipleBubble(
 			createItemTierTypeFilter(ExoticTier),
 			createItemClassTypeFilter(destinationClassType),
-			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level))
+			createItemRequiredLevelFilter(destinationCharacter.LevelProgression.Level),
+			createEquippableFilter(true))
 		if len(filteredExoticArmor) > 0 {
 			randIndex := 0
 			if len(filteredExoticArmor) > 1 {
@@ -331,7 +336,8 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 	reverseLightSortedItems := profile.AllItems.
 		FilterItemsMultipleBubble(createCharacterIDFilter(item.CharacterID),
 			createItemBucketHashFilter(item.BucketHash),
-			createItemNotTierTypeFilter(ExoticTier))
+			createItemNotTierTypeFilter(ExoticTier),
+			createEquippableFilter(true))
 
 	if len(reverseLightSortedItems) <= 1 {
 		// TODO: If there are no other items from the specified character, then we need to

@@ -296,6 +296,7 @@ func BenchmarkMaxLight(b *testing.B) {
 		findMaxLightLoadout(profile, testDestinationID)
 	}
 }
+
 func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
 
 	setup()
@@ -711,6 +712,106 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 	}
 }
 
+func TestMaxLightLoadout(t *testing.T) {
+
+	setup()
+	profileResponse, err := getUnequippableWeaponsProfileResponse()
+	if err != nil {
+		t.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse, true)
+	testDestinationID := profile.Characters[0].CharacterID
+
+	loadout := findMaxLightLoadout(profile, testDestinationID)
+	if loadout == nil {
+		t.Fatal("Nil loadout found for max power")
+	}
+
+	fmt.Printf("Found max light loadout %+v\n", loadout)
+	powerLevel := loadout.calculateLightLevel()
+	if int(powerLevel) != 1003 {
+		t.Fatalf("Incorrect calculated power level for fixed inventory: Expecting(%d) Found(%d)", 1003, int(powerLevel))
+	}
+
+	expectedLoadout := map[EquipmentBucket][2]interface{}{
+		Kinetic:    {uint(4227181568), "6917529192013152845"}, // Exit Strategy
+		Energy:     {uint(4077196130), "6917529189522424035"}, // Trust
+		Power:      {uint(1600633250), "6917529091792886932"}, // 21% Delirium
+		Helmet:     {uint(597618504), "6917529193445089117"},  // Insight Vikti Hood
+		Gauntlets:  {uint(167461728), "6917529179036751229"},  // Iron Rememberance Gloves
+		Chest:      {uint(3183089352), "6917529086583133306"}, // Scorned Baron Robes
+		Legs:       {uint(215768941), "6917529177805037402"},  // Ankaa Seeker IV
+		ClassArmor: {uint(21320325), "6917529186801973462"},   // Bond of Rememberance
+	}
+
+	for bkt, hashes := range expectedLoadout {
+		item := loadout[bkt]
+
+		if item.ItemHash != hashes[0].(uint) {
+			t.Fatalf("Incorrect item hash found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
+		}
+
+		if item.InstanceID != hashes[1].(string) {
+			t.Fatalf("Incorrect item instance ID found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
+		}
+
+		if item.CanEquip == false {
+			t.Fatalf("Attempting to equip an item in a loadout that is marked with canEquip=false")
+		}
+	}
+}
+
+func TestNateMaxLightRegression(t *testing.T) {
+
+	setup()
+	profileResponse, err := getNateProfileResponse()
+	if err != nil {
+		t.FailNow()
+		return
+	}
+	profile := fixupProfileFromProfileResponse(profileResponse, true)
+	testDestinationID := profile.Characters[0].CharacterID
+
+	loadout := findMaxLightLoadout(profile, testDestinationID)
+	if loadout == nil {
+		t.Fatal("Nil loadout found for max power")
+	}
+
+	fmt.Printf("Found max light loadout %+v\n", loadout)
+	powerLevel := loadout.calculateLightLevel()
+	if int(powerLevel) != 1000 {
+		t.Fatalf("Incorrect calculated power level for fixed inventory: Expecting(%d) Found(%d)", 1003, int(powerLevel))
+	}
+
+	expectedLoadout := map[EquipmentBucket][2]interface{}{
+		Kinetic:    {uint(3504336176), "6917529193466997348"}, // Night Watch
+		Energy:     {uint(3383958216), "6917529193642898713"}, // Harmony-21
+		Power:      {uint(991314988), "6917529193455658801"},  // Bad Omens
+		Helmet:     {uint(3153956825), "6917529193648815731"}, // Wing Contender
+		Gauntlets:  {uint(974507844), "6917529193648820818"},  // Insight Rover Grips
+		Chest:      {uint(1914589560), "6917529193648814717"}, // Wing Contender
+		Legs:       {uint(3880804895), "6917529193654957861"}, // The Outlander's Steps
+		ClassArmor: {uint(600059642), "6917529193648821439"},  // The Outlander's Cloak
+	}
+
+	for bkt, hashes := range expectedLoadout {
+		item := loadout[bkt]
+
+		if item.ItemHash != hashes[0].(uint) {
+			t.Fatalf("Incorrect item hash found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
+		}
+
+		if item.InstanceID != hashes[1].(string) {
+			t.Fatalf("Incorrect item instance ID found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
+		}
+
+		if item.CanEquip == false {
+			t.Fatalf("Attempting to equip an item in a loadout that is marked with canEquip=false")
+		}
+	}
+}
+
 func TestParseCharacterProgressionsResponse(t *testing.T) {
 
 	data, err := readSample("GetProgressions.json")
@@ -791,6 +892,40 @@ func TestProgressionAccessors(t *testing.T) {
 
 func getCurrentProfileResponse() (*GetProfileResponse, error) {
 	data, err := readSample("GetProfile.json")
+	if err != nil {
+		fmt.Println("Error reading sample file: ", err.Error())
+		return nil, err
+	}
+
+	var response GetProfileResponse
+	err = json.Unmarshal(data, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling json: ", err.Error())
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func getUnequippableWeaponsProfileResponse() (*GetProfileResponse, error) {
+	data, err := readSample("GetProfile-unequippable.json")
+	if err != nil {
+		fmt.Println("Error reading sample file: ", err.Error())
+		return nil, err
+	}
+
+	var response GetProfileResponse
+	err = json.Unmarshal(data, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling json: ", err.Error())
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func getNateProfileResponse() (*GetProfileResponse, error) {
+	data, err := readSample("GetProfile-nate.json")
 	if err != nil {
 		fmt.Println("Error reading sample file: ", err.Error())
 		return nil, err

@@ -312,3 +312,14 @@ func createItemRequiredLevelFilter(maxLevel interface{}) func(*Item, interface{}
 func itemRequiredLevelFilter(item *Item, maxLevel interface{}) bool {
 	return item.ItemInstance != nil && item.ItemInstance.EquipRequiredLevel <= maxLevel.(int)
 }
+
+func createEquippableFilter(canEquip interface{}) func(*Item, interface{}) bool {
+
+	return func(item *Item, equippable interface{}) bool {
+		return equippableFilter(item, canEquip)
+	}
+}
+
+func equippableFilter(item *Item, canEquip interface{}) bool {
+	return item.ItemInstance != nil && item.ItemInstance.CanEquip == canEquip.(bool)
+}
