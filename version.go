@@ -1,5 +1,5 @@
 package main
 const (
-  version = "2.0.1-fb710b4"
-  buildDate = "2019-12-27 15:55"
+  version = "2.0.2-7007e73"
+  buildDate = "2020-06-19 14:46"
 )
