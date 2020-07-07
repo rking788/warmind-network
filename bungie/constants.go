@@ -143,10 +143,13 @@ const (
 
 // BungieMembershipType constant values
 const (
-	XBOX     = uint(1)
-	PSN      = uint(2)
-	BLIZZARD = uint(4)
-	DEMON    = uint(10)
+	XBOX       = uint(1)
+	PSN        = uint(2)
+	STEAM      = uint(3)
+	BLIZZARD   = uint(4)
+	STADIA     = uint(5)
+	DEMON      = uint(10)
+	BUNGIENEXT = uint(254)
 )
 
 // DamageType will represent the specific damage type tied to a weapon or NoDamage if an item does
