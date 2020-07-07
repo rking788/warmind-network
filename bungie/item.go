@@ -218,7 +218,7 @@ func itemBucketHashFilter(item *Item, bucketTypeHash interface{}) bool {
 		return metadata.BucketHash == bucketTypeHash.(uint)
 	}
 
-	glg.Warnf("No metadata found for item: %d", item.ItemHash)
+	glg.Debugf("No metadata found for item: %d", item.ItemHash)
 	return false
 }
 
@@ -244,7 +244,7 @@ func itemIsEngramFilter(item *Item, wantEngram interface{}) bool {
 func itemTierTypeFilter(item *Item, tierType interface{}) bool {
 	metadata, ok := itemMetadata[item.ItemHash]
 	if !ok {
-		glg.Warnf("No metadata found for item: %d", item.ItemHash)
+		glg.Debugf("No metadata found for item: %d", item.ItemHash)
 		return false
 	}
 	return metadata.TierType == tierType.(int)
@@ -270,7 +270,7 @@ func itemNotTierTypeFilter(item *Item, tierType interface{}) bool {
 		return metadata.TierType != tierType.(int)
 	}
 
-	glg.Warnf("No metadata found for item: %s", item.ItemHash)
+	glg.Debugf("No metadata found for item: %s", item.ItemHash)
 	return false
 }
 
@@ -296,7 +296,7 @@ func itemClassTypeFilter(item *Item, classType interface{}) bool {
 			(metadata.ClassType == classType.(int))
 	}
 
-	glg.Warnf("No metadata found for item: %s", item.ItemHash)
+	glg.Debugf("No metadata found for item: %s", item.ItemHash)
 	return false
 }
 

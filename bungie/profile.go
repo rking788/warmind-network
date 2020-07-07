@@ -196,6 +196,5 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 
 	profile.AllItems = items
 
-	//fmt.Printf("Found %d items in fixed up profile response\n", len(profile.AllItems))
 	return profile
 }

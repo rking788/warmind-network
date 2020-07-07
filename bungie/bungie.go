@@ -161,7 +161,7 @@ func PopulateItemMetadata() error {
 		if itemName != "" {
 			itemHashLookup[itemName] = hash
 		} else {
-			glg.Warn("Found an empty item name, skipping...")
+			glg.Debug("Found an empty item name, skipping...")
 		}
 	}
 	if rows.Err() != nil {
