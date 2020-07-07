@@ -2,6 +2,8 @@ BUILD_DATE := `date +%Y-%m-%d\ %H:%M`
 VERSIONFILE := version.go
 APP_VERSION := `bash ./generate_version.sh`
 APP_NAME := "warmind-network"
+PROFILE_BENCHMARK_NAME := "BenchmarkMaxLight"
+#PROFILE_BENCHMARK_NAME := "BenchmarkFixupProfileFromProfileResponse"
 
 
 all: build
@@ -21,6 +23,8 @@ test:
 bench:
 	# Don't run regular tests as part of benchmarks
 	go test -v -bench=. -run=XXX ./...
+profile:
+	go test -v -run=xxx -bench=$(PROFILE_BENCHMARK_NAME) -memprofile mem.out -cpuprofile cpu.out ./bungie
 coverage:
 	## Right now the coverprofile option is not allowed when testing multiple packages.
 	## this is the best we can do for now until writing a bash script to loop over packages.
