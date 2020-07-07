@@ -23,6 +23,16 @@ func NewCurrentAccountRequest() *APIRequest {
 	}
 }
 
+// NewLinkedProfilesRequest is a helper function for creating a request object
+// to get all of the linked profiles given either a Destiny membership or
+// Bungie.net membership
+func NewLinkedProfilesRequest(membershipType int, membershipID string) *APIRequest {
+	return &APIRequest{
+		HTTPMethod: "GET",
+		Endpoint:   fmt.Sprintf(GetLinkedProfilesEndpointFormat, membershipType, membershipID),
+	}
+}
+
 // NewGetCharactersRequest is a helper function for getting the characters for a specific user
 func NewGetCharactersRequest(membershipType int, membershipID string) *APIRequest {
 	return &APIRequest{

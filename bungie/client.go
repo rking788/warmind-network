@@ -58,6 +58,16 @@ type CurrentUserMembershipsResponse struct {
 	} `json:"Response"`
 }
 
+// LinkedProfilesResponse is a type containing all fields for the object
+// returned by the LinkedProfiles endpoint.
+type LinkedProfilesResponse struct {
+	*BaseResponse
+	Response *struct {
+		Profiles      []*Profile     `json:"profiles"`
+		BungieNetUser *BungieNetUser `json:"bnetMembership"`
+	} `json:"Response"`
+}
+
 // CurrentUserMemberships will hold the current user's Bungie.net membership data
 // as well as the Destiny membership data for their most recently played character.
 type CurrentUserMemberships struct {
@@ -75,6 +85,18 @@ type DestinyMembership struct {
 	DisplayName    string `json:"displayName"`
 	MembershipType int    `json:"membershipType"`
 	MembershipID   string `json:"membershipId"`
+}
+
+// LastPlayedProfileSortDescending will sort the list of Destiny profiles in reverse
+// chronological order. Useful when trying to find the most recently played profile.
+type LastPlayedProfileSortDescending []*Profile
+
+func (profile LastPlayedProfileSortDescending) Len() int { return len(profile) }
+func (profile LastPlayedProfileSortDescending) Swap(i, j int) {
+	profile[i], profile[j] = profile[j], profile[i]
+}
+func (profile LastPlayedProfileSortDescending) Less(i, j int) bool {
+	return profile[j].DateLastPlayed.Before(profile[i].DateLastPlayed)
 }
 
 // CharacterProgressionResponse is the JSON response representation of the character progression
@@ -400,9 +422,10 @@ func (c *Client) AddAuthHeadersToRequest(req *http.Request) {
 func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 
 	accountResponse := CurrentUserMembershipsResponse{}
-	c.Execute(NewCurrentAccountRequest(), &accountResponse)
-
-	glg.Debugf("Found %d Destiny memberships", len(accountResponse.Response.DestinyMemberships))
+	err := c.Execute(NewCurrentAccountRequest(), &accountResponse)
+	if err != nil {
+		return nil, err
+	}
 
 	// If the user only has a single destiny membership, just use that then
 	if len(accountResponse.Response.DestinyMemberships) == 1 {
@@ -412,22 +435,27 @@ func (c *Client) GetCurrentAccount() (*CurrentUserMemberships, error) {
 		}, nil
 	}
 
-	allChars := make(CharacterList, 0, 9)
-	destinyMembershipLookup := make(map[string]*DestinyMembership)
-	for _, destinyMembership := range accountResponse.Response.DestinyMemberships {
-		destinyMembershipLookup[destinyMembership.MembershipID] = destinyMembership
-
-		allChars = append(allChars,
-			c.getCharacters(NewGetCharactersRequest(destinyMembership.MembershipType, destinyMembership.MembershipID))...)
+	bungieNetMembershipID := accountResponse.Response.BungieNetUser.MembershipID
+	linkedProfilesResponse := LinkedProfilesResponse{}
+	err = c.Execute(NewLinkedProfilesRequest(int(BUNGIENEXT), bungieNetMembershipID), &linkedProfilesResponse)
+	if err != nil {
+		return nil, err
 	}
 
-	latestDestinyMembership := accountResponse.Response.DestinyMemberships[0]
-	sort.Sort(sort.Reverse(LastPlayedSort(allChars)))
-	glg.Debugf("Found all membership characters: %+v", allChars)
-	if len(allChars) > 0 {
-		latestDestinyMembership = destinyMembershipLookup[allChars[0].MembershipID]
+	if len(linkedProfilesResponse.Response.Profiles) < 1 {
+		return nil, fmt.Errorf("No linked profiles found for the current account")
+	} else if len(linkedProfilesResponse.Response.Profiles) > 1 {
+		sort.Sort(LastPlayedProfileSortDescending(linkedProfilesResponse.Response.Profiles))
 	}
 
+	glg.Infof("Found %d linked profiles\n", len(linkedProfilesResponse.Response.Profiles))
+
+	latestProfile := linkedProfilesResponse.Response.Profiles[0]
+	latestDestinyMembership := &DestinyMembership{
+		DisplayName:    latestProfile.DisplayName,
+		MembershipID:   latestProfile.MembershipID,
+		MembershipType: latestProfile.MembershipType,
+	}
 	return &CurrentUserMemberships{
 		BungieNetUser:     accountResponse.Response.BungieNetUser,
 		DestinyMembership: latestDestinyMembership,

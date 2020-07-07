@@ -1,3 +1,5 @@
+// +build !integration
+
 package bungie
 
 import (
@@ -398,6 +400,25 @@ func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 	}
 }
 
+func BenchmarkStdJSONUnmarshalProfileResponse(b *testing.B) {
+	data, err := readSample("GetProfile.json")
+	if err != nil {
+		fmt.Println("Error reading sample file: ", err.Error())
+		b.Fatalf("Failed to read the GetProfile response")
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+
+		var response GetProfileResponse
+		err = json.Unmarshal(data, &response)
+		if err != nil {
+			fmt.Println("Error unmarshaling json: ", err.Error())
+		}
+	}
+}
+
 func TestParseCurrentMembershipsResponse(t *testing.T) {
 	setup()
 	data, err := readSample("GetMembershipsForCurrentUser.json")
@@ -427,6 +448,37 @@ func TestParseCurrentMembershipsResponse(t *testing.T) {
 		if membership.DisplayName == "" || membership.MembershipID == "" || membership.MembershipType <= 0 {
 			t.FailNow()
 		}
+	}
+}
+
+func TestParseLinkedProfilesResponse(t *testing.T) {
+	setup()
+
+	data, err := readSample("LinkedProfiles.json")
+	var response LinkedProfilesResponse
+	err = json.Unmarshal(data, &response)
+
+	if err != nil {
+		fmt.Println("Error unmarshaling json: ", err.Error())
+		t.Fatalf("ERROR: Failed to unmarshal linked profiles: " + err.Error())
+	}
+
+	if response.Response.BungieNetUser == nil {
+		t.Fatal("BugnieNetProfile not parsed from LinkedProfiles response")
+	}
+
+	if response.Response.Profiles == nil {
+		t.Fatal("Profiles not parsed from LinkedProfiles response")
+	}
+	if len(response.Response.Profiles) != 1 {
+		t.Fatalf("Incorrect number of linked profiles found: Actual(%d) Expected(%d)", len(response.Response.Profiles), 2)
+	}
+
+	mainProfile := response.Response.Profiles[0]
+	if mainProfile.MembershipID != "4611686018437694484" {
+		t.Fatalf("Invalid membershipID: Actual(%s) Expected(%s)", mainProfile.MembershipID, "4611686018437694484")
+	} else if mainProfile.MembershipType != 1 {
+		t.Fatalf("Invalid membershipType: Actual(%d) Expected(%d)", mainProfile.MembershipType, 1)
 	}
 }
 

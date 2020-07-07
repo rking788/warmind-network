@@ -8,6 +8,7 @@ const (
 	//EquipItemEndpointURL              = "http://localhost:8000/d1/Platform/Destiny/EquipItem/"
 	GetCurrentAccountEndpoint            = "https://www.bungie.net/Platform/User/GetCurrentBungieAccount/"
 	GetMembershipsForCurrentUserEndpoint = "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/"
+	GetLinkedProfilesEndpointFormat      = "https://www.bungie.net/Platform/Destiny2/%d/Profile/%s/LinkedProfiles/"
 	GetProfileEndpointFormat             = "https://www.bungie.net/platform/Destiny2/%d/Profile/%s/"
 	TransferItemEndpointURL              = "https://www.bungie.net/Platform/Destiny2/Actions/Items/TransferItem/"
 	EquipSingleItemEndpointURL           = "https://www.bungie.net/Platform/Destiny2/Actions/Items/EquipItem/"
