@@ -94,7 +94,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 			profile.Characters = append(profile.Characters, char)
 		}
 
-		sort.Sort(sort.Reverse(LastPlayedSort(profile.Characters)))
+		sort.Sort(LastPlayedSortDescending(profile.Characters))
 	}
 
 	// Flatten out the items from different buckets including currencies, inventories, eequipments,

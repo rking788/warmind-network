@@ -385,16 +385,9 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 	}
 
 	for i := Kinetic; i <= Subclass; i++ {
-		sort.Sort(sort.Reverse(LightSort(result[i])))
+		sort.Sort(LightSortDescending(result[i]))
 	}
 
-	return result
-}
-
-func sortGearBucket(bucketHash uint, inventory ItemList) ItemList {
-
-	result := inventory.FilterItemsBubble(itemBucketHashFilter, bucketHash)
-	sort.Sort(sort.Reverse(LightSort(result)))
 	return result
 }
 

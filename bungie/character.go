@@ -46,6 +46,18 @@ func (characters LastPlayedSort) Less(i, j int) bool {
 	return characters[i].DateLastPlayed.Before(characters[j].DateLastPlayed)
 }
 
+// LastPlayedSortDescending will sort the list of characters in reverse
+// chronological order. Useful when trying to find the most recently played character.
+type LastPlayedSortDescending CharacterList
+
+func (characters LastPlayedSortDescending) Len() int { return len(characters) }
+func (characters LastPlayedSortDescending) Swap(i, j int) {
+	characters[i], characters[j] = characters[j], characters[i]
+}
+func (characters LastPlayedSortDescending) Less(i, j int) bool {
+	return characters[j].DateLastPlayed.Before(characters[i].DateLastPlayed)
+}
+
 func (charList CharacterList) findCharacterFromID(characterID string) *Character {
 	for _, char := range charList {
 		if char.CharacterID == characterID {

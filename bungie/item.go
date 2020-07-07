@@ -99,6 +99,16 @@ func (items LightSort) Less(i, j int) bool {
 	return items[i].Power() < items[j].Power()
 }
 
+// LightSortDescending is similar to LightSort but will return a slice that
+// contaiall items sorted in descending order.
+type LightSortDescending ItemList
+
+func (items LightSortDescending) Len() int      { return len(items) }
+func (items LightSortDescending) Swap(i, j int) { items[i], items[j] = items[j], items[i] }
+func (items LightSortDescending) Less(i, j int) bool {
+	return items[j].Power() < items[i].Power()
+}
+
 // FilterItems will filter the receiver slice of Items and return only the items that match
 // the criteria specified in ItemFilter. If ItemFilter returns True, the element will be included,
 // if it returns False the element will be removed.
