@@ -12,12 +12,13 @@ import (
 
 // Profile contains all information about a specific Destiny membership, including character and
 // inventory information.
+//easyjson:json
 type Profile struct {
-	MembershipType        int
-	MembershipID          string
+	MembershipType        int    `json:"membershipType"`
+	MembershipID          string `json:"membershipId"`
 	BungieNetMembershipID string
-	DateLastPlayed        time.Time
-	DisplayName           string
+	DateLastPlayed        time.Time `json:"dateLastPlayed"`
+	DisplayName           string    `json:"displayName"`
 	Characters            CharacterList
 
 	AllItems ItemList
@@ -39,6 +40,7 @@ type Profile struct {
 // ProfileMsg is a wrapper around a Profile struct that should be used exclusively for sending a
 // Profile over a channel, or at least in cases where an error also needs to be sent to indicate
 // failures.
+//easyjson:skip
 type ProfileMsg struct {
 	*Profile
 	error
@@ -69,7 +71,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse, false)
+	profile := fixupProfileFromProfileResponse(&profileResponse, requireInstanceData)
 	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	for _, char := range profile.Characters {
@@ -80,6 +82,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 }
 
 func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData bool) *Profile {
+	requireCanEquip := true
 	profile := &Profile{}
 
 	// Profile Component
@@ -97,15 +100,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 		sort.Sort(LastPlayedSortDescending(profile.Characters))
 	}
 
-	// Flatten out the items from different buckets including currencies, inventories, eequipments,
-	// etc.
-	//totalItemCount := len(response.Response.ProfileCurrencies.Data.Items) + len(response.Response.ProfileInventory.Data.Items)
-	// for id := range response.Response.Characters.Data {
-	// 	totalItemCount += len(response.Response.CharacterEquipment.Data[id].Items)
-	// 	totalItemCount += len(response.Response.CharacterInventories.Data[id].Items)
-	// }
-
-	items := make(ItemList, 0, 32)
+	items := make(ItemList, 0, 512)
 
 	// ProfileCurrencies Component
 	if response.Response.ProfileCurrencies != nil {
@@ -117,10 +112,12 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 	// ProfileInventory Component
 	if response.Response.ProfileInventory != nil {
 		for _, item := range response.Response.ProfileInventory.Data.Items {
-			item.ItemInstance = response.instanceData(item.InstanceID)
+			item.Instance = response.instanceData(item.InstanceID)
 
-			if !requireInstanceData || item.ItemInstance != nil {
-				items = append(items, item)
+			if !requireInstanceData || item.Instance != nil {
+				if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+					items = append(items, item)
+				}
 			}
 		}
 	}
@@ -140,7 +137,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 			for _, item := range list.Items {
 
 				item.Character = response.character(charID)
-				item.ItemInstance = response.instanceData(item.InstanceID)
+				item.Instance = response.instanceData(item.InstanceID)
 
 				// We don't need to check IsEquipped here, that is what the CharacterEquipment
 				// group means, just make sure its on the right character.
@@ -152,8 +149,10 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 					// equipped item for that bucket
 					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
 				}
-				if !requireInstanceData || item.ItemInstance != nil {
-					items = append(items, item)
+				if !requireInstanceData || item.Instance != nil {
+					if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+						items = append(items, item)
+					}
 				}
 			}
 
@@ -179,7 +178,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 
 			for _, item := range list.Items {
 				item.Character = response.character(charID)
-				item.ItemInstance = response.instanceData(item.InstanceID)
+				item.Instance = response.instanceData(item.InstanceID)
 
 				if equipmentBucket, ok := EquipmentBucketLookup[item.BucketHash]; ok {
 
@@ -187,8 +186,10 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 					// the rest of the slice will be the currnet unequipped items
 					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
 				}
-				if !requireInstanceData || item.ItemInstance != nil {
-					items = append(items, item)
+				if !requireInstanceData || item.Instance != nil {
+					if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+						items = append(items, item)
+					}
 				}
 			}
 		}

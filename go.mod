@@ -12,6 +12,7 @@ require (
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/kpango/glg v1.4.6
 	github.com/lib/pq v1.3.0
+	github.com/mailru/easyjson v0.7.1
 	github.com/mikeflynn/go-alexa v0.0.0-20191016174603-1ffcf485965f
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/urfave/negroni v1.0.0 // indirect

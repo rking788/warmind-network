@@ -7,6 +7,7 @@ import (
 // APIRequest is a generic request object that can be sent to a bungie.Client and
 // the client will automatically handle setting up the request body, url parameters,
 // and full url (including endpoint).
+//easyjson:skip
 type APIRequest struct {
 	HTTPMethod string
 	Endpoint   string

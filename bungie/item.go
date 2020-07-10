@@ -6,7 +6,9 @@ import (
 	"github.com/kpango/glg"
 )
 
-//Item represents a single inventory item returned usually by the GetProfile endpoint
+//Item represents a single inventory item returned usually by the GetProfile
+//endpoint
+//easyjson:json
 type Item struct {
 	// DestinyItemComponent https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemComponent.html#schema_Destiny-Entities-Items-DestinyItemComponent
 	ItemHash       uint   `json:"itemHash"`
@@ -18,12 +20,13 @@ type Item struct {
 	Location       int    `json:"location"`
 	TransferStatus int    `json:"transferStatus"`
 	Quantity       int    `json:"quantity"`
-	*ItemInstance
-	*Character
+	Instance       *ItemInstance
+	Character      *Character
 }
 
 // ItemInstance will hold information about a specific instance of an instanced item, this can include item stats,
 // perks, etc. as well as equipped status and things like that.
+//easyjson:json
 type ItemInstance struct {
 	//https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemInstanceComponent.html#schema_Destiny-Entities-Items-DestinyItemInstanceComponent
 	IsEquipped         bool `json:"isEquipped"`
@@ -43,7 +46,9 @@ type ItemInstance struct {
 
 // ItemMetadata is responsible for holding data from the manifest in-memory that is used often
 // when interacting wth different character's inventories. These values are used so much
-// that it would be a big waste of time to query the manifest data from the DB for every use.
+// that it would be a big waste of time to query the manifest data from the DB
+// for every use.
+//easyjson:json
 type ItemMetadata struct {
 	TierType   int
 	ClassType  int
@@ -51,9 +56,9 @@ type ItemMetadata struct {
 }
 
 func (i *Item) String() string {
-	if i.ItemInstance != nil {
-		if i.ItemInstance.PrimaryStat != nil {
-			return fmt.Sprintf("Item{itemHash: %d, itemID: %s, light:%d, isEquipped: %v, quantity: %d}", i.ItemHash, i.InstanceID, i.PrimaryStat.Value, i.IsEquipped, i.Quantity)
+	if i.Instance != nil {
+		if i.Instance.PrimaryStat != nil {
+			return fmt.Sprintf("Item{itemHash: %d, itemID: %s, light:%d, isEquipped: %v, quantity: %d}", i.ItemHash, i.InstanceID, i.Instance.PrimaryStat.Value, i.Instance.IsEquipped, i.Quantity)
 		}
 
 		return fmt.Sprintf("Item{itemHash: %d, itemID: %s, quantity: %d}", i.ItemHash, i.InstanceID, i.Quantity)
@@ -64,11 +69,11 @@ func (i *Item) String() string {
 
 // Power is a convenience accessor to return the power level for a specific item or zero if it does not apply.
 func (i *Item) Power() int {
-	if i == nil || i.ItemInstance == nil || i.PrimaryStat == nil {
+	if i == nil || i.Instance == nil || i.Instance.PrimaryStat == nil {
 		return 0
 	}
 
-	return i.PrimaryStat.Value
+	return i.Instance.PrimaryStat.Value
 }
 
 // IsInVault will determine if the item is in the vault or not. True if it is; False if it is not.
@@ -320,7 +325,7 @@ func createItemRequiredLevelFilter(maxLevel interface{}) func(*Item, interface{}
 // itemRequiredLevelFilter will filter items that have a required level that is greater than
 // the level provided in `maxLevel`. True if the required level is <= the max level; False otherwise
 func itemRequiredLevelFilter(item *Item, maxLevel interface{}) bool {
-	return item.ItemInstance != nil && item.ItemInstance.EquipRequiredLevel <= maxLevel.(int)
+	return item.Instance != nil && item.Instance.EquipRequiredLevel <= maxLevel.(int)
 }
 
 func createEquippableFilter(canEquip interface{}) func(*Item, interface{}) bool {
@@ -331,5 +336,5 @@ func createEquippableFilter(canEquip interface{}) func(*Item, interface{}) bool 
 }
 
 func equippableFilter(item *Item, canEquip interface{}) bool {
-	return item.ItemInstance != nil && item.ItemInstance.CanEquip == canEquip.(bool)
+	return item.Instance != nil && item.Instance.CanEquip == canEquip.(bool)
 }

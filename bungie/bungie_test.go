@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/kpango/glg"
+	easyjson "github.com/mailru/easyjson"
 
 	"github.com/rking788/warmind-network/db"
 )
@@ -55,9 +56,12 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 	items := profile.AllItems
 	b.ReportAllocs()
 	b.ResetTimer()
+	var r ItemList
 	for i := 0; i < b.N; i++ {
-		_ = items._FilterItems(itemTierTypeFilter, ExoticTier)
+		r = items._FilterItems(itemTierTypeFilter, ExoticTier)
 	}
+
+	filtered = r
 }
 func BenchmarkFilteringMultipleFilters(b *testing.B) {
 
@@ -72,13 +76,18 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 	items := profile.AllItems
 	b.ReportAllocs()
 	b.ResetTimer()
+	var r ItemList
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		r = items.
 			_FilterItems(itemClassTypeFilter, WARLOCK).
 			_FilterItems(itemNotTierTypeFilter, ExoticTier).
 			_FilterItems(itemRequiredLevelFilter, 25)
 	}
+
+	filtered = r
 }
+
+var filtered ItemList
 
 func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 
@@ -93,12 +102,14 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 	items := profile.AllItems
 	b.ReportAllocs()
 	b.ResetTimer()
+	var r ItemList
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		r = items.
 			_FilterItemsMultiple(createItemClassTypeFilter(WARLOCK),
 				createItemNotTierTypeFilter(ExoticTier),
 				createItemRequiredLevelFilter(25))
 	}
+	filtered = r
 }
 
 func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
@@ -114,12 +125,15 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 	items := profile.AllItems
 	b.ReportAllocs()
 	b.ResetTimer()
+	var r ItemList
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		r = items.
 			FilterItemsMultipleBubble(createItemClassTypeFilter(WARLOCK),
 				createItemNotTierTypeFilter(ExoticTier),
 				createItemRequiredLevelFilter(25))
 	}
+
+	filtered = r
 }
 
 func BenchmarkFilteringPassthrough(b *testing.B) {
@@ -135,12 +149,15 @@ func BenchmarkFilteringPassthrough(b *testing.B) {
 	items := profile.AllItems
 	b.ReportAllocs()
 	b.ResetTimer()
+	var r ItemList
 	for i := 0; i < b.N; i++ {
-		_ = items.
+		r = items.
 			FilterBaseline(createItemClassTypeFilter(WARLOCK),
 				createItemNotTierTypeFilter(ExoticTier),
 				createItemRequiredLevelFilter(25))
 	}
+
+	filtered = r
 }
 
 func (items ItemList) FilterBaseline(filters ...ItemFilter) ItemList {
@@ -281,6 +298,8 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 	}
 }
 
+var maxLightLoadout Loadout
+
 func BenchmarkMaxLight(b *testing.B) {
 
 	setup()
@@ -294,9 +313,12 @@ func BenchmarkMaxLight(b *testing.B) {
 
 	b.ReportAllocs()
 	b.ResetTimer()
+	var loadout Loadout
 	for i := 0; i < b.N; i++ {
-		findMaxLightLoadout(profile, testDestinationID)
+		loadout = findMaxLightLoadout(profile, testDestinationID)
 	}
+
+	maxLightLoadout = loadout
 }
 
 func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
@@ -400,8 +422,10 @@ func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 	}
 }
 
+var unmarshaledProfile GetProfileResponse
+
 func BenchmarkStdJSONUnmarshalProfileResponse(b *testing.B) {
-	data, err := readSample("GetProfile.json")
+	data, err := readSample("GetProfile-unequippable.json")
 	if err != nil {
 		fmt.Println("Error reading sample file: ", err.Error())
 		b.Fatalf("Failed to read the GetProfile response")
@@ -416,6 +440,61 @@ func BenchmarkStdJSONUnmarshalProfileResponse(b *testing.B) {
 		if err != nil {
 			fmt.Println("Error unmarshaling json: ", err.Error())
 		}
+
+		unmarshaledProfile = response
+	}
+}
+
+func BenchmarkStdJSONDecoderUnmarshalProfileResponse(b *testing.B) {
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		r, _ := os.Open("../test_data/bungie/GetProfile-unequippable.json")
+		var response GetProfileResponse
+		err := json.NewDecoder(r).Decode(&response)
+		if err != nil {
+			fmt.Println("Error unmarshaling json: ", err.Error())
+		}
+
+		unmarshaledProfile = response
+	}
+}
+
+func BenchmarkEasyJSONUnmarshalProfileResponse(b *testing.B) {
+	data, err := readSample("GetProfile-unequippable.json")
+	if err != nil {
+		fmt.Println("Error reading sample file: ", err.Error())
+		b.Fatalf("Failed to read the GetProfile response")
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+
+		var response GetProfileResponse
+		err = easyjson.Unmarshal(data, &response)
+		if err != nil {
+			fmt.Println("Error unmarshaling json: ", err.Error())
+		}
+
+		unmarshaledProfile = response
+	}
+}
+
+func BenchmarkEasyJSONReaderUnmarshalProfileResponse(b *testing.B) {
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		r, _ := os.Open("../test_data/bungie/GetProfile-unequippable.json")
+		var response GetProfileResponse
+		err := easyjson.UnmarshalFromReader(r, &response)
+		if err != nil {
+			fmt.Println("Error unmarshaling json: ", err.Error())
+		}
+
+		unmarshaledProfile = response
 	}
 }
 
@@ -428,7 +507,7 @@ func TestParseCurrentMembershipsResponse(t *testing.T) {
 	}
 
 	var response CurrentUserMembershipsResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
 		t.FailNow()
@@ -455,8 +534,11 @@ func TestParseLinkedProfilesResponse(t *testing.T) {
 	setup()
 
 	data, err := readSample("LinkedProfiles.json")
+	if err != nil {
+		t.Fatalf("Error reading sample data: %s\n", err.Error())
+	}
 	var response LinkedProfilesResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
@@ -469,12 +551,15 @@ func TestParseLinkedProfilesResponse(t *testing.T) {
 
 	if response.Response.Profiles == nil {
 		t.Fatal("Profiles not parsed from LinkedProfiles response")
+	} else if len(response.Response.Profiles) == 0 {
+		t.Fatal("Empty list of profiles from linked profiles response")
 	}
 	if len(response.Response.Profiles) != 1 {
 		t.Fatalf("Incorrect number of linked profiles found: Actual(%d) Expected(%d)", len(response.Response.Profiles), 2)
 	}
 
 	mainProfile := response.Response.Profiles[0]
+	fmt.Printf("MainProfile :%v\n", mainProfile)
 	if mainProfile.MembershipID != "4611686018437694484" {
 		t.Fatalf("Invalid membershipID: Actual(%s) Expected(%s)", mainProfile.MembershipID, "4611686018437694484")
 	} else if mainProfile.MembershipType != 1 {
@@ -591,22 +676,18 @@ func TestFixupProfileFromProfileResponseMissingCharacters(t *testing.T) {
 	setup()
 	response, err := getCurrentProfileResponse()
 	if err != nil {
-		t.FailNow()
+		t.Fatalf("Unable to get current profile response: %s", err.Error())
 	}
 	response.Response.Characters = nil
 
 	profile := fixupProfileFromProfileResponse(response, false)
 	if profile == nil {
-		t.FailNow()
-	}
-
-	if profile.Characters != nil {
-		t.FailNow()
+		t.Fatalf("Unable to fixup profile, nil profile returned")
 	}
 
 	for _, item := range profile.AllItems {
 		if item.Character != nil {
-			t.FailNow()
+			t.Fatalf("Item is missing a character assignment: itemHash=%+v", item)
 		}
 	}
 }
@@ -626,7 +707,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterEquipment(t *testing.T) 
 	}
 
 	for _, item := range profile.AllItems {
-		if item.ItemInstance != nil && item.IsEquipped == true {
+		if item.Instance != nil && item.Instance.IsEquipped == true {
 			t.FailNow()
 		}
 	}
@@ -808,7 +889,7 @@ func TestMaxLightLoadout(t *testing.T) {
 			t.Fatalf("Incorrect item instance ID found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
 		}
 
-		if item.CanEquip == false {
+		if item.Instance.CanEquip == false {
 			t.Fatalf("Attempting to equip an item in a loadout that is marked with canEquip=false")
 		}
 	}
@@ -858,7 +939,7 @@ func TestNateMaxLightRegression(t *testing.T) {
 			t.Fatalf("Incorrect item instance ID found in bkt(%v): Expecting(%d) Found(%d)", bkt, hashes[0], item.ItemHash)
 		}
 
-		if item.CanEquip == false {
+		if item.Instance.CanEquip == false {
 			t.Fatalf("Attempting to equip an item in a loadout that is marked with canEquip=false")
 		}
 	}
@@ -872,7 +953,7 @@ func TestParseCharacterProgressionsResponse(t *testing.T) {
 	}
 
 	var response CharacterProgressionResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		t.Fatalf("Error unmarshaling character progressions: %s\n", err.Error())
 	}
@@ -950,7 +1031,7 @@ func getCurrentProfileResponse() (*GetProfileResponse, error) {
 	}
 
 	var response GetProfileResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
 		return nil, err
@@ -967,7 +1048,7 @@ func getUnequippableWeaponsProfileResponse() (*GetProfileResponse, error) {
 	}
 
 	var response GetProfileResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
 		return nil, err
@@ -984,7 +1065,7 @@ func getNateProfileResponse() (*GetProfileResponse, error) {
 	}
 
 	var response GetProfileResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
 		return nil, err
@@ -1001,7 +1082,7 @@ func getProgressions() (*CharacterProgressionResponse, error) {
 	}
 
 	var response CharacterProgressionResponse
-	err = json.Unmarshal(data, &response)
+	err = easyjson.Unmarshal(data, &response)
 	if err != nil {
 		fmt.Println("Error unmarshaling json: ", err.Error())
 		return nil, err

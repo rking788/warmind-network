@@ -8,6 +8,7 @@ import (
 
 // Character will represent a single in-game character as well as platform membership data, emblems,
 // last played date, and character class and race.
+//easyjson:json
 type Character struct {
 	//https://bungie-net.github.io/multi/schema_Destiny-Entities-Characters-DestinyCharacterComponent.html#schema_Destiny-Entities-Characters-DestinyCharacterComponent
 	MembershipID         string    `json:"membershipId"`

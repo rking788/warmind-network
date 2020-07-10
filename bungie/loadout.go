@@ -285,7 +285,7 @@ func equipLoadout(loadout Loadout, destinationID string, profile *Profile, membe
 
 		// Free any space in a bucket that needs to receive a new item but is currently full
 		if len(profile.Equipments[destinationID][bucket]) == MaxItemsPerBucket &&
-			(item.Character == nil || item.CharacterID != destinationID) {
+			(item.Character == nil || item.Character.CharacterID != destinationID) {
 			for i := MaxItemsPerBucket - 1; i >= 1; i-- {
 				// Start from the back of the bucket and move to the front, this way it will not transfer an item
 				// to the vault if it is trying to equip it in the provided loadout
@@ -334,7 +334,7 @@ func swapEquippedItem(item *Item, profile *Profile, bucket EquipmentBucket, memb
 	// This should be more robust. There is no guarantee the character already has an exotic
 	// equipped in a different slot and this may be the only option to swap out this item.
 	reverseLightSortedItems := profile.AllItems.
-		FilterItemsMultipleBubble(createCharacterIDFilter(item.CharacterID),
+		FilterItemsMultipleBubble(createCharacterIDFilter(item.Character.CharacterID),
 			createItemBucketHashFilter(item.BucketHash),
 			createItemNotTierTypeFilter(ExoticTier),
 			createEquippableFilter(true))
@@ -371,7 +371,7 @@ func groupAndSortGear(inventory ItemList) map[EquipmentBucket]ItemList {
 	result := make(map[EquipmentBucket]ItemList)
 
 	for i := Kinetic; i <= Subclass; i++ {
-		result[i] = make(ItemList, 0, 20)
+		result[i] = make(ItemList, 0, 15)
 	}
 
 	for _, item := range inventory {
@@ -403,25 +403,25 @@ func findBestItemForBucket(bucket EquipmentBucket, items []*Item, destinationID 
 		if next.Power() < candidate.Power() {
 			// Lower light value, keep the current candidate
 			break
-		} else if candidate.IsEquipped && candidate.CharacterID == destinationID {
+		} else if candidate.Instance.IsEquipped && candidate.Character.CharacterID == destinationID {
 			// The current max light piece of gear is currently equipped on the
 			// destination character, avoiding moving items around if we don't need to.
 			break
 		}
 
-		if (!next.IsInVault() && next.CharacterID == destinationID) &&
-			(!candidate.IsInVault() && candidate.CharacterID != destinationID) {
+		if (!next.IsInVault() && next.Character.CharacterID == destinationID) &&
+			(!candidate.IsInVault() && candidate.Character.CharacterID != destinationID) {
 			// This next item is the same light and on the destination character already,
 			// the current candidate is not
 			candidate = next
-		} else if (!next.IsInVault() && next.CharacterID == destinationID) &&
-			(!candidate.IsInVault() && candidate.CharacterID == destinationID) {
+		} else if (!next.IsInVault() && next.Character.CharacterID == destinationID) &&
+			(!candidate.IsInVault() && candidate.Character.CharacterID == destinationID) {
 			if next.TransferStatus == ItemIsEquipped && candidate.TransferStatus != ItemIsEquipped {
 				// The next item is currently equipped on the destination character,
 				// the current candidate is not
 				candidate = next
 			}
-		} else if (!candidate.IsInVault() && candidate.CharacterID != destinationID) &&
+		} else if (!candidate.IsInVault() && candidate.Character.CharacterID != destinationID) &&
 			next.IsInVault() {
 			// If the current candidate is on a character that is NOT the destination and the next
 			// candidate is in the vault, prefer that since we will only need to do a

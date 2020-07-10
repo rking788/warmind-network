@@ -7,6 +7,8 @@ PROFILE_BENCHMARK_NAME := "BenchmarkMaxLight"
 
 
 all: build
+easyjson:
+	easyjson -omit_empty -all bungie/*.go
 genversion:
 	rm -f $(VERSIONFILE)
 	@echo "package main" > $(VERSIONFILE)

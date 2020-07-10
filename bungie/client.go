@@ -26,6 +26,7 @@ type StatusResponse interface {
 
 // BaseResponse represents the data returned as part of all of the Bungie API
 // requests.
+//easyjson:json
 type BaseResponse struct {
 	ErrorCode       int         `json:"ErrorCode"`
 	ThrottleSeconds int         `json:"ThrottleSeconds"`
@@ -50,6 +51,7 @@ func (b *BaseResponse) String() string {
 // authorized user. The request for this information will use the access_token to determine
 // the current user
 // https://bungie-net.github.io/multi/operation_get_User-GetMembershipDataForCurrentUser.html#operation_get_User-GetMembershipDataForCurrentUser
+//easyjson:json
 type CurrentUserMembershipsResponse struct {
 	*BaseResponse
 	Response *struct {
@@ -60,6 +62,7 @@ type CurrentUserMembershipsResponse struct {
 
 // LinkedProfilesResponse is a type containing all fields for the object
 // returned by the LinkedProfiles endpoint.
+//easyjson:json
 type LinkedProfilesResponse struct {
 	*BaseResponse
 	Response *struct {
@@ -69,18 +72,22 @@ type LinkedProfilesResponse struct {
 }
 
 // CurrentUserMemberships will hold the current user's Bungie.net membership data
-// as well as the Destiny membership data for their most recently played character.
+// as well as the Destiny membership data for their most recently played
+// character.
+//easyjson:json
 type CurrentUserMemberships struct {
 	BungieNetUser     *BungieNetUser
 	DestinyMembership *DestinyMembership
 }
 
 // BungieNetUser holds fields relating to a specific Bungie membership
+//easyjson:json
 type BungieNetUser struct {
 	MembershipID string `json:"membershipId"`
 }
 
 // DestinyMembership holds information about a specific Destiny membership
+//easyjson:json
 type DestinyMembership struct {
 	DisplayName    string `json:"displayName"`
 	MembershipType int    `json:"membershipType"`
@@ -101,6 +108,7 @@ func (profile LastPlayedProfileSortDescending) Less(i, j int) bool {
 
 // CharacterProgressionResponse is the JSON response representation of the character progression
 // data from the GetProfile endpoint.
+//easyjson:json
 type CharacterProgressionResponse struct {
 	*BaseResponse
 	Response *struct {
@@ -156,7 +164,9 @@ func (r *CharacterProgressionResponse) progression(hash string) *DestinyProgress
 	return nil
 }
 
-// CharacterProgression contains data for different progressions tied to a specific character
+// CharacterProgression contains data for different progressions tied to a
+// specific character
+//easyjson:json
 type CharacterProgression struct {
 	Progressions map[string]*DestinyProgression   `json:"progressions"`
 	Factions     map[string]*FactionProgression   `json:"factions"`
@@ -166,7 +176,9 @@ type CharacterProgression struct {
 	// uninstancedItemObjectives
 }
 
-// BaseProgression contains data relevant to all of the different progression types
+// BaseProgression contains data relevant to all of the different progression
+// types
+//easyjson:json
 type BaseProgression struct {
 	ProgressionHash     int `json:"progressionHash"`
 	DailyProgress       int `json:"dailyProgress"`
@@ -186,6 +198,7 @@ func (b *BaseProgression) String() string {
 }
 
 // DestinyProgression contains data about progression through different Destiny related achievements
+//easyjson:json
 type DestinyProgression struct {
 	*BaseProgression
 }
@@ -196,6 +209,7 @@ func (p *DestinyProgression) String() string {
 
 // FactionProgression wraps data related to the progression through levels related
 // to the different factions
+//easyjson:json
 type FactionProgression struct {
 	*BaseProgression
 	FactionHash        int `json:"factionHash"`
@@ -206,7 +220,9 @@ func (p *FactionProgression) String() string {
 	return fmt.Sprintf("%+v", *p)
 }
 
-// MilestoneProgression contains data about progress through different milestones
+// MilestoneProgression contains data about progress through different
+// milestones
+//easyjson:json
 type MilestoneProgression struct {
 	MilestoneHash int `json:"milestoneHash"`
 	// NOTE: Not sure how much information from here could be provided. Seems
@@ -218,33 +234,56 @@ type MilestoneProgression struct {
 
 // GetProfileResponse is the response from the GetProfile endpoint. This data contains
 // information about the characeters, inventories, profile inventory, and equipped loadouts.
-//https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile
+// https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile
+//easyjson:json
 type GetProfileResponse struct {
 	*BaseResponse
-	Response *struct {
-		CharacterInventories *CharacterMappedItemListData `json:"characterInventories"`
-		CharacterEquipment   *CharacterMappedItemListData `json:"characterEquipment"`
-		ProfileInventory     *ItemListData                `json:"profileInventory"`
-		ProfileCurrencies    *ItemListData                `json:"profileCurrencies"`
-		ItemComponents       *struct {
-			Instances *struct {
-				Data map[string]*ItemInstance `json:"data"`
-			} `json:"instances"`
-		} `json:"itemComponents"`
-		Profile *struct {
-			//https://bungie-net.github.io/multi/schema_Destiny-Entities-Profiles-DestinyProfileComponent.html#schema_Destiny-Entities-Profiles-DestinyProfileComponent
-			Data *struct {
-				UserInfo *struct {
-					MembershipType int    `json:"membershipType"`
-					MembershipID   string `json:"membershipId"`
-					DisplayName    string `json:"displayName"`
-				} `json:"userInfo"`
-			} `json:"data"`
-		} `json:"profile"`
-		Characters *struct {
-			Data CharacterMap `json:"data"`
-		} `json:"Characters"`
-	} `json:"Response"`
+	Response *GetProfilePayload `json:"Response"`
+}
+
+//easyjson:json
+type ItemComponents struct {
+	Instances *ItemInstanceData `json:"instances"`
+}
+
+//easyjson:json
+type ItemInstanceData struct {
+	Data map[string]*ItemInstance `json:"data"`
+}
+
+//easyjson:json
+type GetProfilePayload struct {
+	CharacterInventories *CharacterMappedItemListPayload `json:"characterInventories"`
+	CharacterEquipment   *CharacterMappedItemListPayload `json:"characterEquipment"`
+	ProfileInventory     *ItemListPayload                `json:"profileInventory"`
+	ProfileCurrencies    *ItemListPayload                `json:"profileCurrencies"`
+	ItemComponents       *ItemComponents                 `json:"itemComponents"`
+	Profile              *ProfilePayload                 `json:"profile"`
+	Characters           *CharacterData                  `json:"characters"`
+}
+
+//easyjson:json
+type ProfilePayload struct {
+	//https://bungie-net.github.io/multi/schema_Destiny-Entities-Profiles-DestinyProfileComponent.html#schema_Destiny-Entities-Profiles-DestinyProfileComponent
+	Data *ProfileData `json:"data"`
+}
+
+//easyjson:json
+type ProfileData struct {
+	DateLastPlayed time.Time        `json:"dateLastPlayed"`
+	UserInfo       *ProfileUserInfo `json:"userInfo"`
+}
+
+//easyjson:json
+type ProfileUserInfo struct {
+	MembershipType int    `json:"membershipType"`
+	MembershipID   string `json:"membershipId"`
+	DisplayName    string `json:"displayName"`
+}
+
+//easyjson:json
+type CharacterData struct {
+	Data CharacterMap `json:"data"`
 }
 
 func (r *GetProfileResponse) membershipID() string {
@@ -280,26 +319,28 @@ func (r *GetProfileResponse) instanceData(ID string) *ItemInstance {
 	return r.Response.ItemComponents.Instances.Data[ID]
 }
 
-// ItemListData contains the list of Items in the format returned by the Bungie.net API
+// ItemListPayload contains the list of Items in the format returned by the
+// Bungie.net API
+//easyjson:json
+type ItemListPayload struct {
+	Data *ItemListData `json:"data"`
+}
+
+//easyjson:json
 type ItemListData struct {
-	Data *struct {
-		Items ItemList `json:"items"`
-	} `json:"data"`
+	Items ItemList `json:"items,omitempty"`
 }
 
-// CharacterMappedItemListData contains the lists of item data mapped by the character ID
+// CharacterMappedItemListPayload contains the lists of item data mapped by the character ID
 // to which they are associated.
-type CharacterMappedItemListData struct {
-	Data map[string]*struct {
-		Items ItemList `json:"items"`
-	} `json:"data"`
+//easyjson:json
+type CharacterMappedItemListPayload struct {
+	Data map[string]*CharacterMappedItemListData `json:"data"`
 }
 
-// ClientPool is a simple client buffer that will provided round robin access to a collection
-// of Clients.
-type ClientPool struct {
-	Clients []*Client
-	current int
+//easyjson:json
+type CharacterMappedItemListData struct {
+	Items ItemList `json:"items"`
 }
 
 // NewClientPool is a convenience initializer to create a new collection of Clients.
@@ -365,11 +406,20 @@ func readClientAddresses() (result []string) {
 
 // Client is a type that contains all information needed to make requests to the
 // Bungie API.
+//easyjson:skip
 type Client struct {
 	*http.Client
 	Address     string
 	AccessToken string
 	APIToken    string
+}
+
+// ClientPool is a simple client buffer that will provided round robin access to a collection
+// of Clients.
+//easyjson:skip
+type ClientPool struct {
+	Clients []*Client
+	current int
 }
 
 // NewCustomAddrClient will create a new Bungie Client instance with the provided local IP address.
