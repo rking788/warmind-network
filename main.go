@@ -5,9 +5,6 @@ import (
 	"flag"
 	"net/http"
 	"net/http/httputil"
-	"os"
-	"os/signal"
-	"runtime/pprof"
 	"strings"
 	"time"
 
@@ -52,6 +49,7 @@ var (
 		"EquipNamedLoadout":   dialogflow.AuthWrapper(dialogflow.EquipNamedLoadout),
 		"ListLoadouts":        dialogflow.AuthWrapper(dialogflow.ListLoadouts),
 		"RandomizeLoadout":    dialogflow.AuthWrapper(dialogflow.RandomGear),
+		"RandomizeGear":       dialogflow.AuthWrapper(dialogflow.RandomGear),
 		"CurrentRank":         dialogflow.AuthWrapper(dialogflow.GetCurrentRank),
 		"CreateLoadout":       dialogflow.AuthWrapper(dialogflow.CreateLoadout),
 		"CreateLoadout - yes": dialogflow.AuthWrapper(dialogflow.CreateLoadoutWithOverwrite),
@@ -120,8 +118,6 @@ func main() {
 
 	glg.Printf("Version=%s, BuildDate=%v", version, buildDate)
 
-	// writeHeapProfile()
-
 	if config.Environment == "production" {
 		port := config.Port
 		skillserver.RunSSL(applications, port, config.SSLCertPath, config.SSLKeyPath)
@@ -138,27 +134,6 @@ func main() {
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Up"))
-}
-
-func writeHeapProfile() {
-	//bungie.EquipMaxLightGear("access-token")
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for range c {
-			if *memprofile != "" {
-				f, err := os.Create(*memprofile)
-				if err != nil {
-					glg.Fatal(err)
-				}
-				pprof.WriteHeapProfile(f)
-				f.Close()
-				os.Exit(1)
-				return
-			}
-		}
-	}()
 }
 
 // Alexa skill related functions
