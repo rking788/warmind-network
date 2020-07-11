@@ -48,7 +48,7 @@ type ProfileMsg struct {
 
 // GetProfileForCurrentUser will retrieve the Profile data for the currently logged in user
 // (determined by the access_token)
-func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profile, error) {
+func GetProfileForCurrentUser(client *Client, requireInstanceData, requireEquippable bool) (*Profile, error) {
 
 	// TODO: check error
 	currentAccount, _ := client.GetCurrentAccount()
@@ -71,7 +71,7 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 		return nil, errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse, requireInstanceData)
+	profile := fixupProfileFromProfileResponse(&profileResponse, requireInstanceData, requireEquippable)
 	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	for _, char := range profile.Characters {
@@ -81,8 +81,8 @@ func GetProfileForCurrentUser(client *Client, requireInstanceData bool) (*Profil
 	return profile, nil
 }
 
-func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData bool) *Profile {
-	requireCanEquip := true
+func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstanceData, requireEquippable bool) *Profile {
+
 	profile := &Profile{}
 
 	// Profile Component
@@ -115,7 +115,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 			item.Instance = response.instanceData(item.InstanceID)
 
 			if !requireInstanceData || item.Instance != nil {
-				if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+				if !requireEquippable || (item.Instance != nil && item.Instance.CanEquip) {
 					items = append(items, item)
 				}
 			}
@@ -150,7 +150,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
 				}
 				if !requireInstanceData || item.Instance != nil {
-					if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+					if !requireEquippable || (item.Instance != nil && item.Instance.CanEquip) {
 						items = append(items, item)
 					}
 				}
@@ -187,7 +187,7 @@ func fixupProfileFromProfileResponse(response *GetProfileResponse, requireInstan
 					currentEquipment[equipmentBucket] = append(currentEquipment[equipmentBucket], item)
 				}
 				if !requireInstanceData || item.Instance != nil {
-					if item.Instance != nil && requireCanEquip && item.Instance.CanEquip {
+					if !requireEquippable || (item.Instance != nil && item.Instance.CanEquip) {
 						items = append(items, item)
 					}
 				}

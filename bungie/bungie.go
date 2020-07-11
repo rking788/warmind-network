@@ -242,7 +242,7 @@ func CountItem(itemName, accessToken string) (string, error) {
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
 	// Load all items on all characters
-	profile, err := GetProfileForCurrentUser(client, false)
+	profile, err := GetProfileForCurrentUser(client, false, false)
 	if err != nil {
 		outputStr := "Sorry Guardian, I could not load your items from Destiny, you may need to re-link your account in the Alexa app."
 		return outputStr, nil
@@ -295,7 +295,7 @@ func TransferItem(itemName, accessToken, sourceClass, destinationClass string, c
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client, false)
+	profile, err := GetProfileForCurrentUser(client, false, true)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
@@ -339,7 +339,7 @@ func EquipMaxLightGear(accessToken string) (string, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client, true)
+	profile, err := GetProfileForCurrentUser(client, true, true)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
@@ -378,7 +378,7 @@ func RandomizeLoadout(accessToken string) (string, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client, true)
+	profile, err := GetProfileForCurrentUser(client, true, true)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
@@ -416,7 +416,7 @@ func UnloadEngrams(accessToken string) (string, error) {
 	client := Clients.Get()
 	client.AddAuthValues(accessToken, warmindAPIKey)
 
-	profile, err := GetProfileForCurrentUser(client, false)
+	profile, err := GetProfileForCurrentUser(client, false, false)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to read the Items response from Bungie!: %s", err.Error())
@@ -519,7 +519,9 @@ func CreateLoadoutForCurrentCharacter(accessToken, name string, shouldOverwrite 
 
 	// At some point it could be useful to save emotes, ships, subclasses, etc. That is why
 	// instance data is not required here for getting the profile info.
-	profile := fixupProfileFromProfileResponse(&profileResponse, false)
+	// TOOD: Maybe requiring it to be equippable makes sense here? the one thing
+	// i am stuck on is subclasses. Are subclasses equippable?
+	profile := fixupProfileFromProfileResponse(&profileResponse, false, false)
 	profile.BungieNetMembershipID = bnetMembershipID
 
 	loadout := profile.Loadouts[profile.Characters[0].CharacterID]
@@ -574,7 +576,9 @@ func EquipNamedLoadout(accessToken, name string) (string, error) {
 		return "", errors.New("Failed to read current user's profile: " + err.Error())
 	}
 
-	profile := fixupProfileFromProfileResponse(&profileResponse, false)
+	// TOOD: Maybe requiring it to be equippable makes sense here? the one thing
+	// i am stuck on is subclasses. Are subclasses equippable?
+	profile := fixupProfileFromProfileResponse(&profileResponse, false, false)
 	profile.BungieNetMembershipID = currentAccount.BungieNetUser.MembershipID
 
 	loadoutJSON, err := db.SelectLoadout(profile.BungieNetMembershipID, name)

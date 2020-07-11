@@ -51,7 +51,7 @@ func BenchmarkFilteringSingleFilter(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -71,7 +71,7 @@ func BenchmarkFilteringMultipleFilters(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -97,7 +97,7 @@ func BenchmarkFilteringMultipleFiltersAtOnce(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -120,7 +120,7 @@ func BenchmarkFilteringMultipleFiltersAtOnceBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -144,7 +144,7 @@ func BenchmarkFilteringPassthrough(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -183,7 +183,7 @@ func TestFilteringSingleFilterBubble(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 
@@ -206,7 +206,7 @@ func TestFilteringMultipleFilter(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 
@@ -268,7 +268,7 @@ func BenchmarkFilteringSingleFilterBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -285,7 +285,7 @@ func BenchmarkFilteringMultipleFiltersBubble(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, false)
 
 	items := profile.AllItems
 	b.ReportAllocs()
@@ -308,7 +308,7 @@ func BenchmarkMaxLight(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, true)
+	profile := fixupProfileFromProfileResponse(profileResponse, true, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -329,7 +329,7 @@ func BenchmarkFindRandomLoadoutWeaponsOnly(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -347,7 +347,7 @@ func BenchmarkFindRandomLoadoutAll(b *testing.B) {
 		b.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, false)
+	profile := fixupProfileFromProfileResponse(profileResponse, false, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	b.ReportAllocs()
@@ -364,7 +364,7 @@ func BenchmarkGroupAndSort(b *testing.B) {
 	if err != nil {
 		b.FailNow()
 	}
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, true)
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -383,7 +383,7 @@ func BenchmarkBestItemForBucket(b *testing.B) {
 	if err != nil {
 		b.FailNow()
 	}
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, true)
 	grouped := groupAndSortGear(profile.AllItems)
 	largestBucket := Kinetic
 	largestBucketSize := len(grouped[Kinetic])
@@ -415,7 +415,7 @@ func BenchmarkFixupProfileFromProfileResponse(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		profile := fixupProfileFromProfileResponse(response, false)
+		profile := fixupProfileFromProfileResponse(response, false, false)
 		if profile == nil {
 			b.FailNow()
 		}
@@ -614,7 +614,7 @@ func TestFixupProfileFromProfileResponse(t *testing.T) {
 		t.FailNow()
 	}
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -628,7 +628,7 @@ func TestFixupProfileFromProfileResponseOnlyInstanced(t *testing.T) {
 		t.FailNow()
 	}
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, true, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -643,7 +643,7 @@ func TestFixupProfileFromProfileResponseMissingProfile(t *testing.T) {
 	}
 	response.Response.Profile = nil
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -665,7 +665,7 @@ func TestFixupProfileFromProfileResponseMissingProfileInventory(t *testing.T) {
 	}
 	response.Response.ProfileInventory = nil
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -680,7 +680,7 @@ func TestFixupProfileFromProfileResponseMissingCharacters(t *testing.T) {
 	}
 	response.Response.Characters = nil
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.Fatalf("Unable to fixup profile, nil profile returned")
 	}
@@ -701,7 +701,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterEquipment(t *testing.T) 
 	}
 	response.Response.CharacterEquipment = nil
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -722,7 +722,7 @@ func TestFixupProfileFromProfileResponseMissingCharacterInventories(t *testing.T
 	}
 	response.Response.CharacterInventories = nil
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -735,7 +735,7 @@ func TestGroupAndSort(t *testing.T) {
 		t.Fatal("Failed to get current profile for test")
 	}
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.Fatal("Failed to fixup profile from response")
 	}
@@ -769,7 +769,7 @@ func TestRandomLoadoutFromProfile(t *testing.T) {
 		t.FailNow()
 	}
 
-	profile := fixupProfileFromProfileResponse(response, false)
+	profile := fixupProfileFromProfileResponse(response, false, false)
 	if profile == nil {
 		t.FailNow()
 	}
@@ -853,7 +853,7 @@ func TestMaxLightLoadout(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, true)
+	profile := fixupProfileFromProfileResponse(profileResponse, true, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	loadout := findMaxLightLoadout(profile, testDestinationID)
@@ -903,7 +903,7 @@ func TestNateMaxLightRegression(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	profile := fixupProfileFromProfileResponse(profileResponse, true)
+	profile := fixupProfileFromProfileResponse(profileResponse, true, true)
 	testDestinationID := profile.Characters[0].CharacterID
 
 	loadout := findMaxLightLoadout(profile, testDestinationID)
