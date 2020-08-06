@@ -1,4 +1,4 @@
-name: "Build Warmind Network"
+name: "Build"
 on: push
 
 jobs:

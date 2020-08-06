@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rking788/warmind-network.svg?branch=master)](https://travis-ci.org/rking788/warmind-network)
+[![Build Status](https://github.com/rking788/warmind-network/workflows/Build/badge.svg)](https://github.com/rking788/warmind-network/actions?query=workflow%3ABuild)
 
 Warmind Network
 =================
