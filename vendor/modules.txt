@@ -25,6 +25,11 @@ github.com/kpango/glg
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
+# github.com/mailru/easyjson v0.7.1
+github.com/mailru/easyjson
+github.com/mailru/easyjson/buffer
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
 # github.com/mikeflynn/go-alexa v0.0.0-20191016174603-1ffcf485965f
 github.com/mikeflynn/go-alexa/skillserver
 github.com/mikeflynn/go-alexa/skillserver/dialog
