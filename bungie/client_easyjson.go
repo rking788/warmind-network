@@ -564,7 +564,7 @@ func easyjsonC0e5e3f1Decode(in *jlexer.Lexer, out *struct {
 						if v1 == nil {
 							v1 = new(Profile)
 						}
-						easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie5(in, v1)
+						(*v1).UnmarshalEasyJSON(in)
 					}
 					out.Profiles = append(out.Profiles, v1)
 					in.WantComma()
@@ -611,7 +611,7 @@ func easyjsonC0e5e3f1Encode(out *jwriter.Writer, in struct {
 				if v3 == nil {
 					out.RawString("null")
 				} else {
-					easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie5(out, *v3)
+					(*v3).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -629,816 +629,7 @@ func easyjsonC0e5e3f1Encode(out *jwriter.Writer, in struct {
 	}
 	out.RawByte('}')
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie5(in *jlexer.Lexer, out *Profile) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "membershipType":
-			out.MembershipType = int(in.Int())
-		case "membershipId":
-			out.MembershipID = string(in.String())
-		case "BungieNetMembershipID":
-			out.BungieNetMembershipID = string(in.String())
-		case "dateLastPlayed":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.DateLastPlayed).UnmarshalJSON(data))
-			}
-		case "displayName":
-			out.DisplayName = string(in.String())
-		case "Characters":
-			if in.IsNull() {
-				in.Skip()
-				out.Characters = nil
-			} else {
-				in.Delim('[')
-				if out.Characters == nil {
-					if !in.IsDelim(']') {
-						out.Characters = make(CharacterList, 0, 8)
-					} else {
-						out.Characters = CharacterList{}
-					}
-				} else {
-					out.Characters = (out.Characters)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v4 *Character
-					if in.IsNull() {
-						in.Skip()
-						v4 = nil
-					} else {
-						if v4 == nil {
-							v4 = new(Character)
-						}
-						(*v4).UnmarshalEasyJSON(in)
-					}
-					out.Characters = append(out.Characters, v4)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "AllItems":
-			if in.IsNull() {
-				in.Skip()
-				out.AllItems = nil
-			} else {
-				in.Delim('[')
-				if out.AllItems == nil {
-					if !in.IsDelim(']') {
-						out.AllItems = make(ItemList, 0, 8)
-					} else {
-						out.AllItems = ItemList{}
-					}
-				} else {
-					out.AllItems = (out.AllItems)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v5 *Item
-					if in.IsNull() {
-						in.Skip()
-						v5 = nil
-					} else {
-						if v5 == nil {
-							v5 = new(Item)
-						}
-						easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in, v5)
-					}
-					out.AllItems = append(out.AllItems, v5)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "Loadouts":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Loadouts = make(map[string]Loadout)
-				} else {
-					out.Loadouts = nil
-				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v6 Loadout
-					if in.IsNull() {
-						in.Skip()
-					} else {
-						in.Delim('{')
-						if !in.IsDelim('}') {
-							v6 = make(Loadout)
-						} else {
-							v6 = nil
-						}
-						for !in.IsDelim('}') {
-							key := EquipmentBucket(in.UintStr())
-							in.WantColon()
-							var v7 *Item
-							if in.IsNull() {
-								in.Skip()
-								v7 = nil
-							} else {
-								if v7 == nil {
-									v7 = new(Item)
-								}
-								easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in, v7)
-							}
-							(v6)[key] = v7
-							in.WantComma()
-						}
-						in.Delim('}')
-					}
-					(out.Loadouts)[key] = v6
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "Equipments":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Equipments = make(map[string]Equipment)
-				} else {
-					out.Equipments = nil
-				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v8 Equipment
-					if in.IsNull() {
-						in.Skip()
-					} else {
-						in.Delim('{')
-						if !in.IsDelim('}') {
-							v8 = make(Equipment)
-						} else {
-							v8 = nil
-						}
-						for !in.IsDelim('}') {
-							key := EquipmentBucket(in.UintStr())
-							in.WantColon()
-							var v9 ItemList
-							if in.IsNull() {
-								in.Skip()
-								v9 = nil
-							} else {
-								in.Delim('[')
-								if v9 == nil {
-									if !in.IsDelim(']') {
-										v9 = make(ItemList, 0, 8)
-									} else {
-										v9 = ItemList{}
-									}
-								} else {
-									v9 = (v9)[:0]
-								}
-								for !in.IsDelim(']') {
-									var v10 *Item
-									if in.IsNull() {
-										in.Skip()
-										v10 = nil
-									} else {
-										if v10 == nil {
-											v10 = new(Item)
-										}
-										easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in, v10)
-									}
-									v9 = append(v9, v10)
-									in.WantComma()
-								}
-								in.Delim(']')
-							}
-							(v8)[key] = v9
-							in.WantComma()
-						}
-						in.Delim('}')
-					}
-					(out.Equipments)[key] = v8
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie5(out *jwriter.Writer, in Profile) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.MembershipType != 0 {
-		const prefix string = ",\"membershipType\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.Int(int(in.MembershipType))
-	}
-	if in.MembershipID != "" {
-		const prefix string = ",\"membershipId\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.MembershipID))
-	}
-	if in.BungieNetMembershipID != "" {
-		const prefix string = ",\"BungieNetMembershipID\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.BungieNetMembershipID))
-	}
-	if true {
-		const prefix string = ",\"dateLastPlayed\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Raw((in.DateLastPlayed).MarshalJSON())
-	}
-	if in.DisplayName != "" {
-		const prefix string = ",\"displayName\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.DisplayName))
-	}
-	if len(in.Characters) != 0 {
-		const prefix string = ",\"Characters\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('[')
-			for v11, v12 := range in.Characters {
-				if v11 > 0 {
-					out.RawByte(',')
-				}
-				if v12 == nil {
-					out.RawString("null")
-				} else {
-					(*v12).MarshalEasyJSON(out)
-				}
-			}
-			out.RawByte(']')
-		}
-	}
-	if len(in.AllItems) != 0 {
-		const prefix string = ",\"AllItems\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('[')
-			for v13, v14 := range in.AllItems {
-				if v13 > 0 {
-					out.RawByte(',')
-				}
-				if v14 == nil {
-					out.RawString("null")
-				} else {
-					easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out, *v14)
-				}
-			}
-			out.RawByte(']')
-		}
-	}
-	if len(in.Loadouts) != 0 {
-		const prefix string = ",\"Loadouts\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('{')
-			v15First := true
-			for v15Name, v15Value := range in.Loadouts {
-				if v15First {
-					v15First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v15Name))
-				out.RawByte(':')
-				if v15Value == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-					out.RawString(`null`)
-				} else {
-					out.RawByte('{')
-					v16First := true
-					for v16Name, v16Value := range v15Value {
-						if v16First {
-							v16First = false
-						} else {
-							out.RawByte(',')
-						}
-						out.UintStr(uint(v16Name))
-						out.RawByte(':')
-						if v16Value == nil {
-							out.RawString("null")
-						} else {
-							easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out, *v16Value)
-						}
-					}
-					out.RawByte('}')
-				}
-			}
-			out.RawByte('}')
-		}
-	}
-	if len(in.Equipments) != 0 {
-		const prefix string = ",\"Equipments\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('{')
-			v17First := true
-			for v17Name, v17Value := range in.Equipments {
-				if v17First {
-					v17First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v17Name))
-				out.RawByte(':')
-				if v17Value == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-					out.RawString(`null`)
-				} else {
-					out.RawByte('{')
-					v18First := true
-					for v18Name, v18Value := range v17Value {
-						if v18First {
-							v18First = false
-						} else {
-							out.RawByte(',')
-						}
-						out.UintStr(uint(v18Name))
-						out.RawByte(':')
-						if v18Value == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-							out.RawString("null")
-						} else {
-							out.RawByte('[')
-							for v19, v20 := range v18Value {
-								if v19 > 0 {
-									out.RawByte(',')
-								}
-								if v20 == nil {
-									out.RawString("null")
-								} else {
-									easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out, *v20)
-								}
-							}
-							out.RawByte(']')
-						}
-					}
-					out.RawByte('}')
-				}
-			}
-			out.RawByte('}')
-		}
-	}
-	out.RawByte('}')
-}
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in *jlexer.Lexer, out *Item) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "itemHash":
-			out.ItemHash = uint(in.Uint())
-		case "itemInstanceId":
-			out.InstanceID = string(in.String())
-		case "bucketHash":
-			out.BucketHash = uint(in.Uint())
-		case "lockable":
-			out.Lockable = bool(in.Bool())
-		case "bindStatus":
-			out.BindStatus = int(in.Int())
-		case "state":
-			out.State = int(in.Int())
-		case "location":
-			out.Location = int(in.Int())
-		case "transferStatus":
-			out.TransferStatus = int(in.Int())
-		case "quantity":
-			out.Quantity = int(in.Int())
-		case "Instance":
-			if in.IsNull() {
-				in.Skip()
-				out.Instance = nil
-			} else {
-				if out.Instance == nil {
-					out.Instance = new(ItemInstance)
-				}
-				easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(in, out.Instance)
-			}
-		case "Character":
-			if in.IsNull() {
-				in.Skip()
-				out.Character = nil
-			} else {
-				if out.Character == nil {
-					out.Character = new(Character)
-				}
-				(*out.Character).UnmarshalEasyJSON(in)
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out *jwriter.Writer, in Item) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.ItemHash != 0 {
-		const prefix string = ",\"itemHash\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.Uint(uint(in.ItemHash))
-	}
-	if in.InstanceID != "" {
-		const prefix string = ",\"itemInstanceId\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.InstanceID))
-	}
-	if in.BucketHash != 0 {
-		const prefix string = ",\"bucketHash\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Uint(uint(in.BucketHash))
-	}
-	if in.Lockable {
-		const prefix string = ",\"lockable\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.Lockable))
-	}
-	if in.BindStatus != 0 {
-		const prefix string = ",\"bindStatus\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.BindStatus))
-	}
-	if in.State != 0 {
-		const prefix string = ",\"state\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.State))
-	}
-	if in.Location != 0 {
-		const prefix string = ",\"location\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.Location))
-	}
-	if in.TransferStatus != 0 {
-		const prefix string = ",\"transferStatus\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.TransferStatus))
-	}
-	if in.Quantity != 0 {
-		const prefix string = ",\"quantity\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.Quantity))
-	}
-	if in.Instance != nil {
-		const prefix string = ",\"Instance\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(out, *in.Instance)
-	}
-	if in.Character != nil {
-		const prefix string = ",\"Character\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.Character).MarshalEasyJSON(out)
-	}
-	out.RawByte('}')
-}
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(in *jlexer.Lexer, out *ItemInstance) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "isEquipped":
-			out.IsEquipped = bool(in.Bool())
-		case "canEquip":
-			out.CanEquip = bool(in.Bool())
-		case "quality":
-			out.Quality = int(in.Int())
-		case "cannotEquipReason":
-			out.CannotEquipReason = int(in.Int())
-		case "DamageType":
-			out.DamageType = int(in.Int())
-		case "equipRequiredLevel":
-			out.EquipRequiredLevel = int(in.Int())
-		case "primaryStat":
-			if in.IsNull() {
-				in.Skip()
-				out.PrimaryStat = nil
-			} else {
-				if out.PrimaryStat == nil {
-					out.PrimaryStat = new(struct {
-						StatHash     uint `json:"statHash"`
-						Value        int  `json:"value"`
-						MaximumValue int  `json:"maximumValue"`
-						ItemLevel    int  `json:"itemLevel"`
-					})
-				}
-				easyjsonC0e5e3f1Decode1(in, out.PrimaryStat)
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(out *jwriter.Writer, in ItemInstance) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.IsEquipped {
-		const prefix string = ",\"isEquipped\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.Bool(bool(in.IsEquipped))
-	}
-	if in.CanEquip {
-		const prefix string = ",\"canEquip\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.CanEquip))
-	}
-	if in.Quality != 0 {
-		const prefix string = ",\"quality\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.Quality))
-	}
-	if in.CannotEquipReason != 0 {
-		const prefix string = ",\"cannotEquipReason\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.CannotEquipReason))
-	}
-	if in.DamageType != 0 {
-		const prefix string = ",\"DamageType\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.DamageType))
-	}
-	if in.EquipRequiredLevel != 0 {
-		const prefix string = ",\"equipRequiredLevel\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.EquipRequiredLevel))
-	}
-	if in.PrimaryStat != nil {
-		const prefix string = ",\"primaryStat\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjsonC0e5e3f1Encode1(out, *in.PrimaryStat)
-	}
-	out.RawByte('}')
-}
-func easyjsonC0e5e3f1Decode1(in *jlexer.Lexer, out *struct {
-	StatHash     uint `json:"statHash"`
-	Value        int  `json:"value"`
-	MaximumValue int  `json:"maximumValue"`
-	ItemLevel    int  `json:"itemLevel"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "statHash":
-			out.StatHash = uint(in.Uint())
-		case "value":
-			out.Value = int(in.Int())
-		case "maximumValue":
-			out.MaximumValue = int(in.Int())
-		case "itemLevel":
-			out.ItemLevel = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1Encode1(out *jwriter.Writer, in struct {
-	StatHash     uint `json:"statHash"`
-	Value        int  `json:"value"`
-	MaximumValue int  `json:"maximumValue"`
-	ItemLevel    int  `json:"itemLevel"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.StatHash != 0 {
-		const prefix string = ",\"statHash\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.Uint(uint(in.StatHash))
-	}
-	if in.Value != 0 {
-		const prefix string = ",\"value\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.Value))
-	}
-	if in.MaximumValue != 0 {
-		const prefix string = ",\"maximumValue\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.MaximumValue))
-	}
-	if in.ItemLevel != 0 {
-		const prefix string = ",\"itemLevel\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.ItemLevel))
-	}
-	out.RawByte('}')
-}
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(in *jlexer.Lexer, out *ItemListPayload) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie5(in *jlexer.Lexer, out *ItemListPayload) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1477,7 +668,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(in *jlexer.Lex
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(out *jwriter.Writer, in ItemListPayload) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie5(out *jwriter.Writer, in ItemListPayload) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1493,27 +684,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(out *jwriter.W
 // MarshalJSON supports json.Marshaler interface
 func (v ItemListPayload) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemListPayload) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemListPayload) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemListPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie5(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(in *jlexer.Lexer, out *ItemListData) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in *jlexer.Lexer, out *ItemListData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1548,17 +739,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(in *jlexer.Lex
 					out.Items = (out.Items)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v21 *Item
+					var v4 *Item
 					if in.IsNull() {
 						in.Skip()
-						v21 = nil
+						v4 = nil
 					} else {
-						if v21 == nil {
-							v21 = new(Item)
+						if v4 == nil {
+							v4 = new(Item)
 						}
-						easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in, v21)
+						(*v4).UnmarshalEasyJSON(in)
 					}
-					out.Items = append(out.Items, v21)
+					out.Items = append(out.Items, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1573,7 +764,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(in *jlexer.Lex
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(out *jwriter.Writer, in ItemListData) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out *jwriter.Writer, in ItemListData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1583,14 +774,14 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(out *jwriter.W
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('[')
-			for v22, v23 := range in.Items {
-				if v22 > 0 {
+			for v5, v6 := range in.Items {
+				if v5 > 0 {
 					out.RawByte(',')
 				}
-				if v23 == nil {
+				if v6 == nil {
 					out.RawString("null")
 				} else {
-					easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out, *v23)
+					(*v6).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -1602,27 +793,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(out *jwriter.W
 // MarshalJSON supports json.Marshaler interface
 func (v ItemListData) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemListData) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemListData) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemListData) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(in *jlexer.Lexer, out *ItemInstanceData) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(in *jlexer.Lexer, out *ItemInstanceData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1654,17 +845,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v24 *ItemInstance
+					var v7 *ItemInstance
 					if in.IsNull() {
 						in.Skip()
-						v24 = nil
+						v7 = nil
 					} else {
-						if v24 == nil {
-							v24 = new(ItemInstance)
+						if v7 == nil {
+							v7 = new(ItemInstance)
 						}
-						easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(in, v24)
+						(*v7).UnmarshalEasyJSON(in)
 					}
-					(out.Data)[key] = v24
+					(out.Data)[key] = v7
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -1679,7 +870,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(out *jwriter.Writer, in ItemInstanceData) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(out *jwriter.Writer, in ItemInstanceData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1689,19 +880,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(out *jwriter.
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('{')
-			v25First := true
-			for v25Name, v25Value := range in.Data {
-				if v25First {
-					v25First = false
+			v8First := true
+			for v8Name, v8Value := range in.Data {
+				if v8First {
+					v8First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v25Name))
+				out.String(string(v8Name))
 				out.RawByte(':')
-				if v25Value == nil {
+				if v8Value == nil {
 					out.RawString("null")
 				} else {
-					easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(out, *v25Value)
+					(*v8Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -1713,27 +904,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v ItemInstanceData) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemInstanceData) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie7(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemInstanceData) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemInstanceData) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie7(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(in *jlexer.Lexer, out *ItemComponents) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(in *jlexer.Lexer, out *ItemComponents) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1772,7 +963,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(out *jwriter.Writer, in ItemComponents) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(out *jwriter.Writer, in ItemComponents) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1788,27 +979,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v ItemComponents) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemComponents) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie8(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemComponents) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemComponents) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie8(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(in *jlexer.Lexer, out *GetProfileResponse) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(in *jlexer.Lexer, out *GetProfileResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1864,7 +1055,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(out *jwriter.Writer, in GetProfileResponse) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(out *jwriter.Writer, in GetProfileResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1936,27 +1127,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v GetProfileResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetProfileResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie9(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetProfileResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetProfileResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie9(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(in *jlexer.Lexer, out *GetProfilePayload) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(in *jlexer.Lexer, out *GetProfilePayload) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2055,7 +1246,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(out *jwriter.Writer, in GetProfilePayload) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(out *jwriter.Writer, in GetProfilePayload) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2131,27 +1322,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v GetProfilePayload) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetProfilePayload) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie10(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetProfilePayload) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetProfilePayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie10(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(in *jlexer.Lexer, out *FactionProgression) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(in *jlexer.Lexer, out *FactionProgression) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2207,7 +1398,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(out *jwriter.Writer, in FactionProgression) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(out *jwriter.Writer, in FactionProgression) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2343,27 +1534,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v FactionProgression) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FactionProgression) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie11(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FactionProgression) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FactionProgression) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie11(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(in *jlexer.Lexer, out *DestinyProgression) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(in *jlexer.Lexer, out *DestinyProgression) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2415,7 +1606,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(out *jwriter.Writer, in DestinyProgression) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(out *jwriter.Writer, in DestinyProgression) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2531,27 +1722,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v DestinyProgression) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DestinyProgression) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie12(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DestinyProgression) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DestinyProgression) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie12(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(in *jlexer.Lexer, out *DestinyMembership) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(in *jlexer.Lexer, out *DestinyMembership) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2586,7 +1777,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(out *jwriter.Writer, in DestinyMembership) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(out *jwriter.Writer, in DestinyMembership) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2622,27 +1813,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v DestinyMembership) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DestinyMembership) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie13(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DestinyMembership) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DestinyMembership) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie13(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(in *jlexer.Lexer, out *CurrentUserMembershipsResponse) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(in *jlexer.Lexer, out *CurrentUserMembershipsResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2673,6 +1864,364 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(in *jlexer.Le
 						BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
 					})
 				}
+				easyjsonC0e5e3f1Decode1(in, out.Response)
+			}
+		case "ErrorCode":
+			out.ErrorCode = int(in.Int())
+		case "ThrottleSeconds":
+			out.ThrottleSeconds = int(in.Int())
+		case "ErrorStatus":
+			out.ErrorStatus = string(in.String())
+		case "Message":
+			out.Message = string(in.String())
+		case "MessageData":
+			if m, ok := out.MessageData.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.MessageData.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.MessageData = in.Interface()
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(out *jwriter.Writer, in CurrentUserMembershipsResponse) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Response != nil {
+		const prefix string = ",\"Response\":"
+		first = false
+		out.RawString(prefix[1:])
+		easyjsonC0e5e3f1Encode1(out, *in.Response)
+	}
+	if in.ErrorCode != 0 {
+		const prefix string = ",\"ErrorCode\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.ErrorCode))
+	}
+	if in.ThrottleSeconds != 0 {
+		const prefix string = ",\"ThrottleSeconds\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.ThrottleSeconds))
+	}
+	if in.ErrorStatus != "" {
+		const prefix string = ",\"ErrorStatus\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ErrorStatus))
+	}
+	if in.Message != "" {
+		const prefix string = ",\"Message\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Message))
+	}
+	if in.MessageData != nil {
+		const prefix string = ",\"MessageData\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if m, ok := in.MessageData.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.MessageData.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.MessageData))
+		}
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v CurrentUserMembershipsResponse) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v CurrentUserMembershipsResponse) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie14(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *CurrentUserMembershipsResponse) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *CurrentUserMembershipsResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie14(l, v)
+}
+func easyjsonC0e5e3f1Decode1(in *jlexer.Lexer, out *struct {
+	DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
+	BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
+}) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "destinyMemberships":
+			if in.IsNull() {
+				in.Skip()
+				out.DestinyMemberships = nil
+			} else {
+				in.Delim('[')
+				if out.DestinyMemberships == nil {
+					if !in.IsDelim(']') {
+						out.DestinyMemberships = make([]*DestinyMembership, 0, 8)
+					} else {
+						out.DestinyMemberships = []*DestinyMembership{}
+					}
+				} else {
+					out.DestinyMemberships = (out.DestinyMemberships)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v9 *DestinyMembership
+					if in.IsNull() {
+						in.Skip()
+						v9 = nil
+					} else {
+						if v9 == nil {
+							v9 = new(DestinyMembership)
+						}
+						(*v9).UnmarshalEasyJSON(in)
+					}
+					out.DestinyMemberships = append(out.DestinyMemberships, v9)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "bungieNetUser":
+			if in.IsNull() {
+				in.Skip()
+				out.BungieNetUser = nil
+			} else {
+				if out.BungieNetUser == nil {
+					out.BungieNetUser = new(BungieNetUser)
+				}
+				(*out.BungieNetUser).UnmarshalEasyJSON(in)
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonC0e5e3f1Encode1(out *jwriter.Writer, in struct {
+	DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
+	BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
+}) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if len(in.DestinyMemberships) != 0 {
+		const prefix string = ",\"destinyMemberships\":"
+		first = false
+		out.RawString(prefix[1:])
+		{
+			out.RawByte('[')
+			for v10, v11 := range in.DestinyMemberships {
+				if v10 > 0 {
+					out.RawByte(',')
+				}
+				if v11 == nil {
+					out.RawString("null")
+				} else {
+					(*v11).MarshalEasyJSON(out)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.BungieNetUser != nil {
+		const prefix string = ",\"bungieNetUser\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.BungieNetUser).MarshalEasyJSON(out)
+	}
+	out.RawByte('}')
+}
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(in *jlexer.Lexer, out *CurrentUserMemberships) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "BungieNetUser":
+			if in.IsNull() {
+				in.Skip()
+				out.BungieNetUser = nil
+			} else {
+				if out.BungieNetUser == nil {
+					out.BungieNetUser = new(BungieNetUser)
+				}
+				(*out.BungieNetUser).UnmarshalEasyJSON(in)
+			}
+		case "DestinyMembership":
+			if in.IsNull() {
+				in.Skip()
+				out.DestinyMembership = nil
+			} else {
+				if out.DestinyMembership == nil {
+					out.DestinyMembership = new(DestinyMembership)
+				}
+				(*out.DestinyMembership).UnmarshalEasyJSON(in)
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(out *jwriter.Writer, in CurrentUserMemberships) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.BungieNetUser != nil {
+		const prefix string = ",\"BungieNetUser\":"
+		first = false
+		out.RawString(prefix[1:])
+		(*in.BungieNetUser).MarshalEasyJSON(out)
+	}
+	if in.DestinyMembership != nil {
+		const prefix string = ",\"DestinyMembership\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.DestinyMembership).MarshalEasyJSON(out)
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v CurrentUserMemberships) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v CurrentUserMemberships) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie15(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *CurrentUserMemberships) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *CurrentUserMemberships) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie15(l, v)
+}
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(in *jlexer.Lexer, out *CharacterProgressionResponse) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	out.BaseResponse = new(BaseResponse)
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "Response":
+			if in.IsNull() {
+				in.Skip()
+				out.Response = nil
+			} else {
+				if out.Response == nil {
+					out.Response = new(struct {
+						CharacterProgressions *struct {
+							Data map[string]*CharacterProgression `json:"data"`
+						} `json:"characterProgressions"`
+					})
+				}
 				easyjsonC0e5e3f1Decode2(in, out.Response)
 			}
 		case "ErrorCode":
@@ -2701,7 +2250,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(out *jwriter.Writer, in CurrentUserMembershipsResponse) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(out *jwriter.Writer, in CharacterProgressionResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2771,387 +2320,29 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(out *jwriter.
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v CurrentUserMembershipsResponse) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v CurrentUserMembershipsResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *CurrentUserMembershipsResponse) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *CurrentUserMembershipsResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(l, v)
-}
-func easyjsonC0e5e3f1Decode2(in *jlexer.Lexer, out *struct {
-	DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
-	BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "destinyMemberships":
-			if in.IsNull() {
-				in.Skip()
-				out.DestinyMemberships = nil
-			} else {
-				in.Delim('[')
-				if out.DestinyMemberships == nil {
-					if !in.IsDelim(']') {
-						out.DestinyMemberships = make([]*DestinyMembership, 0, 8)
-					} else {
-						out.DestinyMemberships = []*DestinyMembership{}
-					}
-				} else {
-					out.DestinyMemberships = (out.DestinyMemberships)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v26 *DestinyMembership
-					if in.IsNull() {
-						in.Skip()
-						v26 = nil
-					} else {
-						if v26 == nil {
-							v26 = new(DestinyMembership)
-						}
-						(*v26).UnmarshalEasyJSON(in)
-					}
-					out.DestinyMemberships = append(out.DestinyMemberships, v26)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "bungieNetUser":
-			if in.IsNull() {
-				in.Skip()
-				out.BungieNetUser = nil
-			} else {
-				if out.BungieNetUser == nil {
-					out.BungieNetUser = new(BungieNetUser)
-				}
-				(*out.BungieNetUser).UnmarshalEasyJSON(in)
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1Encode2(out *jwriter.Writer, in struct {
-	DestinyMemberships []*DestinyMembership `json:"destinyMemberships"`
-	BungieNetUser      *BungieNetUser       `json:"bungieNetUser"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if len(in.DestinyMemberships) != 0 {
-		const prefix string = ",\"destinyMemberships\":"
-		first = false
-		out.RawString(prefix[1:])
-		{
-			out.RawByte('[')
-			for v27, v28 := range in.DestinyMemberships {
-				if v27 > 0 {
-					out.RawByte(',')
-				}
-				if v28 == nil {
-					out.RawString("null")
-				} else {
-					(*v28).MarshalEasyJSON(out)
-				}
-			}
-			out.RawByte(']')
-		}
-	}
-	if in.BungieNetUser != nil {
-		const prefix string = ",\"bungieNetUser\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.BungieNetUser).MarshalEasyJSON(out)
-	}
-	out.RawByte('}')
-}
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(in *jlexer.Lexer, out *CurrentUserMemberships) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "BungieNetUser":
-			if in.IsNull() {
-				in.Skip()
-				out.BungieNetUser = nil
-			} else {
-				if out.BungieNetUser == nil {
-					out.BungieNetUser = new(BungieNetUser)
-				}
-				(*out.BungieNetUser).UnmarshalEasyJSON(in)
-			}
-		case "DestinyMembership":
-			if in.IsNull() {
-				in.Skip()
-				out.DestinyMembership = nil
-			} else {
-				if out.DestinyMembership == nil {
-					out.DestinyMembership = new(DestinyMembership)
-				}
-				(*out.DestinyMembership).UnmarshalEasyJSON(in)
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(out *jwriter.Writer, in CurrentUserMemberships) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.BungieNetUser != nil {
-		const prefix string = ",\"BungieNetUser\":"
-		first = false
-		out.RawString(prefix[1:])
-		(*in.BungieNetUser).MarshalEasyJSON(out)
-	}
-	if in.DestinyMembership != nil {
-		const prefix string = ",\"DestinyMembership\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.DestinyMembership).MarshalEasyJSON(out)
-	}
-	out.RawByte('}')
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (v CurrentUserMemberships) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v CurrentUserMemberships) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *CurrentUserMemberships) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *CurrentUserMemberships) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(l, v)
-}
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(in *jlexer.Lexer, out *CharacterProgressionResponse) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	out.BaseResponse = new(BaseResponse)
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "Response":
-			if in.IsNull() {
-				in.Skip()
-				out.Response = nil
-			} else {
-				if out.Response == nil {
-					out.Response = new(struct {
-						CharacterProgressions *struct {
-							Data map[string]*CharacterProgression `json:"data"`
-						} `json:"characterProgressions"`
-					})
-				}
-				easyjsonC0e5e3f1Decode3(in, out.Response)
-			}
-		case "ErrorCode":
-			out.ErrorCode = int(in.Int())
-		case "ThrottleSeconds":
-			out.ThrottleSeconds = int(in.Int())
-		case "ErrorStatus":
-			out.ErrorStatus = string(in.String())
-		case "Message":
-			out.Message = string(in.String())
-		case "MessageData":
-			if m, ok := out.MessageData.(easyjson.Unmarshaler); ok {
-				m.UnmarshalEasyJSON(in)
-			} else if m, ok := out.MessageData.(json.Unmarshaler); ok {
-				_ = m.UnmarshalJSON(in.Raw())
-			} else {
-				out.MessageData = in.Interface()
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(out *jwriter.Writer, in CharacterProgressionResponse) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.Response != nil {
-		const prefix string = ",\"Response\":"
-		first = false
-		out.RawString(prefix[1:])
-		easyjsonC0e5e3f1Encode3(out, *in.Response)
-	}
-	if in.ErrorCode != 0 {
-		const prefix string = ",\"ErrorCode\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.ErrorCode))
-	}
-	if in.ThrottleSeconds != 0 {
-		const prefix string = ",\"ThrottleSeconds\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.ThrottleSeconds))
-	}
-	if in.ErrorStatus != "" {
-		const prefix string = ",\"ErrorStatus\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.ErrorStatus))
-	}
-	if in.Message != "" {
-		const prefix string = ",\"Message\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Message))
-	}
-	if in.MessageData != nil {
-		const prefix string = ",\"MessageData\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		if m, ok := in.MessageData.(easyjson.Marshaler); ok {
-			m.MarshalEasyJSON(out)
-		} else if m, ok := in.MessageData.(json.Marshaler); ok {
-			out.Raw(m.MarshalJSON())
-		} else {
-			out.Raw(json.Marshal(in.MessageData))
-		}
-	}
-	out.RawByte('}')
-}
-
-// MarshalJSON supports json.Marshaler interface
 func (v CharacterProgressionResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CharacterProgressionResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie16(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CharacterProgressionResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CharacterProgressionResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie16(l, v)
 }
-func easyjsonC0e5e3f1Decode3(in *jlexer.Lexer, out *struct {
+func easyjsonC0e5e3f1Decode2(in *jlexer.Lexer, out *struct {
 	CharacterProgressions *struct {
 		Data map[string]*CharacterProgression `json:"data"`
 	} `json:"characterProgressions"`
@@ -3184,7 +2375,7 @@ func easyjsonC0e5e3f1Decode3(in *jlexer.Lexer, out *struct {
 						Data map[string]*CharacterProgression `json:"data"`
 					})
 				}
-				easyjsonC0e5e3f1Decode4(in, out.CharacterProgressions)
+				easyjsonC0e5e3f1Decode3(in, out.CharacterProgressions)
 			}
 		default:
 			in.SkipRecursive()
@@ -3196,7 +2387,7 @@ func easyjsonC0e5e3f1Decode3(in *jlexer.Lexer, out *struct {
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1Encode3(out *jwriter.Writer, in struct {
+func easyjsonC0e5e3f1Encode2(out *jwriter.Writer, in struct {
 	CharacterProgressions *struct {
 		Data map[string]*CharacterProgression `json:"data"`
 	} `json:"characterProgressions"`
@@ -3208,11 +2399,11 @@ func easyjsonC0e5e3f1Encode3(out *jwriter.Writer, in struct {
 		const prefix string = ",\"characterProgressions\":"
 		first = false
 		out.RawString(prefix[1:])
-		easyjsonC0e5e3f1Encode4(out, *in.CharacterProgressions)
+		easyjsonC0e5e3f1Encode3(out, *in.CharacterProgressions)
 	}
 	out.RawByte('}')
 }
-func easyjsonC0e5e3f1Decode4(in *jlexer.Lexer, out *struct {
+func easyjsonC0e5e3f1Decode3(in *jlexer.Lexer, out *struct {
 	Data map[string]*CharacterProgression `json:"data"`
 }) {
 	isTopLevel := in.IsStart()
@@ -3246,17 +2437,17 @@ func easyjsonC0e5e3f1Decode4(in *jlexer.Lexer, out *struct {
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v29 *CharacterProgression
+					var v12 *CharacterProgression
 					if in.IsNull() {
 						in.Skip()
-						v29 = nil
+						v12 = nil
 					} else {
-						if v29 == nil {
-							v29 = new(CharacterProgression)
+						if v12 == nil {
+							v12 = new(CharacterProgression)
 						}
-						(*v29).UnmarshalEasyJSON(in)
+						(*v12).UnmarshalEasyJSON(in)
 					}
-					(out.Data)[key] = v29
+					(out.Data)[key] = v12
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3271,7 +2462,7 @@ func easyjsonC0e5e3f1Decode4(in *jlexer.Lexer, out *struct {
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1Encode4(out *jwriter.Writer, in struct {
+func easyjsonC0e5e3f1Encode3(out *jwriter.Writer, in struct {
 	Data map[string]*CharacterProgression `json:"data"`
 }) {
 	out.RawByte('{')
@@ -3283,19 +2474,19 @@ func easyjsonC0e5e3f1Encode4(out *jwriter.Writer, in struct {
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('{')
-			v30First := true
-			for v30Name, v30Value := range in.Data {
-				if v30First {
-					v30First = false
+			v13First := true
+			for v13Name, v13Value := range in.Data {
+				if v13First {
+					v13First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v30Name))
+				out.String(string(v13Name))
 				out.RawByte(':')
-				if v30Value == nil {
+				if v13Value == nil {
 					out.RawString("null")
 				} else {
-					(*v30Value).MarshalEasyJSON(out)
+					(*v13Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3303,7 +2494,7 @@ func easyjsonC0e5e3f1Encode4(out *jwriter.Writer, in struct {
 	}
 	out.RawByte('}')
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Lexer, out *CharacterProgression) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(in *jlexer.Lexer, out *CharacterProgression) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3335,17 +2526,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v31 *DestinyProgression
+					var v14 *DestinyProgression
 					if in.IsNull() {
 						in.Skip()
-						v31 = nil
+						v14 = nil
 					} else {
-						if v31 == nil {
-							v31 = new(DestinyProgression)
+						if v14 == nil {
+							v14 = new(DestinyProgression)
 						}
-						(*v31).UnmarshalEasyJSON(in)
+						(*v14).UnmarshalEasyJSON(in)
 					}
-					(out.Progressions)[key] = v31
+					(out.Progressions)[key] = v14
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3363,17 +2554,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v32 *FactionProgression
+					var v15 *FactionProgression
 					if in.IsNull() {
 						in.Skip()
-						v32 = nil
+						v15 = nil
 					} else {
-						if v32 == nil {
-							v32 = new(FactionProgression)
+						if v15 == nil {
+							v15 = new(FactionProgression)
 						}
-						(*v32).UnmarshalEasyJSON(in)
+						(*v15).UnmarshalEasyJSON(in)
 					}
-					(out.Factions)[key] = v32
+					(out.Factions)[key] = v15
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3391,17 +2582,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v33 *MilestoneProgression
+					var v16 *MilestoneProgression
 					if in.IsNull() {
 						in.Skip()
-						v33 = nil
+						v16 = nil
 					} else {
-						if v33 == nil {
-							v33 = new(MilestoneProgression)
+						if v16 == nil {
+							v16 = new(MilestoneProgression)
 						}
-						(*v33).UnmarshalEasyJSON(in)
+						(*v16).UnmarshalEasyJSON(in)
 					}
-					(out.Milestones)[key] = v33
+					(out.Milestones)[key] = v16
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3416,7 +2607,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.Writer, in CharacterProgression) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(out *jwriter.Writer, in CharacterProgression) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -3426,19 +2617,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('{')
-			v34First := true
-			for v34Name, v34Value := range in.Progressions {
-				if v34First {
-					v34First = false
+			v17First := true
+			for v17Name, v17Value := range in.Progressions {
+				if v17First {
+					v17First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v34Name))
+				out.String(string(v17Name))
 				out.RawByte(':')
-				if v34Value == nil {
+				if v17Value == nil {
 					out.RawString("null")
 				} else {
-					(*v34Value).MarshalEasyJSON(out)
+					(*v17Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3454,19 +2645,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.
 		}
 		{
 			out.RawByte('{')
-			v35First := true
-			for v35Name, v35Value := range in.Factions {
-				if v35First {
-					v35First = false
+			v18First := true
+			for v18Name, v18Value := range in.Factions {
+				if v18First {
+					v18First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v35Name))
+				out.String(string(v18Name))
 				out.RawByte(':')
-				if v35Value == nil {
+				if v18Value == nil {
 					out.RawString("null")
 				} else {
-					(*v35Value).MarshalEasyJSON(out)
+					(*v18Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3482,19 +2673,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.
 		}
 		{
 			out.RawByte('{')
-			v36First := true
-			for v36Name, v36Value := range in.Milestones {
-				if v36First {
-					v36First = false
+			v19First := true
+			for v19Name, v19Value := range in.Milestones {
+				if v19First {
+					v19First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v36Name))
+				out.String(string(v19Name))
 				out.RawByte(':')
-				if v36Value == nil {
+				if v19Value == nil {
 					out.RawString("null")
 				} else {
-					(*v36Value).MarshalEasyJSON(out)
+					(*v19Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3506,27 +2697,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v CharacterProgression) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CharacterProgression) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie17(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CharacterProgression) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CharacterProgression) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie17(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(in *jlexer.Lexer, out *CharacterMappedItemListPayload) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(in *jlexer.Lexer, out *CharacterMappedItemListPayload) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3558,17 +2749,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v37 *CharacterMappedItemListData
+					var v20 *CharacterMappedItemListData
 					if in.IsNull() {
 						in.Skip()
-						v37 = nil
+						v20 = nil
 					} else {
-						if v37 == nil {
-							v37 = new(CharacterMappedItemListData)
+						if v20 == nil {
+							v20 = new(CharacterMappedItemListData)
 						}
-						(*v37).UnmarshalEasyJSON(in)
+						(*v20).UnmarshalEasyJSON(in)
 					}
-					(out.Data)[key] = v37
+					(out.Data)[key] = v20
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3583,7 +2774,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(out *jwriter.Writer, in CharacterMappedItemListPayload) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(out *jwriter.Writer, in CharacterMappedItemListPayload) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -3593,19 +2784,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(out *jwriter.
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('{')
-			v38First := true
-			for v38Name, v38Value := range in.Data {
-				if v38First {
-					v38First = false
+			v21First := true
+			for v21Name, v21Value := range in.Data {
+				if v21First {
+					v21First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v38Name))
+				out.String(string(v21Name))
 				out.RawByte(':')
-				if v38Value == nil {
+				if v21Value == nil {
 					out.RawString("null")
 				} else {
-					(*v38Value).MarshalEasyJSON(out)
+					(*v21Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3617,27 +2808,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v CharacterMappedItemListPayload) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CharacterMappedItemListPayload) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie18(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CharacterMappedItemListPayload) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CharacterMappedItemListPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie18(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(in *jlexer.Lexer, out *CharacterMappedItemListData) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(in *jlexer.Lexer, out *CharacterMappedItemListData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3672,17 +2863,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(in *jlexer.Le
 					out.Items = (out.Items)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v39 *Item
+					var v22 *Item
 					if in.IsNull() {
 						in.Skip()
-						v39 = nil
+						v22 = nil
 					} else {
-						if v39 == nil {
-							v39 = new(Item)
+						if v22 == nil {
+							v22 = new(Item)
 						}
-						easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie6(in, v39)
+						(*v22).UnmarshalEasyJSON(in)
 					}
-					out.Items = append(out.Items, v39)
+					out.Items = append(out.Items, v22)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -3697,7 +2888,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(out *jwriter.Writer, in CharacterMappedItemListData) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(out *jwriter.Writer, in CharacterMappedItemListData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -3707,14 +2898,14 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(out *jwriter.
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('[')
-			for v40, v41 := range in.Items {
-				if v40 > 0 {
+			for v23, v24 := range in.Items {
+				if v23 > 0 {
 					out.RawByte(',')
 				}
-				if v41 == nil {
+				if v24 == nil {
 					out.RawString("null")
 				} else {
-					easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie6(out, *v41)
+					(*v24).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -3726,27 +2917,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v CharacterMappedItemListData) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CharacterMappedItemListData) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie19(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CharacterMappedItemListData) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CharacterMappedItemListData) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie19(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(in *jlexer.Lexer, out *CharacterData) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(in *jlexer.Lexer, out *CharacterData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3778,17 +2969,17 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(in *jlexer.Le
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v42 *Character
+					var v25 *Character
 					if in.IsNull() {
 						in.Skip()
-						v42 = nil
+						v25 = nil
 					} else {
-						if v42 == nil {
-							v42 = new(Character)
+						if v25 == nil {
+							v25 = new(Character)
 						}
-						(*v42).UnmarshalEasyJSON(in)
+						(*v25).UnmarshalEasyJSON(in)
 					}
-					(out.Data)[key] = v42
+					(out.Data)[key] = v25
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3803,7 +2994,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(out *jwriter.Writer, in CharacterData) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(out *jwriter.Writer, in CharacterData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -3813,19 +3004,19 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(out *jwriter.
 		out.RawString(prefix[1:])
 		{
 			out.RawByte('{')
-			v43First := true
-			for v43Name, v43Value := range in.Data {
-				if v43First {
-					v43First = false
+			v26First := true
+			for v26Name, v26Value := range in.Data {
+				if v26First {
+					v26First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v43Name))
+				out.String(string(v26Name))
 				out.RawByte(':')
-				if v43Value == nil {
+				if v26Value == nil {
 					out.RawString("null")
 				} else {
-					(*v43Value).MarshalEasyJSON(out)
+					(*v26Value).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte('}')
@@ -3837,27 +3028,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v CharacterData) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CharacterData) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie20(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CharacterData) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CharacterData) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie20(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie24(in *jlexer.Lexer, out *BungieNetUser) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(in *jlexer.Lexer, out *BungieNetUser) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3888,7 +3079,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie24(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie24(out *jwriter.Writer, in BungieNetUser) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(out *jwriter.Writer, in BungieNetUser) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -3904,27 +3095,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie24(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v BungieNetUser) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie24(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BungieNetUser) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie24(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie21(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BungieNetUser) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie24(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BungieNetUser) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie24(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie21(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie25(in *jlexer.Lexer, out *BaseResponse) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(in *jlexer.Lexer, out *BaseResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -3969,7 +3160,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie25(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie25(out *jwriter.Writer, in BaseResponse) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(out *jwriter.Writer, in BaseResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4031,27 +3222,27 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie25(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v BaseResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie25(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BaseResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie25(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie22(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BaseResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie25(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BaseResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie25(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie22(l, v)
 }
-func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie26(in *jlexer.Lexer, out *BaseProgression) {
+func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(in *jlexer.Lexer, out *BaseProgression) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4102,7 +3293,7 @@ func easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie26(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie26(out *jwriter.Writer, in BaseProgression) {
+func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(out *jwriter.Writer, in BaseProgression) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4218,23 +3409,23 @@ func easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie26(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v BaseProgression) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie26(&w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BaseProgression) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie26(w, v)
+	easyjsonC0e5e3f1EncodeGithubComRking788WarmindNetworkBungie23(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BaseProgression) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie26(&r, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BaseProgression) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie26(l, v)
+	easyjsonC0e5e3f1DecodeGithubComRking788WarmindNetworkBungie23(l, v)
 }

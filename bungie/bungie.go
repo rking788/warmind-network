@@ -57,6 +57,10 @@ var BucketHashLookup map[EquipmentBucket]uint
 // equipment constants.
 var EquipmentBucketLookup map[uint]EquipmentBucket
 
+// RecordLookup will hold all of the record information to be used for character
+// titles related to equipped titles from seals.
+var recordLookup map[uint]*Record
+
 // InitEnv provides a package level initialization point for any work that is environment specific
 func InitEnv(apiKey, warmindKey string) {
 	bungieAPIKey = apiKey
@@ -80,6 +84,13 @@ func InitEnv(apiKey, warmindKey string) {
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Error populating item metadata lookup table: %s\nExiting...", err.Error())
+		return
+	}
+
+	err = populateRecordLookup()
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Error populating record lookup table: %s\nExiting...", err.Error())
 		return
 	}
 }
@@ -168,6 +179,28 @@ func PopulateItemMetadata() error {
 		return rows.Err()
 	}
 	glg.Infof("Loaded %d item metadata entries", len(itemMetadata))
+
+	return nil
+}
+
+func populateRecordLookup() error {
+
+	rows, err := db.LoadRecords()
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	recordLookup = make(map[uint]*Record)
+
+	for rows.Next() {
+
+		r := Record{}
+		rows.Scan(&r.Hash, &r.Name, &r.HasTitle, &r.MaleTitle, &r.FemaleTitle)
+
+		recordLookup[r.Hash] = &r
+	}
+
+	glg.Infof("Loaded %d record entries", len(recordLookup))
 
 	return nil
 }
@@ -347,27 +380,42 @@ func EquipMaxLightGear(accessToken string) (string, error) {
 	}
 
 	// Transfer to the most recent character on the most recent platform
-	destinationID := profile.Characters[0].CharacterID
+	destinationCharacter := profile.Characters[0]
 	membershipType := profile.MembershipType
 
 	glg.Debugf("Character(%s), MembershipID(%s), MembershipType(%d)",
 		profile.Characters[0].CharacterID, profile.MembershipID, profile.MembershipType)
 
-	loadout := findMaxLightLoadout(profile, destinationID)
+	loadout := findMaxLightLoadout(profile, destinationCharacter.CharacterID)
 
 	glg.Debugf("Found loadout to equip: %v", loadout)
 	glg.Infof("Calculated power for loadout: %f", loadout.calculateLightLevel())
 
-	err = equipLoadout(loadout, destinationID, profile, membershipType, client)
+	err = equipLoadout(loadout, destinationCharacter.CharacterID, profile, membershipType, client)
 	if err != nil {
 		raven.CaptureError(err, nil)
 		glg.Errorf("Failed to equip the specified loadout: %s", err.Error())
 		return "", err
 	}
 
-	characterClass := classHashToName[profile.Characters[0].ClassHash]
-	outputStr := fmt.Sprintf("Max power equipped to your %s Guardian. You are a force "+
-		"to be wreckoned with.", characterClass)
+	characterClass := classHashToName[destinationCharacter.ClassHash]
+	titleHash := destinationCharacter.TitleRecordHash
+	title := "Guardian"
+	if titleHash != 0 {
+		if record, ok := recordLookup[titleHash]; ok {
+			if destinationCharacter.GenderHash == MALE {
+				title = record.MaleTitle
+			} else if destinationCharacter.GenderHash == FEMALE {
+				title = record.FemaleTitle
+			} else {
+				glg.Warnf("Unknown character gender hash: %d")
+			}
+		} else {
+			glg.Warnf("Title record not found with hash=%d", titleHash)
+		}
+	}
+	outputStr := fmt.Sprintf("Max power equipped to your %s %s. You are a force "+
+		"to be wreckoned with.", characterClass, title)
 	return outputStr, nil
 }
 

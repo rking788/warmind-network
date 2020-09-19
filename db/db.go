@@ -30,6 +30,7 @@ type LookupDB struct {
 	UpdateLoadoutStmt       *sql.Stmt
 	SelectLoadoutStmt       *sql.Stmt
 	SelectLoadoutByNameStmt *sql.Stmt
+	RecordStmt              *sql.Stmt
 }
 
 var db1 *LookupDB
@@ -114,6 +115,13 @@ func InitDatabase() error {
 		return err
 	}
 
+	selectRecordsStmt, err := db.Prepare("SELECT hash, name, has_title, male_title, female_title FROM records WHERE has_title = true")
+	if err != nil {
+		raven.CaptureError(err, nil)
+		glg.Errorf("Error preparing the select records statement: %s", err.Error())
+		return err
+	}
+
 	db1 = &LookupDB{
 		Database:                db,
 		HashFromNameStmt:        stmt,
@@ -125,6 +133,7 @@ func InitDatabase() error {
 		UpdateLoadoutStmt:       updateLoadoutStmt,
 		SelectLoadoutStmt:       selectLoadoutStmt,
 		SelectLoadoutByNameStmt: selectLoadoutByNameStmt,
+		RecordStmt:              selectRecordsStmt,
 	}
 
 	return nil
@@ -182,6 +191,22 @@ func LoadItemMetadata() (*sql.Rows, error) {
 	}
 
 	rows, err := db.ItemMetadataStmt.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+// LoadRecords will load all rows from the database for the record definitions
+func LoadRecords() (*sql.Rows, error) {
+
+	db, err := GetDBConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.RecordStmt.Query()
 	if err != nil {
 		return nil, err
 	}

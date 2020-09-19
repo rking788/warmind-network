@@ -55,6 +55,15 @@ type ItemMetadata struct {
 	BucketHash uint
 }
 
+// Record represents the data contained in a Dsetiny Record definition
+type Record struct {
+	Hash        uint
+	Name        string
+	HasTitle    bool
+	MaleTitle   string
+	FemaleTitle string
+}
+
 func (i *Item) String() string {
 	if i.Instance != nil {
 		if i.Instance.PrimaryStat != nil {

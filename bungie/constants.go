@@ -131,8 +131,8 @@ const (
 
 // Hash values for Gender 'genderHash' JSON key
 const (
-	MALE   = 3111576190
-	FEMALE = 2204441813
+	MALE   = uint(3111576190)
+	FEMALE = uint(2204441813)
 )
 
 // Gender Enum values used in some of the Bungie API responses

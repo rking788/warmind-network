@@ -54,6 +54,12 @@ func easyjson96521307DecodeGithubComRking788WarmindNetworkBungie(in *jlexer.Lexe
 			out.ClassHash = uint(in.Uint())
 		case "classType":
 			out.ClassType = int(in.Int())
+		case "genderHash":
+			out.GenderHash = uint(in.Uint())
+		case "genderType":
+			out.GenderType = int(in.Int())
+		case "titleRecordHash":
+			out.TitleRecordHash = uint(in.Uint())
 		case "light":
 			out.Light = int(in.Int())
 		case "levelProgression":
@@ -157,6 +163,36 @@ func easyjson96521307EncodeGithubComRking788WarmindNetworkBungie(out *jwriter.Wr
 			out.RawString(prefix)
 		}
 		out.Int(int(in.ClassType))
+	}
+	if in.GenderHash != 0 {
+		const prefix string = ",\"genderHash\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Uint(uint(in.GenderHash))
+	}
+	if in.GenderType != 0 {
+		const prefix string = ",\"genderType\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.GenderType))
+	}
+	if in.TitleRecordHash != 0 {
+		const prefix string = ",\"titleRecordHash\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Uint(uint(in.TitleRecordHash))
 	}
 	if in.Light != 0 {
 		const prefix string = ",\"light\":"

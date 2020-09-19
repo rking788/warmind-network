@@ -19,6 +19,9 @@ type Character struct {
 	RaceHash             uint      `json:"raceHash"`
 	ClassHash            uint      `json:"classHash"`
 	ClassType            int       `json:"classType"`
+	GenderHash           uint      `json:"genderHash"`
+	GenderType           int       `json:"genderType"`
+	TitleRecordHash      uint      `json:"titleRecordHash"`
 	Light                int       `json:"light"`
 	LevelProgression     *struct {
 		Level int `json:"level"`

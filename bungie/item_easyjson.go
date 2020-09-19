@@ -17,7 +17,122 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(in *jlexer.Lexer, out *ItemMetadata) {
+func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(in *jlexer.Lexer, out *Record) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "Hash":
+			out.Hash = uint(in.Uint())
+		case "Name":
+			out.Name = string(in.String())
+		case "HasTitle":
+			out.HasTitle = bool(in.Bool())
+		case "MaleTitle":
+			out.MaleTitle = string(in.String())
+		case "FemaleTitle":
+			out.FemaleTitle = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(out *jwriter.Writer, in Record) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Hash != 0 {
+		const prefix string = ",\"Hash\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.Uint(uint(in.Hash))
+	}
+	if in.Name != "" {
+		const prefix string = ",\"Name\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Name))
+	}
+	if in.HasTitle {
+		const prefix string = ",\"HasTitle\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.HasTitle))
+	}
+	if in.MaleTitle != "" {
+		const prefix string = ",\"MaleTitle\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.MaleTitle))
+	}
+	if in.FemaleTitle != "" {
+		const prefix string = ",\"FemaleTitle\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.FemaleTitle))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Record) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Record) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Record) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Record) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(l, v)
+}
+func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(in *jlexer.Lexer, out *ItemMetadata) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -52,7 +167,7 @@ func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(in *jlexer.Lexe
 		in.Consumed()
 	}
 }
-func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(out *jwriter.Writer, in ItemMetadata) {
+func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(out *jwriter.Writer, in ItemMetadata) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -88,27 +203,27 @@ func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(out *jwriter.Wr
 // MarshalJSON supports json.Marshaler interface
 func (v ItemMetadata) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(&w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemMetadata) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie(w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemMetadata) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(&r, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemMetadata) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie(l, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(l, v)
 }
-func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(in *jlexer.Lexer, out *ItemInstance) {
+func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(in *jlexer.Lexer, out *ItemInstance) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -164,7 +279,7 @@ func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(in *jlexer.Lex
 		in.Consumed()
 	}
 }
-func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(out *jwriter.Writer, in ItemInstance) {
+func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(out *jwriter.Writer, in ItemInstance) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -240,25 +355,25 @@ func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(out *jwriter.W
 // MarshalJSON supports json.Marshaler interface
 func (v ItemInstance) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(&w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ItemInstance) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie1(w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ItemInstance) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(&r, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ItemInstance) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie1(l, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(l, v)
 }
 func easyjsonA80d3b19Decode(in *jlexer.Lexer, out *struct {
 	StatHash     uint `json:"statHash"`
@@ -349,7 +464,7 @@ func easyjsonA80d3b19Encode(out *jwriter.Writer, in struct {
 	}
 	out.RawByte('}')
 }
-func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(in *jlexer.Lexer, out *Item) {
+func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie3(in *jlexer.Lexer, out *Item) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -416,7 +531,7 @@ func easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(in *jlexer.Lex
 		in.Consumed()
 	}
 }
-func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(out *jwriter.Writer, in Item) {
+func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie3(out *jwriter.Writer, in Item) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -532,23 +647,23 @@ func easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(out *jwriter.W
 // MarshalJSON supports json.Marshaler interface
 func (v Item) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(&w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Item) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie2(w, v)
+	easyjsonA80d3b19EncodeGithubComRking788WarmindNetworkBungie3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Item) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(&r, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Item) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie2(l, v)
+	easyjsonA80d3b19DecodeGithubComRking788WarmindNetworkBungie3(l, v)
 }
